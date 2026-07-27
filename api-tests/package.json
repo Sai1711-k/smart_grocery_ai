@@ -1,0 +1,11 @@
+{
+  "name": "backend-api-tests",
+  "version": "1.0.0",
+  "description": "Functional API integration tests for FreshCart backend",
+  "scripts": {
+    "test": "node test-runner.js"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
+}
