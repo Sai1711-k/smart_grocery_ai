@@ -19,21 +19,24 @@ export const getTransporter = async () => {
 
   console.log(`[Email] Creating SMTP transporter: ${user} @ ${host}:${port}`);
 
-  transporterInstance = nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
-    tls: {
-      rejectUnauthorized: false
-    },
-    // Force IPv4 to prevent ENETUNREACH errors on Windows when IPv6 isn't fully routed
-    family: 4,
-    // Timeout settings to fail fast when SMTP is unreachable
-    connectionTimeout: 5000,  // 5 seconds to establish connection
-    greetingTimeout: 5000,    // 5 seconds for server greeting
-    socketTimeout: 5000,      // 5 seconds for socket inactivity
-  } as any);
+  const isGmail = host?.includes('gmail');
+
+  transporterInstance = nodemailer.createTransport(
+    isGmail
+      ? {
+          service: 'gmail',
+          auth: { user, pass },
+          tls: { rejectUnauthorized: false },
+        }
+      : ({
+          host,
+          port,
+          secure: port === 465,
+          auth: { user, pass },
+          tls: { rejectUnauthorized: false },
+          connectionTimeout: 10000,
+        } as any)
+  );
 
   // Verify the connection works
   try {

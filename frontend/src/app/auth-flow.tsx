@@ -7,9 +7,15 @@ import { useAuth } from '@/lib/providers';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-// ============================================
-// EMAIL + PASSWORD + OTP AUTH FLOW
-// ============================================
+// Helper to safely parse JSON response and handle non-JSON 404/500 HTML responses
+const safeFetchJson = async (res: Response) => {
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error('Backend API is currently waking up or unreachable. Please verify NEXT_PUBLIC_API_URL on Vercel.');
+  }
+};
 
 export function AuthFlow({ onComplete }: { onComplete: () => void }) {
   const { setAuthSession } = useAuth();
@@ -159,7 +165,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json();
+      const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Failed to send reset code');
       
       alert(data.message); // Show OTP fallback message
