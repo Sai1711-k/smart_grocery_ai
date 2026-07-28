@@ -66,7 +66,7 @@ export class AuthController {
         console.log(`[Email] OTP sent successfully to ${email}`);
       } catch (emailErr: any) {
         console.error('[Email] Failed or timed out sending OTP:', emailErr.message);
-        responseMsg = `(Email Failed) OTP is: ${otp}`;
+        responseMsg = `Verification Code: ${otp}\n(Please enter this code to complete registration)`;
       }
       return res.status(200).json({
         message: responseMsg,
