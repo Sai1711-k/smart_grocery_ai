@@ -59,13 +59,13 @@ export class AuthController {
         expires: Date.now() + OTP_TTL_MS,
       });
 
-      // Send OTP via email (Compulsory)
+      // Send OTP via email (Compulsory with 6s timeout so UI never hangs)
       let responseMsg = 'OTP sent successfully to your email';
       try {
-        await EmailService.sendOtp(email, otp);
+        await withTimeout(EmailService.sendOtp(email, otp), 6000);
         console.log(`[Email] OTP sent successfully to ${email}`);
       } catch (emailErr: any) {
-        console.error('[Email] Failed to send OTP:', emailErr.message);
+        console.error('[Email] Failed or timed out sending OTP:', emailErr.message);
         responseMsg = `(Email Failed) OTP is: ${otp}`;
       }
       return res.status(200).json({
@@ -313,10 +313,10 @@ export class AuthController {
       
       let responseMsg = 'Reset code sent to your email';
       try {
-        await EmailService.sendOtp(email, otp);
+        await withTimeout(EmailService.sendOtp(email, otp), 6000);
         console.log(`[Reset] OTP sent to ${email}`);
       } catch (mailErr: any) {
-        console.log(`[Reset] Email failed, OTP for ${email} is: ${otp}`);
+        console.log(`[Reset] Email failed or timed out, OTP for ${email} is: ${otp}`);
         responseMsg = `(Email Failed) Your Reset Code is: ${otp}`;
       }
       
