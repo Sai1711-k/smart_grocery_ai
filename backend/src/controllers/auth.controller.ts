@@ -231,7 +231,7 @@ export class AuthController {
         });
       } else {
         // Sub-Admin - Needs Verification
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otp = generateOtp();
         
         // Store the sub-admin request temporarily
         otpStore.set(`admin_${email}`, { otp, expires: Date.now() + 10 * 60 * 1000 });
@@ -308,7 +308,7 @@ export class AuthController {
       const { email } = req.body;
       if (!email) return res.status(400).json({ error: 'Email is required' });
       
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = generateOtp();
       otpStore.set(`reset_${email}`, { otp, expires: Date.now() + 10 * 60 * 1000 });
       
       let responseMsg = 'Reset code sent to your email';
