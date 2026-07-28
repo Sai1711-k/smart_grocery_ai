@@ -28,12 +28,21 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Routes
+// Routes (Supports both /api/* and direct /* paths for maximum URL flexibility)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
+
 app.use('/api/admin', adminRoutes);
+app.use('/admin', adminRoutes);
+
 app.use('/api/cart', cartRoutes);
+app.use('/cart', cartRoutes);
+
 app.use('/api/orders', orderRoutes);
+app.use('/orders', orderRoutes);
+
 app.use('/api/ai', aiRoutes);
+app.use('/ai', aiRoutes);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Backend API is running at http://localhost:${port}`);
