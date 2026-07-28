@@ -19,9 +19,55 @@ export class EmailService {
     `;
 
     // 1. Check HTTP-based Email APIs (Port 443 - Never blocked on Render)
-    const resendKey = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
     const brevoKey = process.env.BREVO_API_KEY?.replace(/^["']|["']$/g, '').trim();
+    const resendKey = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
+    const sendgridKey = process.env.SENDGRID_API_KEY?.replace(/^["']|["']$/g, '').trim();
 
+    // Brevo (300 free emails/day to ANY recipient without domain restriction)
+    if (brevoKey) {
+      console.log(`[Email] Attempting to send OTP via Brevo HTTP API to ${email}...`);
+      const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sender: { name: 'FreshCart Grocery', email: process.env.EMAIL_USER || 'sai17042004@gmail.com' },
+          to: [{ email }],
+          subject: 'Your FreshCart Verification Code',
+          htmlContent: html,
+        }),
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('[Brevo Error Detail]:', errorText);
+        throw new Error(`Brevo API Error (${res.status}): ${errorText}`);
+      }
+      console.log(`[Email] Brevo HTTP API successfully sent email to ${email}`);
+      return;
+    }
+
+    // SendGrid (100 free emails/day over HTTPS Port 443)
+    if (sendgridKey) {
+      console.log(`[Email] Attempting to send OTP via SendGrid HTTP API to ${email}...`);
+      const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${sendgridKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          personalizations: [{ to: [{ email }] }],
+          from: { email: process.env.EMAIL_USER || 'sai17042004@gmail.com', name: 'FreshCart Grocery' },
+          subject: 'Your FreshCart Verification Code',
+          content: [{ type: 'text/html', value: html }],
+        }),
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('[SendGrid Error Detail]:', errorText);
+        throw new Error(`SendGrid API Error (${res.status}): ${errorText}`);
+      }
+      console.log(`[Email] SendGrid HTTP API successfully sent email to ${email}`);
+      return;
+    }
+
+    // Resend (3,000 free emails/month)
     if (resendKey) {
       console.log(`[Email] Attempting to send OTP via Resend HTTP API to ${email}...`);
       const res = await fetch('https://api.resend.com/emails', {
@@ -35,22 +81,6 @@ export class EmailService {
         throw new Error(`Resend API Error (${res.status}): ${errorText}`);
       }
       console.log(`[Email] Resend HTTP API successfully sent email to ${email}`);
-      return;
-    }
-
-    if (brevoKey) {
-      console.log(`[Email] Attempting to send OTP via Brevo HTTP API to ${email}...`);
-      const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sender: { name: 'FreshCart', email: process.env.EMAIL_USER || 'sai17042004@gmail.com' }, to: [{ email }], subject: 'Your FreshCart Verification Code', htmlContent: html }),
-      });
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('[Brevo Error Detail]:', errorText);
-        throw new Error(`Brevo API Error (${res.status}): ${errorText}`);
-      }
-      console.log(`[Email] Brevo HTTP API successfully sent email to ${email}`);
       return;
     }
 
