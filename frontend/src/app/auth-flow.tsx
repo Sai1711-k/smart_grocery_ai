@@ -62,7 +62,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, full_name: fullName }),
       });
-      const data = await res.json();
+      const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Signup failed');
       
       alert(data.message); // Show OTP fallback message
@@ -95,7 +95,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+      const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Login failed');
 
       if (data.requiresOtp && data.newDevice) {
@@ -130,7 +130,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, passkey: password }),
       });
-      const data = await res.json();
+      const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Admin login failed');
 
       if (data.requiresVerification) {
@@ -192,7 +192,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp: code, newPassword: password }),
       });
-      const data = await res.json();
+      const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Password reset failed');
       
       alert('Password reset successfully! Please log in with your new password.');
