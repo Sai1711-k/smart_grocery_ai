@@ -19,26 +19,38 @@ export class EmailService {
     `;
 
     // 1. Check HTTP-based Email APIs (Port 443 - Never blocked on Render)
-    const resendKey = process.env.RESEND_API_KEY;
-    const brevoKey = process.env.BREVO_API_KEY;
+    const resendKey = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
+    const brevoKey = process.env.BREVO_API_KEY?.replace(/^["']|["']$/g, '').trim();
 
     if (resendKey) {
+      console.log(`[Email] Attempting to send OTP via Resend HTTP API to ${email}...`);
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ from: 'FreshCart <onboarding@resend.dev>', to: [email], subject: 'Your FreshCart Verification Code', html }),
       });
-      if (!res.ok) throw new Error(`Resend API Error: ${res.statusText}`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('[Resend Error Detail]:', errorText);
+        throw new Error(`Resend API Error (${res.status}): ${errorText}`);
+      }
+      console.log(`[Email] Resend HTTP API successfully sent email to ${email}`);
       return;
     }
 
     if (brevoKey) {
+      console.log(`[Email] Attempting to send OTP via Brevo HTTP API to ${email}...`);
       const res = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({ sender: { name: 'FreshCart', email: process.env.EMAIL_USER || 'sai17042004@gmail.com' }, to: [{ email }], subject: 'Your FreshCart Verification Code', htmlContent: html }),
       });
-      if (!res.ok) throw new Error(`Brevo API Error: ${res.statusText}`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('[Brevo Error Detail]:', errorText);
+        throw new Error(`Brevo API Error (${res.status}): ${errorText}`);
+      }
+      console.log(`[Email] Brevo HTTP API successfully sent email to ${email}`);
       return;
     }
 

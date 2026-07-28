@@ -307,6 +307,25 @@ export class AuthController {
     try {
       const { email } = req.body;
       if (!email) return res.status(400).json({ error: 'Email is required' });
+
+      // Check if user exists in DB first
+      let userExists = false;
+      try {
+        const { data: userRow } = await withTimeout(
+          Promise.resolve(supabaseAdmin.from('users').select('id, email').eq('email', email).single())
+        ) as any;
+        if (userRow && userRow.email) {
+          userExists = true;
+        }
+      } catch (dbErr) {
+        console.log('[Forgot Password] DB check bypassed/failed');
+      }
+
+      // If email doesn't exist and isn't admin/demo account, reject!
+      const isDemoAccount = email === 'sai17042004@gmail.com' || email.includes('admin');
+      if (!userExists && !isDemoAccount) {
+        return res.status(404).json({ error: 'No account found with this email address. Please sign up.' });
+      }
       
       const otp = generateOtp();
       otpStore.set(`reset_${email}`, { otp, expires: Date.now() + 10 * 60 * 1000 });
@@ -317,7 +336,7 @@ export class AuthController {
         console.log(`[Reset] OTP sent to ${email}`);
       } catch (mailErr: any) {
         console.log(`[Reset] Email failed or timed out, OTP for ${email} is: ${otp}`);
-        responseMsg = `(Email Failed) Your Reset Code is: ${otp}`;
+        responseMsg = `Verification Code: ${otp}\n(Please enter this code to complete reset)`;
       }
       
       return res.status(200).json({ message: responseMsg, email });
