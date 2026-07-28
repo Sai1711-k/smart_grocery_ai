@@ -1,4 +1,5 @@
 import { getTransporter } from '../config/email';
+import { supabaseAdmin } from '../config/supabase';
 
 export class EmailService {
   /**
@@ -84,15 +85,35 @@ export class EmailService {
       return;
     }
 
-    // 2. Fallback to standard Nodemailer SMTP
-    const transporter = await getTransporter();
-    await transporter.sendMail({
-      from: `"FreshCart" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: 'Your FreshCart Verification Code',
-      html,
-      text: `Your FreshCart OTP is ${otp}. It expires in 10 minutes.`,
-    });
+    // 2. Standard Nodemailer SMTP
+    try {
+      const transporter = await getTransporter();
+      await transporter.sendMail({
+        from: `"FreshCart" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: 'Your FreshCart Verification Code',
+        html,
+        text: `Your FreshCart OTP is ${otp}. It expires in 10 minutes.`,
+      });
+      return;
+    } catch (smtpErr: any) {
+      console.warn('[Email] Standard Nodemailer SMTP failed, triggering Supabase Auth SMTP fallback:', smtpErr.message);
+    }
+
+    // 3. Supabase Auth SMTP (Uses SMTP configured in Supabase Dashboard over AWS!)
+    try {
+      console.log(`[Email] Sending email via Supabase Auth SMTP to ${email}...`);
+      const { error: supaErr } = await supabaseAdmin.auth.signInWithOtp({ email });
+      if (!supaErr) {
+        console.log(`[Email] Supabase Auth SMTP successfully triggered email to ${email}`);
+        return;
+      }
+      console.error('[Supabase Auth SMTP Error]:', supaErr.message);
+      throw new Error(`Supabase Auth SMTP Error: ${supaErr.message}`);
+    } catch (supaException: any) {
+      console.error('[Supabase Auth SMTP Exception]:', supaException.message);
+      throw supaException;
+    }
   }
 
   /**
