@@ -8,10 +8,10 @@ let transporterInstance: nodemailer.Transporter | null = null;
 export const getTransporter = async () => {
   if (transporterInstance) return transporterInstance;
 
-  const host = process.env.EMAIL_HOST;
-  const port = Number(process.env.EMAIL_PORT);
-  const user = process.env.EMAIL_USER;
-  const pass = process.env.EMAIL_PASS;
+  const host = (process.env.EMAIL_HOST || 'smtp.gmail.com').replace(/^["']|["']$/g, '').trim();
+  const port = Number(process.env.EMAIL_PORT) || 587;
+  const user = (process.env.EMAIL_USER || '').replace(/^["']|["']$/g, '').trim();
+  const pass = (process.env.EMAIL_PASS || '').replace(/^["']|["']$/g, '').trim();
 
   if (!host || !user || !pass) {
     throw new Error('SMTP not configured. Set EMAIL_HOST, EMAIL_USER, EMAIL_PASS in .env');
