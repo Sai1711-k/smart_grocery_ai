@@ -5,8 +5,6 @@ export class EmailService {
    * Send an OTP verification code to the given email address.
    */
   static async sendOtp(email: string, otp: string): Promise<void> {
-    const transporter = await getTransporter();
-
     const html = `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 480px; margin: auto; padding: 32px; border: 1px solid #e0e0e0; border-radius: 12px;">
         <h2 style="color: #1a1a2e; margin-bottom: 8px;">🛒 FreshCart</h2>
@@ -20,6 +18,32 @@ export class EmailService {
       </div>
     `;
 
+    // 1. Check HTTP-based Email APIs (Port 443 - Never blocked on Render)
+    const resendKey = process.env.RESEND_API_KEY;
+    const brevoKey = process.env.BREVO_API_KEY;
+
+    if (resendKey) {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ from: 'FreshCart <onboarding@resend.dev>', to: [email], subject: 'Your FreshCart Verification Code', html }),
+      });
+      if (!res.ok) throw new Error(`Resend API Error: ${res.statusText}`);
+      return;
+    }
+
+    if (brevoKey) {
+      const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: { name: 'FreshCart', email: process.env.EMAIL_USER || 'sai17042004@gmail.com' }, to: [{ email }], subject: 'Your FreshCart Verification Code', htmlContent: html }),
+      });
+      if (!res.ok) throw new Error(`Brevo API Error: ${res.statusText}`);
+      return;
+    }
+
+    // 2. Fallback to standard Nodemailer SMTP
+    const transporter = await getTransporter();
     await transporter.sendMail({
       from: `"FreshCart" <${process.env.EMAIL_USER}>`,
       to: email,

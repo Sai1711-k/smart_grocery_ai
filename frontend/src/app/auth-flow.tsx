@@ -65,7 +65,6 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Signup failed');
       
-      alert(data.message); // Show OTP fallback message
       setMode('otp');
       setResendTimer(30);
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -99,7 +98,6 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       if (!res.ok) throw new Error(data.error || 'Login failed');
 
       if (data.requiresOtp && data.newDevice) {
-        alert(data.message); // Show OTP fallback message
         setMode('loginOtp');
         setResendTimer(30);
         setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -134,7 +132,6 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       if (!res.ok) throw new Error(data.error || 'Admin login failed');
 
       if (data.requiresVerification) {
-        alert(data.message); // Show OTP fallback message
         setMode('adminOtp');
         setResendTimer(30);
         setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -168,7 +165,6 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Failed to send reset code');
       
-      alert(data.message); // Show OTP fallback message
       setMode('resetPassword');
       setResendTimer(30);
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
