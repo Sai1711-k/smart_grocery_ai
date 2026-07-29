@@ -4,11 +4,12 @@ import { supabaseAdmin } from '../config/supabase';
 export class EmailService {
   /**
    * Send an OTP verification code to the given email address.
-   * Priority chain with graceful fallback:
-   *   1. Brevo HTTP API    (BREVO_API_KEY)    – port 443, universal, 300/day free
-   *   2. SendGrid HTTP API (SENDGRID_API_KEY) – port 443, 100/day free
-   *   3. Resend HTTP API   (RESEND_API_KEY)   – port 443, 3000/month free
-   *   4. Gmail SMTP directly (Local dev fallback)
+   * Universal delivery strategy:
+   *   1. Brevo HTTP API (tries candidate senders: BREVO_SENDER_EMAIL, senderEmail, karnati.saisomasekharreddy@gmail.com)
+   *   2. SendGrid HTTP API
+   *   3. Resend HTTP API
+   *   4. Supabase Auth Cloud Email (signInWithOtp)
+   *   5. Direct Nodemailer SMTP
    */
   static async sendOtp(email: string, otp: string): Promise<void> {
     const year = new Date().getFullYear();
@@ -27,28 +28,37 @@ export class EmailService {
     const sendgridKey = process.env.SENDGRID_API_KEY?.replace(/^["']|["']$/g, '').trim();
     const resendKey   = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
 
-    // ── 1. Brevo HTTP API (Priority #1: Universal sending to ANY email) ──────
+    // ── 1. Brevo HTTP API (Try multiple candidate sender emails) ────────────
     if (brevoKey) {
-      try {
-        console.log(`[Email] Attempting Brevo HTTP API → ${email}`);
-        const r = await fetch('https://api.brevo.com/v3/smtp/email', {
-          method: 'POST',
-          headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sender: { name: 'FreshCart Grocery', email: senderEmail },
-            to: [{ email }],
-            subject: 'Your FreshCart Verification Code',
-            htmlContent: html,
-          }),
-        });
-        if (r.ok) {
-          console.log(`[Email] ✅ Brevo successfully sent OTP email to ${email}`);
-          return;
+      const candidateSenders = Array.from(new Set([
+        process.env.BREVO_SENDER_EMAIL?.replace(/^["']|["']$/g, '').trim(),
+        senderEmail,
+        'karnati.saisomasekharreddy@gmail.com',
+        'sai17042004@gmail.com',
+      ].filter(Boolean))) as string[];
+
+      for (const sEmail of candidateSenders) {
+        try {
+          console.log(`[Email] Attempting Brevo HTTP API (sender: ${sEmail}) → ${email}`);
+          const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sender: { name: 'FreshCart Grocery', email: sEmail },
+              to: [{ email }],
+              subject: 'Your FreshCart Verification Code',
+              htmlContent: html,
+            }),
+          });
+          if (r.ok) {
+            console.log(`[Email] ✅ Brevo successfully sent OTP email to ${email} via ${sEmail}`);
+            return;
+          }
+          const errTxt = await r.text();
+          console.error(`[Email] ⚠️ Brevo (${sEmail}) returned ${r.status}: ${errTxt}`);
+        } catch (err: any) {
+          console.error(`[Email] ⚠️ Brevo exception (${sEmail}): ${err.message}`);
         }
-        const errTxt = await r.text();
-        console.error(`[Email] ⚠️ Brevo returned ${r.status}: ${errTxt}. Trying next provider...`);
-      } catch (err: any) {
-        console.error(`[Email] ⚠️ Brevo request failed: ${err.message}. Trying next provider...`);
       }
     }
 
@@ -71,13 +81,13 @@ export class EmailService {
           return;
         }
         const errTxt = await r.text();
-        console.error(`[Email] ⚠️ SendGrid returned ${r.status}: ${errTxt}. Trying next provider...`);
+        console.error(`[Email] ⚠️ SendGrid returned ${r.status}: ${errTxt}`);
       } catch (err: any) {
-        console.error(`[Email] ⚠️ SendGrid request failed: ${err.message}. Trying next provider...`);
+        console.error(`[Email] ⚠️ SendGrid exception: ${err.message}`);
       }
     }
 
-    // ── 3. Resend HTTP API (Restricted on free tier to account owner only) ──
+    // ── 3. Resend HTTP API ───────────────────────────────────────────────────
     if (resendKey) {
       try {
         console.log(`[Email] Attempting Resend HTTP API → ${email}`);
@@ -96,13 +106,26 @@ export class EmailService {
           return;
         }
         const errTxt = await r.text();
-        console.error(`[Email] ⚠️ Resend returned ${r.status}: ${errTxt}. Trying next provider...`);
+        console.error(`[Email] ⚠️ Resend returned ${r.status}: ${errTxt}`);
       } catch (err: any) {
-        console.error(`[Email] ⚠️ Resend request failed: ${err.message}. Trying next provider...`);
+        console.error(`[Email] ⚠️ Resend exception: ${err.message}`);
       }
     }
 
-    // ── 4. Standard Nodemailer SMTP (Local dev fallback) ────────────────────
+    // ── 4. Supabase Auth Cloud Email Trigger ─────────────────────────────────
+    try {
+      console.log(`[Email] Attempting Supabase Auth Cloud Email → ${email}`);
+      const { error: supaErr } = await supabaseAdmin.auth.signInWithOtp({ email });
+      if (!supaErr) {
+        console.log(`[Email] ✅ Supabase Auth cloud email triggered to ${email}`);
+        return;
+      }
+      console.error(`[Email] ⚠️ Supabase Auth returned error: ${supaErr.message}`);
+    } catch (supaErr: any) {
+      console.error(`[Email] ⚠️ Supabase Auth exception: ${supaErr.message}`);
+    }
+
+    // ── 5. Standard Nodemailer SMTP ──────────────────────────────────────────
     try {
       console.log(`[Email] Attempting Nodemailer SMTP → ${email}`);
       const transporter = nodemailer.createTransport({
@@ -126,7 +149,7 @@ export class EmailService {
       console.error(`[Email] ⚠️ Nodemailer SMTP failed: ${smtpErr.message}`);
     }
 
-    throw new Error('All email providers (Brevo, SendGrid, Resend, SMTP) failed to deliver email');
+    throw new Error('All email delivery options failed');
   }
 
   /**

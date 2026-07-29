@@ -102,9 +102,9 @@ export class AuthController {
         expires: Date.now() + OTP_TTL_MS,
       });
 
-      // ── 4. Send OTP email (15s timeout for cloud) ──
+      // ── 4. Send OTP email (25s timeout for cloud services) ──
       try {
-        await withTimeout(EmailService.sendOtp(email, otp), 15000);
+        await withTimeout(EmailService.sendOtp(email, otp), 25000);
         console.log(`[Email] OTP sent successfully to ${email}`);
         return res.status(200).json({
           message: `A 6-digit verification code has been sent to ${email}. Please check your inbox.`,
@@ -113,7 +113,6 @@ export class AuthController {
         });
       } catch (emailErr: any) {
         console.error('[Email] Failed sending OTP:', emailErr.message);
-        // Do NOT expose OTP in response — return a professional error
         return res.status(503).json({
           error: 'We could not send the verification email right now. Please try again in a moment.',
           status: 'email_failed',
