@@ -4,12 +4,6 @@ import { supabaseAdmin } from '../config/supabase';
 export class EmailService {
   /**
    * Send an OTP verification code to the given email address.
-   * Universal delivery strategy:
-   *   1. Brevo HTTP API (tries candidate senders: BREVO_SENDER_EMAIL, senderEmail, karnati.saisomasekharreddy@gmail.com)
-   *   2. SendGrid HTTP API
-   *   3. Resend HTTP API
-   *   4. Supabase Auth Cloud Email (signInWithOtp)
-   *   5. Direct Nodemailer SMTP
    */
   static async sendOtp(email: string, otp: string): Promise<void> {
     const year = new Date().getFullYear();
@@ -28,7 +22,9 @@ export class EmailService {
     const sendgridKey = process.env.SENDGRID_API_KEY?.replace(/^["']|["']$/g, '').trim();
     const resendKey   = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
 
-    // ── 1. Brevo HTTP API (Try multiple candidate sender emails) ────────────
+    const errors: string[] = [];
+
+    // ── 1. Brevo HTTP API ────────────
     if (brevoKey) {
       const candidateSenders = Array.from(new Set([
         process.env.BREVO_SENDER_EMAIL?.replace(/^["']|["']$/g, '').trim(),
@@ -55,9 +51,13 @@ export class EmailService {
             return;
           }
           const errTxt = await r.text();
-          console.error(`[Email] ⚠️ Brevo (${sEmail}) returned ${r.status}: ${errTxt}`);
+          const msg = `Brevo (${sEmail}) returned ${r.status}: ${errTxt}`;
+          console.error(`[Email] ⚠️ ${msg}`);
+          errors.push(msg);
         } catch (err: any) {
-          console.error(`[Email] ⚠️ Brevo exception (${sEmail}): ${err.message}`);
+          const msg = `Brevo exception (${sEmail}): ${err.message}`;
+          console.error(`[Email] ⚠️ ${msg}`);
+          errors.push(msg);
         }
       }
     }
@@ -81,9 +81,13 @@ export class EmailService {
           return;
         }
         const errTxt = await r.text();
-        console.error(`[Email] ⚠️ SendGrid returned ${r.status}: ${errTxt}`);
+        const msg = `SendGrid returned ${r.status}: ${errTxt}`;
+        console.error(`[Email] ⚠️ ${msg}`);
+        errors.push(msg);
       } catch (err: any) {
-        console.error(`[Email] ⚠️ SendGrid exception: ${err.message}`);
+        const msg = `SendGrid exception: ${err.message}`;
+        console.error(`[Email] ⚠️ ${msg}`);
+        errors.push(msg);
       }
     }
 
@@ -106,9 +110,13 @@ export class EmailService {
           return;
         }
         const errTxt = await r.text();
-        console.error(`[Email] ⚠️ Resend returned ${r.status}: ${errTxt}`);
+        const msg = `Resend returned ${r.status}: ${errTxt}`;
+        console.error(`[Email] ⚠️ ${msg}`);
+        errors.push(msg);
       } catch (err: any) {
-        console.error(`[Email] ⚠️ Resend exception: ${err.message}`);
+        const msg = `Resend exception: ${err.message}`;
+        console.error(`[Email] ⚠️ ${msg}`);
+        errors.push(msg);
       }
     }
 
@@ -120,9 +128,13 @@ export class EmailService {
         console.log(`[Email] ✅ Supabase Auth cloud email triggered to ${email}`);
         return;
       }
-      console.error(`[Email] ⚠️ Supabase Auth returned error: ${supaErr.message}`);
+      const msg = `Supabase Auth returned error: ${supaErr.message}`;
+      console.error(`[Email] ⚠️ ${msg}`);
+      errors.push(msg);
     } catch (supaErr: any) {
-      console.error(`[Email] ⚠️ Supabase Auth exception: ${supaErr.message}`);
+      const msg = `Supabase Auth exception: ${supaErr.message}`;
+      console.error(`[Email] ⚠️ ${msg}`);
+      errors.push(msg);
     }
 
     // ── 5. Standard Nodemailer SMTP ──────────────────────────────────────────
@@ -146,10 +158,13 @@ export class EmailService {
       console.log(`[Email] ✅ Nodemailer SMTP sent to ${email}`);
       return;
     } catch (smtpErr: any) {
-      console.error(`[Email] ⚠️ Nodemailer SMTP failed: ${smtpErr.message}`);
+      const msg = `Nodemailer SMTP failed: ${smtpErr.message}`;
+      console.error(`[Email] ⚠️ ${msg}`);
+      errors.push(msg);
     }
 
-    throw new Error('All email delivery options failed');
+    const aggregatedError = errors.join(' | ');
+    throw new Error(`All email delivery options failed. Errors: ${aggregatedError}`);
   }
 
   /**

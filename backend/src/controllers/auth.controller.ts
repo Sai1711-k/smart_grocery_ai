@@ -114,7 +114,7 @@ export class AuthController {
       } catch (emailErr: any) {
         console.error('[Email] Failed sending OTP:', emailErr.message);
         return res.status(503).json({
-          error: 'We could not send the verification email right now. Please try again in a moment.',
+          error: `We could not send the verification email right now. Details: ${emailErr.message}`,
           status: 'email_failed',
         });
       }
