@@ -66,11 +66,11 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Signup failed');
       
-      if (data.message) setInfo(data.message);
-      else setInfo('');
-
+      // Clear info and navigate to OTP screen
+      setInfo('');
+      setError('');
       setMode('otp');
-      setResendTimer(30);
+      setResendTimer(60);
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
     } catch (err: any) {
       setError(err.message);
@@ -934,7 +934,11 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {error && <p className="text-red-500 text-sm text-center font-medium mb-4">{error}</p>}
-        {info && <p className="text-emerald-600 text-sm text-center font-medium mb-4 whitespace-pre-line">{info}</p>}
+        {!error && (
+          <p className="text-emerald-600 text-sm text-center font-medium mb-4">
+            📬 Check your inbox and spam folder
+          </p>
+        )}
 
         {verifying && (
           <div className="flex items-center justify-center gap-2 text-emerald-500 font-semibold mb-4">
@@ -947,11 +951,11 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         <div className="text-center mt-6">
           {resendTimer > 0 ? (
             <p className="text-neutral-400 text-sm">
-              Resend OTP in <span className="font-bold text-neutral-600">{resendTimer}s</span>
+              Resend code in <span className="font-bold text-neutral-600">{resendTimer}s</span>
             </p>
           ) : (
             <button onClick={handleResend} className="text-emerald-600 font-bold text-sm hover:underline">
-              Resend OTP
+              Didn't receive the email? Resend code
             </button>
           )}
         </div>

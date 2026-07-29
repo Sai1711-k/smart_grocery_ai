@@ -80,7 +80,7 @@ export class AuthController {
             } catch (emailErr: any) {
               console.error('[Email] Failed sending OTP:', emailErr.message);
               return res.status(200).json({
-                message: `Your account is pending verification. Verification Code: ${otp}`,
+                message: `A verification code has been sent to ${email}. Please check your inbox (and spam folder).`,
                 requiresOtp: true,
                 status: 'pending_verification',
               });
@@ -113,10 +113,9 @@ export class AuthController {
         });
       } catch (emailErr: any) {
         console.error('[Email] Failed sending OTP:', emailErr.message);
-        // Return OTP in response as last resort (dev mode only)
-        return res.status(200).json({
-          message: `Email delivery failed. Your Verification Code: ${otp}`,
-          requiresOtp: true,
+        // Do NOT expose OTP in response — return a professional error
+        return res.status(503).json({
+          error: 'We could not send the verification email right now. Please try again in a moment.',
           status: 'email_failed',
         });
       }
@@ -384,7 +383,9 @@ export class AuthController {
         console.log(`[Reset] OTP sent to ${email}`);
       } catch (mailErr: any) {
         console.log(`[Reset] Email failed or timed out, OTP for ${email} is: ${otp}`);
-        responseMsg = `Verification Code: ${otp}\n(Please enter this code to complete reset)`;
+        // Email failed silently — OTP is stored in otpStore, do NOT expose it
+        console.error('[Reset] Email delivery failed. OTP stored but not sent to:', email);
+        return res.status(503).json({ error: 'We could not send the reset code right now. Please try again in a moment.' });
       }
       
       return res.status(200).json({ message: responseMsg, email });
