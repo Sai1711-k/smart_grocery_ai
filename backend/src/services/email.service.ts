@@ -24,11 +24,34 @@ export class EmailService {
       </div>`;
 
     const senderEmail = (process.env.EMAIL_USER || 'sai17042004@gmail.com').replace(/^["']|["']$/g, '').trim();
+    const resendKey  = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
     const brevoKey   = process.env.BREVO_API_KEY?.replace(/^["']|["']$/g, '').trim();
     const sendgridKey= process.env.SENDGRID_API_KEY?.replace(/^["']|["']$/g, '').trim();
-    const resendKey  = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
 
-    // ── 1. Brevo HTTP API ────────────────────────────────────────────────────
+    // ── 1. Resend HTTP API (key already in Render!) ──────────────────────────
+    // IMPORTANT: from must be onboarding@resend.dev on free plan (Gmail not a verified Resend domain)
+    if (resendKey) {
+      console.log(`[Email] Sending via Resend → ${email}`);
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: 'FreshCart <onboarding@resend.dev>',
+          to: [email],
+          subject: 'Your FreshCart Verification Code',
+          html,
+        }),
+      });
+      if (!r.ok) {
+        const t = await r.text();
+        console.error('[Resend] Error:', r.status, t);
+        throw new Error(`Resend ${r.status}: ${t}`);
+      }
+      console.log(`[Email] ✅ Resend sent to ${email}`);
+      return;
+    }
+
+    // ── 2. Brevo HTTP API ────────────────────────────────────────────────────
     if (brevoKey) {
       console.log(`[Email] Sending via Brevo → ${email}`);
       const r = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -72,22 +95,6 @@ export class EmailService {
       return;
     }
 
-    // ── 3. Resend HTTP API ───────────────────────────────────────────────────
-    if (resendKey) {
-      console.log(`[Email] Sending via Resend → ${email}`);
-      const r = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: `FreshCart <${senderEmail}>`, to: [email], subject: 'Your FreshCart Verification Code', html }),
-      });
-      if (!r.ok) {
-        const t = await r.text();
-        console.error('[Resend] Error:', r.status, t);
-        throw new Error(`Resend ${r.status}: ${t}`);
-      }
-      console.log(`[Email] ✅ Resend sent to ${email}`);
-      return;
-    }
 
     // ── 4. Gmail SMTP (local dev only – port 587 is blocked on Render free tier) ──
     console.warn('[Email] ⚠️  No HTTP API key found. Falling back to Gmail SMTP (will FAIL on Render free tier).');
