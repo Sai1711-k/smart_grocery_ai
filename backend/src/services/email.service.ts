@@ -1,119 +1,113 @@
-import { getTransporter } from '../config/email';
+import nodemailer from 'nodemailer';
 import { supabaseAdmin } from '../config/supabase';
 
 export class EmailService {
   /**
    * Send an OTP verification code to the given email address.
+   * Priority chain:
+   *   1. Brevo HTTP API  (BREVO_API_KEY env var)  – port 443, universal, 300/day free
+   *   2. SendGrid HTTP API (SENDGRID_API_KEY env var) – port 443, 100/day free
+   *   3. Resend HTTP API  (RESEND_API_KEY env var)  – port 443, 3000/month free
+   *   4. Gmail SMTP directly (local dev only – Render blocks port 587)
+   * Any failure throws so the caller can surface the OTP as fallback.
    */
   static async sendOtp(email: string, otp: string): Promise<void> {
+    const year = new Date().getFullYear();
     const html = `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 480px; margin: auto; padding: 32px; border: 1px solid #e0e0e0; border-radius: 12px;">
-        <h2 style="color: #1a1a2e; margin-bottom: 8px;">🛒 FreshCart</h2>
-        <p style="color: #555; font-size: 15px;">Here is your one‑time verification code:</p>
-        <div style="background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; font-size: 32px; font-weight: 700; letter-spacing: 8px; text-align: center; padding: 18px; border-radius: 8px; margin: 24px 0;">
-          ${otp}
-        </div>
-        <p style="color: #888; font-size: 13px;">This code expires in <strong>10 minutes</strong>. If you didn't request this, please ignore this email.</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
-        <p style="color: #aaa; font-size: 11px; text-align: center;">&copy; ${new Date().getFullYear()} FreshCart Grocery. All rights reserved.</p>
-      </div>
-    `;
+      <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e0e0e0;border-radius:12px;">
+        <h2 style="color:#1a1a2e;margin-bottom:8px;">&#x1F6D2; FreshCart</h2>
+        <p style="color:#555;font-size:15px;">Your one-time verification code:</p>
+        <div style="background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;font-size:36px;font-weight:700;letter-spacing:10px;text-align:center;padding:20px;border-radius:10px;margin:24px 0;">${otp}</div>
+        <p style="color:#888;font-size:13px;">Expires in <strong>10 minutes</strong>. If you did not request this, ignore this email.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;"/>
+        <p style="color:#aaa;font-size:11px;text-align:center;">&copy; ${year} FreshCart Grocery</p>
+      </div>`;
 
-    // 1. Check HTTP-based Email APIs (Port 443 - Never blocked on Render)
-    const brevoKey = process.env.BREVO_API_KEY?.replace(/^["']|["']$/g, '').trim();
-    const resendKey = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
-    const sendgridKey = process.env.SENDGRID_API_KEY?.replace(/^["']|["']$/g, '').trim();
+    const senderEmail = (process.env.EMAIL_USER || 'sai17042004@gmail.com').replace(/^["']|["']$/g, '').trim();
+    const brevoKey   = process.env.BREVO_API_KEY?.replace(/^["']|["']$/g, '').trim();
+    const sendgridKey= process.env.SENDGRID_API_KEY?.replace(/^["']|["']$/g, '').trim();
+    const resendKey  = process.env.RESEND_API_KEY?.replace(/^["']|["']$/g, '').trim();
 
-    // Brevo (300 free emails/day to ANY recipient without domain restriction)
+    // ── 1. Brevo HTTP API ────────────────────────────────────────────────────
     if (brevoKey) {
-      console.log(`[Email] Attempting to send OTP via Brevo HTTP API to ${email}...`);
-      const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      console.log(`[Email] Sending via Brevo → ${email}`);
+      const r = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sender: { name: 'FreshCart Grocery', email: process.env.EMAIL_USER || 'sai17042004@gmail.com' },
+          sender: { name: 'FreshCart Grocery', email: senderEmail },
           to: [{ email }],
           subject: 'Your FreshCart Verification Code',
           htmlContent: html,
         }),
       });
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('[Brevo Error Detail]:', errorText);
-        throw new Error(`Brevo API Error (${res.status}): ${errorText}`);
+      if (!r.ok) {
+        const t = await r.text();
+        console.error('[Brevo] Error:', r.status, t);
+        throw new Error(`Brevo ${r.status}: ${t}`);
       }
-      console.log(`[Email] Brevo HTTP API successfully sent email to ${email}`);
+      console.log(`[Email] ✅ Brevo sent to ${email}`);
       return;
     }
 
-    // SendGrid (100 free emails/day over HTTPS Port 443)
+    // ── 2. SendGrid HTTP API ─────────────────────────────────────────────────
     if (sendgridKey) {
-      console.log(`[Email] Attempting to send OTP via SendGrid HTTP API to ${email}...`);
-      const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      console.log(`[Email] Sending via SendGrid → ${email}`);
+      const r = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${sendgridKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           personalizations: [{ to: [{ email }] }],
-          from: { email: process.env.EMAIL_USER || 'sai17042004@gmail.com', name: 'FreshCart Grocery' },
+          from: { email: senderEmail, name: 'FreshCart Grocery' },
           subject: 'Your FreshCart Verification Code',
           content: [{ type: 'text/html', value: html }],
         }),
       });
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('[SendGrid Error Detail]:', errorText);
-        throw new Error(`SendGrid API Error (${res.status}): ${errorText}`);
+      if (!r.ok) {
+        const t = await r.text();
+        console.error('[SendGrid] Error:', r.status, t);
+        throw new Error(`SendGrid ${r.status}: ${t}`);
       }
-      console.log(`[Email] SendGrid HTTP API successfully sent email to ${email}`);
+      console.log(`[Email] ✅ SendGrid sent to ${email}`);
       return;
     }
 
-    // Resend (3,000 free emails/month)
+    // ── 3. Resend HTTP API ───────────────────────────────────────────────────
     if (resendKey) {
-      console.log(`[Email] Attempting to send OTP via Resend HTTP API to ${email}...`);
-      const res = await fetch('https://api.resend.com/emails', {
+      console.log(`[Email] Sending via Resend → ${email}`);
+      const r = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: 'FreshCart <onboarding@resend.dev>', to: [email], subject: 'Your FreshCart Verification Code', html }),
+        body: JSON.stringify({ from: `FreshCart <${senderEmail}>`, to: [email], subject: 'Your FreshCart Verification Code', html }),
       });
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('[Resend Error Detail]:', errorText);
-        throw new Error(`Resend API Error (${res.status}): ${errorText}`);
+      if (!r.ok) {
+        const t = await r.text();
+        console.error('[Resend] Error:', r.status, t);
+        throw new Error(`Resend ${r.status}: ${t}`);
       }
-      console.log(`[Email] Resend HTTP API successfully sent email to ${email}`);
+      console.log(`[Email] ✅ Resend sent to ${email}`);
       return;
     }
 
-    // 2. Standard Nodemailer SMTP
-    try {
-      const transporter = await getTransporter();
-      await transporter.sendMail({
-        from: `"FreshCart" <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: 'Your FreshCart Verification Code',
-        html,
-        text: `Your FreshCart OTP is ${otp}. It expires in 10 minutes.`,
-      });
-      return;
-    } catch (smtpErr: any) {
-      console.warn('[Email] Standard Nodemailer SMTP failed, triggering Supabase Auth SMTP fallback:', smtpErr.message);
-    }
-
-    // 3. Supabase Auth SMTP (Uses SMTP configured in Supabase Dashboard over AWS!)
-    try {
-      console.log(`[Email] Sending email via Supabase Auth SMTP to ${email}...`);
-      const { error: supaErr } = await supabaseAdmin.auth.signInWithOtp({ email });
-      if (!supaErr) {
-        console.log(`[Email] Supabase Auth SMTP successfully triggered email to ${email}`);
-        return;
-      }
-      console.error('[Supabase Auth SMTP Error]:', supaErr.message);
-      throw new Error(`Supabase Auth SMTP Error: ${supaErr.message}`);
-    } catch (supaException: any) {
-      console.error('[Supabase Auth SMTP Exception]:', supaException.message);
-      throw supaException;
-    }
+    // ── 4. Gmail SMTP (local dev only – port 587 is blocked on Render free tier) ──
+    console.warn('[Email] ⚠️  No HTTP API key found. Falling back to Gmail SMTP (will FAIL on Render free tier).');
+    console.warn('[Email] Set BREVO_API_KEY in Render env vars to fix email delivery.');
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: senderEmail,
+        pass: (process.env.EMAIL_PASS || '').replace(/^["']|["']$/g, '').trim(),
+      },
+      tls: { rejectUnauthorized: false },
+    });
+    await transporter.sendMail({
+      from: `"FreshCart" <${senderEmail}>`,
+      to: email,
+      subject: 'Your FreshCart Verification Code',
+      html,
+      text: `Your FreshCart OTP is ${otp}. It expires in 10 minutes.`,
+    });
+    console.log(`[Email] ✅ Gmail SMTP sent to ${email}`);
   }
 
   /**

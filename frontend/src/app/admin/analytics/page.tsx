@@ -27,11 +27,11 @@ export default function AdminAnalyticsPage() {
         fetch(`${API_BASE}/admin/analytics/alerts`, { headers })
       ]);
       
-      const sData = await salesRes.json();
-      const aData = await alertsRes.json();
+      const sData = salesRes.ok && salesRes.headers.get('content-type')?.includes('application/json') ? await salesRes.json() : null;
+      const aData = alertsRes.ok && alertsRes.headers.get('content-type')?.includes('application/json') ? await alertsRes.json() : null;
       
-      if (sData.success) setSalesData(sData.data);
-      if (aData.success) setAlerts(aData.data);
+      if (sData && sData.success) setSalesData(sData.data);
+      if (aData && aData.success) setAlerts(aData.data);
       
     } catch (err) {
       console.error(err);

@@ -29,9 +29,14 @@ export function SalesRecap() {
     fetch(`${API_BASE}/orders/history`, {
       headers: { Authorization: `Bearer ${session.access_token}` }
     })
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) return null;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return null;
+        return res.json();
+      })
       .then(result => {
-        if (result.success) setOrders(result.data);
+        if (result && result.success) setOrders(result.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

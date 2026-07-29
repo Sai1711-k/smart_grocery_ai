@@ -75,7 +75,12 @@ export function StockAlerts({ onBack }: { onBack?: () => void }) {
   const fetchAlerts = () => {
     setLoading(true);
     fetch('/api/stock-alerts')
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) throw new Error('Not JSON');
+        return res.json();
+      })
       .then(result => {
         if (result.success) {
           setData(result.data);
@@ -265,7 +270,12 @@ export function StockAlertBell({ onClick }: { onClick: () => void }) {
 
   useEffect(() => {
     fetch('/api/stock-alerts')
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) throw new Error('Not JSON');
+        return res.json();
+      })
       .then(result => {
         if (result.success) setAlertCount(result.data.totalAlerts);
       })

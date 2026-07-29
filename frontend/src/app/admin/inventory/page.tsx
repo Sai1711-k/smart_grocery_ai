@@ -62,11 +62,11 @@ export default function AdminInventoryPage() {
         fetch(`${API_BASE}/admin/providers`, { headers })
       ]);
       
-      const invData = await invRes.json();
-      const provData = await provRes.json();
+      const invData = invRes.ok && invRes.headers.get('content-type')?.includes('application/json') ? await invRes.json() : null;
+      const provData = provRes.ok && provRes.headers.get('content-type')?.includes('application/json') ? await provRes.json() : null;
       
-      if (invData.success) setInventory(invData.data);
-      if (provData.success) setProviders(provData.data);
+      if (invData && invData.success) setInventory(invData.data);
+      if (provData && provData.success) setProviders(provData.data);
       
     } catch (err) {
       console.error(err);

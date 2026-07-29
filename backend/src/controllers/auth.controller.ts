@@ -31,47 +31,95 @@ export class AuthController {
     try {
       const { email, password, full_name } = req.body;
 
+      // ── 1. Basic validation ──
       if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
       }
-
-      // Fast-fail check if user exists
-      try {
-        const existingUserResponse = await withTimeout(
-          Promise.resolve(supabaseAdmin.from('users').select('id, email_verified').eq('email', email).single())
-        ) as any;
-        
-        if (existingUserResponse.data && existingUserResponse.data.email_verified) {
-          return res.status(400).json({ error: 'User already exists' });
-        }
-      } catch (dbErr) {
-        console.log('[Signup] DB check timed out or failed (likely asleep). Proceeding with mock signup flow.');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Please enter a valid email address' });
+      }
+      if (password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters' });
       }
 
-      // Generate & store OTP
+      // ── 2. Check if email already exists in DB ──
+      try {
+        const { data: existingUser } = await withTimeout(
+          Promise.resolve(supabaseAdmin.from('users').select('id, email_verified').eq('email', email).single()),
+          5000
+        ) as any;
+
+        if (existingUser) {
+          if (existingUser.email_verified) {
+            // Already fully registered → block
+            return res.status(400).json({
+              error: 'An account with this email already exists. Please log in instead.'
+            });
+          } else {
+            // Exists but NOT verified → resend OTP and redirect to OTP page
+            console.log(`[Signup] Unverified account found for ${email}. Resending OTP...`);
+            const otp = generateOtp();
+            otpStore.set(email, { otp, expires: Date.now() + OTP_TTL_MS });
+
+            // Keep old pending data or update with new password
+            pendingSignupStore.set(email, {
+              password,
+              full_name: full_name || existingUser.full_name || '',
+              expires: Date.now() + OTP_TTL_MS,
+            });
+
+            try {
+              await withTimeout(EmailService.sendOtp(email, otp), 15000);
+              console.log(`[Email] Re-verification OTP sent to ${email}`);
+              return res.status(200).json({
+                message: `A verification code has been sent to ${email}. Please check your inbox to complete registration.`,
+                requiresOtp: true,
+                status: 'pending_verification',
+              });
+            } catch (emailErr: any) {
+              console.error('[Email] Failed sending OTP:', emailErr.message);
+              return res.status(200).json({
+                message: `Your account is pending verification. Verification Code: ${otp}`,
+                requiresOtp: true,
+                status: 'pending_verification',
+              });
+            }
+          }
+        }
+      } catch (dbErr: any) {
+        if (dbErr.message !== 'TIMEOUT') {
+          console.log('[Signup] DB check error:', dbErr.message);
+        }
+      }
+
+      // ── 3. New user: generate OTP and store pending data ──
       const otp = generateOtp();
       otpStore.set(email, { otp, expires: Date.now() + OTP_TTL_MS });
-
-      // Store pending signup data
       pendingSignupStore.set(email, {
         password,
         full_name: full_name || '',
         expires: Date.now() + OTP_TTL_MS,
       });
 
-      // Send OTP via email (Compulsory with 6s timeout so UI never hangs)
-      let responseMsg = 'OTP sent successfully to your email';
+      // ── 4. Send OTP email (15s timeout for cloud) ──
       try {
-        await withTimeout(EmailService.sendOtp(email, otp), 6000);
+        await withTimeout(EmailService.sendOtp(email, otp), 15000);
         console.log(`[Email] OTP sent successfully to ${email}`);
+        return res.status(200).json({
+          message: `A 6-digit verification code has been sent to ${email}. Please check your inbox.`,
+          requiresOtp: true,
+          status: 'otp_sent',
+        });
       } catch (emailErr: any) {
-        console.error('[Email] Failed or timed out sending OTP:', emailErr.message);
-        responseMsg = `Verification Code: ${otp}\n(Please enter this code to complete registration)`;
+        console.error('[Email] Failed sending OTP:', emailErr.message);
+        // Return OTP in response as last resort (dev mode only)
+        return res.status(200).json({
+          message: `Email delivery failed. Your Verification Code: ${otp}`,
+          requiresOtp: true,
+          status: 'email_failed',
+        });
       }
-      return res.status(200).json({
-        message: responseMsg,
-        requiresOtp: true,
-      });
     } catch (error: any) {
       console.error('Signup error:', error);
       res.status(500).json({ error: error.message || 'Internal server error' });

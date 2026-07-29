@@ -52,6 +52,9 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ diets, familySize, monthlyBudget })
         });
+        if (!res.ok) throw new Error('AI request failed');
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) throw new Error('AI non-JSON response');
         const json = await res.json();
         if (json.success && json.items && json.items.length > 0) {
           setRecommendedItems(json.items);

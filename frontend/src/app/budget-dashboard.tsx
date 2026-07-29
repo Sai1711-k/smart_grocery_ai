@@ -21,6 +21,9 @@ export function BudgetDashboard({ onBack }: { onBack: () => void }) {
             'Authorization': `Bearer ${session?.access_token || 'mock-user-token'}`
           }
         });
+        if (!res.ok) return;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return;
         const json = await res.json();
         
         if (json.success && json.data) {

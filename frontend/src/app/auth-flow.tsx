@@ -26,6 +26,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
   const [showPass, setShowPass] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
@@ -65,6 +66,9 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Signup failed');
       
+      if (data.message) setInfo(data.message);
+      else setInfo('');
+
       setMode('otp');
       setResendTimer(30);
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -96,6 +100,9 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       });
       const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Login failed');
+
+      if (data.message) setInfo(data.message);
+      else setInfo('');
 
       if (data.requiresOtp && data.newDevice) {
         setMode('loginOtp');
@@ -131,6 +138,9 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Admin login failed');
 
+      if (data.message) setInfo(data.message);
+      else setInfo('');
+
       if (data.requiresVerification) {
         setMode('adminOtp');
         setResendTimer(30);
@@ -165,6 +175,9 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       const data = await safeFetchJson(res);
       if (!res.ok) throw new Error(data.error || 'Failed to send reset code');
       
+      if (data.message) setInfo(data.message);
+      else setInfo('');
+
       setMode('resetPassword');
       setResendTimer(30);
       setTimeout(() => otpRefs.current[0]?.focus(), 100);
@@ -817,6 +830,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
           </div>
 
           {error && <p className="text-red-500 text-sm mt-2 font-medium text-center">{error}</p>}
+          {info && <p className="text-emerald-600 text-sm mt-2 font-medium text-center whitespace-pre-line">{info}</p>}
 
           <div className="text-center mt-6">
             {resendTimer > 0 ? (
@@ -920,6 +934,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {error && <p className="text-red-500 text-sm text-center font-medium mb-4">{error}</p>}
+        {info && <p className="text-emerald-600 text-sm text-center font-medium mb-4 whitespace-pre-line">{info}</p>}
 
         {verifying && (
           <div className="flex items-center justify-center gap-2 text-emerald-500 font-semibold mb-4">

@@ -116,9 +116,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
       fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
         headers: { Authorization: `Bearer ${session.access_token}` }
       })
-      .then(r => r.json())
-      .then(d => { if (d.success) setCartItems(d.data); })
-      .catch(console.error);
+      .then(async r => {
+        if (!r.ok) return null;
+        const ct = r.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return null;
+        return r.json();
+      })
+      .then(d => { if (d && d.success) setCartItems(d.data); })
+      .catch(() => {});
     } else {
       setCartItems([]);
     }

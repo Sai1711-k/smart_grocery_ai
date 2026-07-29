@@ -231,9 +231,14 @@ export function OrderHistoryPrototype({ initialOrderId, onBack }: { initialOrder
     fetch(`${API_BASE}/orders/history`, {
       headers: { Authorization: `Bearer ${session.access_token}` }
     })
-    .then(res => res.json())
+    .then(async res => {
+      if (!res.ok) return null;
+      const ct = res.headers.get('content-type');
+      if (!ct || !ct.includes('application/json')) return null;
+      return res.json();
+    })
     .then(result => {
-      if (result.success) {
+      if (result && result.success) {
         setOrders(result.data);
         if (initialOrderId) {
           const found = result.data.find((o: Order) => o.id === initialOrderId);
@@ -441,7 +446,14 @@ export function OrderAnalyticsPrototype() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/analytics').then(res => res.json()).then(r => setData(r.data));
+    fetch('/api/analytics')
+      .then(async res => {
+        if (!res.ok) return null;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return null;
+        return res.json();
+      })
+      .then(r => { if (r && r.data) setData(r.data); });
   }, []);
 
   if (!data) return <div className="bg-[#111315] min-h-screen"></div>;
