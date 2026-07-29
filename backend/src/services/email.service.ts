@@ -24,6 +24,20 @@ export class EmailService {
 
     const errors: string[] = [];
 
+    // ── Helper: 5s timeout fetch ──
+    const fetchWithTimeout = async (url: string, options: any) => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 5000);
+      try {
+        const response = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(id);
+        return response;
+      } catch (err) {
+        clearTimeout(id);
+        throw err;
+      }
+    };
+
     // ── 1. Brevo HTTP API ────────────
     if (brevoKey) {
       const candidateSenders = Array.from(new Set([
@@ -36,7 +50,7 @@ export class EmailService {
       for (const sEmail of candidateSenders) {
         try {
           console.log(`[Email] Attempting Brevo HTTP API (sender: ${sEmail}) → ${email}`);
-          const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+          const r = await fetchWithTimeout('https://api.brevo.com/v3/smtp/email', {
             method: 'POST',
             headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -66,7 +80,7 @@ export class EmailService {
     if (sendgridKey) {
       try {
         console.log(`[Email] Attempting SendGrid HTTP API → ${email}`);
-        const r = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        const r = await fetchWithTimeout('https://api.sendgrid.com/v3/mail/send', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${sendgridKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -95,7 +109,7 @@ export class EmailService {
     if (resendKey) {
       try {
         console.log(`[Email] Attempting Resend HTTP API → ${email}`);
-        const r = await fetch('https://api.resend.com/emails', {
+        const r = await fetchWithTimeout('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -123,7 +137,11 @@ export class EmailService {
     // ── 4. Supabase Auth Cloud Email Trigger ─────────────────────────────────
     try {
       console.log(`[Email] Attempting Supabase Auth Cloud Email → ${email}`);
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), 5000);
       const { error: supaErr } = await supabaseAdmin.auth.signInWithOtp({ email });
+      clearTimeout(id);
+      
       if (!supaErr) {
         console.log(`[Email] ✅ Supabase Auth cloud email triggered to ${email}`);
         return;
@@ -147,6 +165,9 @@ export class EmailService {
           pass: (process.env.EMAIL_PASS || '').replace(/^["']|["']$/g, '').trim(),
         },
         tls: { rejectUnauthorized: false },
+        connectionTimeout: 5000,
+        greetingTimeout: 5000,
+        socketTimeout: 5000,
       });
       await transporter.sendMail({
         from: `"FreshCart" <${senderEmail}>`,
