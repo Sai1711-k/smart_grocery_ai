@@ -100,7 +100,7 @@ const CATEGORIES = [
 
 export function CategoriesPage({ onSelectCategory, onBack }: CategoriesPageProps) {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-24 transition-colors">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-24 transition-colors">
       {/* Header */}
       <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 px-6 pt-10 pb-8 flex items-center gap-4 shadow-lg relative overflow-hidden rounded-b-[40px]">
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />

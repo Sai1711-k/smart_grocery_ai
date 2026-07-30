@@ -57,16 +57,38 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
     { emoji: '🫒', label: 'Oils' },
     { emoji: '🍚', label: 'Grains' },
     { emoji: '🍪', label: 'Snacks' },
+    { emoji: '☕', label: 'Beverages' },
   ];
 
   const [addingIds, setAddingIds] = useState<Record<string, boolean>>({});
 
   const filtered = products.filter(p => {
     const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || 
-      p.category === selectedCategory || 
-      (selectedCategory === 'Top Deals' && p.price < 100) ||
-      (selectedCategory === 'Snacks' && (p.category === 'Snacks' || p.category === 'Bakery & Snacks' || p.name.toLowerCase().includes('biscuit') || p.name.toLowerCase().includes('chips') || p.name.toLowerCase().includes('kurkure') || p.name.toLowerCase().includes('lays')));
+    
+    let matchesCategory = !selectedCategory;
+    if (selectedCategory) {
+      const targetCat = selectedCategory.toLowerCase();
+      const pCat = (p.category || '').toLowerCase();
+      const pName = (p.name || '').toLowerCase();
+
+      if (targetCat === 'top deals') {
+        matchesCategory = p.price < 100 || p.health_score > 90;
+      } else if (targetCat === 'for you') {
+        matchesCategory = p.health_score >= 80;
+      } else if (targetCat.includes('beverag') || targetCat.includes('drink')) {
+        matchesCategory = pCat.includes('beverag') || pCat.includes('drink') || pName.includes('juice') || pName.includes('coffee') || pName.includes('tea') || pName.includes('bull') || pName.includes('cola') || pName.includes('water');
+      } else if (targetCat.includes('oil')) {
+        matchesCategory = pCat.includes('oil') || pName.includes('oil') || pName.includes('ghee');
+      } else if (targetCat.includes('snack')) {
+        matchesCategory = pCat.includes('snack') || pName.includes('biscuit') || pName.includes('chips') || pName.includes('kurkure') || pName.includes('lays') || pName.includes('oreo') || pName.includes('cookie') || pName.includes('popcorn') || pName.includes('chocolate') || pName.includes('bhujia');
+      } else if (targetCat.includes('grain') || targetCat.includes('rice')) {
+        matchesCategory = pCat.includes('grain') || pCat.includes('rice') || pName.includes('rice') || pName.includes('atta') || pName.includes('dal');
+      } else if (targetCat.includes('meat') || targetCat.includes('non-veg')) {
+        matchesCategory = pCat.includes('meat') || pName.includes('chicken') || pName.includes('mutton') || pName.includes('fish');
+      } else {
+        matchesCategory = pCat.includes(targetCat) || targetCat.includes(pCat);
+      }
+    }
     return matchesSearch && matchesCategory;
   });
 
