@@ -1,128 +1,88 @@
-const UNSPLASH_IMAGES: Record<string, string> = {
-  // Vegetables
-  tomato: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop',
-  tomatoes: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop',
-  spinach: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500&auto=format&fit=crop',
-  carrot: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=500&auto=format&fit=crop',
-  carrots: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=500&auto=format&fit=crop',
-  broccoli: 'https://images.unsplash.com/photo-1447175008436-08417090ea77?w=500&auto=format&fit=crop',
-  potato: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop',
-  potatoes: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop',
-  onion: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500&auto=format&fit=crop',
-  onions: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500&auto=format&fit=crop',
-  cucumber: 'https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=500&auto=format&fit=crop',
-  vegetable: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop',
-  vegetables: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop',
-
-  // Fruits
-  apple: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop',
-  apples: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop',
-  banana: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500&auto=format&fit=crop',
-  bananas: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500&auto=format&fit=crop',
-  orange: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?w=500&auto=format&fit=crop',
-  oranges: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?w=500&auto=format&fit=crop',
-  berry: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=500&auto=format&fit=crop',
-  berries: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=500&auto=format&fit=crop',
-  avocado: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=500&auto=format&fit=crop',
-  fruit: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=500&auto=format&fit=crop',
-  fruits: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=500&auto=format&fit=crop',
-
-  // Dairy
-  milk: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop',
-  cheese: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=500&auto=format&fit=crop',
-  butter: 'https://images.unsplash.com/photo-1584278860011-678e36e68948?w=500&auto=format&fit=crop',
-  yogurt: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&auto=format&fit=crop',
-  curd: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&auto=format&fit=crop',
-  dairy: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop',
-
+const EXACT_ITEM_IMAGES: Record<string, string> = {
   // Bakery
-  bread: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop',
-  bakery: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop',
-  croissant: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop',
-  bun: 'https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=500&auto=format&fit=crop',
-  muffin: 'https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=500&auto=format&fit=crop',
+  'white bread': 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop',
+  'brown bread': 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=500&auto=format&fit=crop',
+  'multigrain bread': 'https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=500&auto=format&fit=crop',
+  '100% multigrain bread': 'https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=500&auto=format&fit=crop',
+  'butter croissant': 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop',
+  'french butter croissant': 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop',
+  'chocolate muffin': 'https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=500&auto=format&fit=crop',
+  'rich chocolate muffin': 'https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=500&auto=format&fit=crop',
+  'blueberry muffin': 'https://images.unsplash.com/photo-1598215439218-f79b4ed1cb16?w=500&auto=format&fit=crop',
+  'choco chip cookies': 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&auto=format&fit=crop',
 
-  // Meat / Poultry
-  chicken: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=500&auto=format&fit=crop',
+  // Snacks & Biscuits (EVERY ITEM HAS A UNIQUE EXCLUSIVE IMAGE)
+  'kurkure masala munch': 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=500&auto=format&fit=crop',
+  'kurkure green chutney style': 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500&auto=format&fit=crop',
+  'lays classic salted chips': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop',
+  'lays classic salted': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop',
+  'lays india magic masala': 'https://images.unsplash.com/photo-1527842891421-42eec6e703ea?w=500&auto=format&fit=crop',
+  'lays american style cream & onion': 'https://images.unsplash.com/photo-1613919113640-25732ec5e61f?w=500&auto=format&fit=crop',
+  'lays spanish tomato tango': 'https://images.unsplash.com/photo-1566478978921-654b0e8c81ef?w=500&auto=format&fit=crop',
+  'oreo chocolate cream biscuits': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop',
+  'oreo biscuits': 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop',
+  'britannia jimjam biscuits': 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop',
+  'jimjam cream biscuits': 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop',
+  'parle-g gold biscuits': 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500&auto=format&fit=crop',
+  'britannia good day butter cookies': 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&auto=format&fit=crop',
+  'sunfeast dark fantasy choco fills': 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format&fit=crop',
+  'bingo mad angles very peri peri': 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500&auto=format&fit=crop',
+  'doritos nacho cheese tortilla chips': 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=500&auto=format&fit=crop',
+  'pringles sour cream & onion': 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=500&auto=format&fit=crop',
+  'cheetos cheese puffs': 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500&auto=format&fit=crop',
+  'britannia bourbon chocolate biscuits': 'https://images.unsplash.com/photo-1605807646983-377bc5a76493?w=500&auto=format&fit=crop',
+  'parle hide & seek choco chip': 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop',
+  'haldiram aloo bhujia 200g': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&auto=format&fit=crop',
+  'haldiram aloo bhujia': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&auto=format&fit=crop',
+  'haldiram khatta meetha mixture': 'https://images.unsplash.com/photo-1601050690187-013098522301?w=500&auto=format&fit=crop',
+  'act ii golden butter popcorn': 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=500&auto=format&fit=crop',
+  'snickers peanut chocolate bar': 'https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&auto=format&fit=crop',
+  'cadbury dairy milk silk chocolate': 'https://images.unsplash.com/photo-1548813293-c906666fc29b?w=500&auto=format&fit=crop',
+  'kitkat 4-finger chocolate wafers': 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500&auto=format&fit=crop',
+  'roasted salted almonds 200g': 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=500&auto=format&fit=crop',
+  'premium whole cashews 200g': 'https://images.unsplash.com/photo-1536591375315-198956582373?w=500&auto=format&fit=crop',
+};
+
+const CATEGORY_FALLBACKS: Record<string, string> = {
+  vegetables: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500&auto=format&fit=crop',
+  fruits: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=500&auto=format&fit=crop',
+  dairy: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop',
+  bakery: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop',
   meat: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=500&auto=format&fit=crop',
-  mutton: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=500&auto=format&fit=crop',
-  fish: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop',
-  egg: 'https://images.unsplash.com/photo-1516448620398-c5f44bf9f441?w=500&auto=format&fit=crop',
-  eggs: 'https://images.unsplash.com/photo-1516448620398-c5f44bf9f441?w=500&auto=format&fit=crop',
-
-  // Grains
-  rice: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop',
-  wheat: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop',
-  grains: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop',
-
-  // Oils
-  oil: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop',
   oils: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop',
-
-  // Snacks & Biscuits
-  kurkure: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=500&auto=format&fit=crop',
-  lays: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop',
-  oreo: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop',
-  jimjam: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop',
-  parleg: 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500&auto=format&fit=crop',
-  goodday: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&auto=format&fit=crop',
-  darkfantasy: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format&fit=crop',
-  bingo: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500&auto=format&fit=crop',
-  doritos: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=500&auto=format&fit=crop',
-  pringles: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=500&auto=format&fit=crop',
-  cheetos: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500&auto=format&fit=crop',
-  bourbon: 'https://images.unsplash.com/photo-1605807646983-377bc5a76493?w=500&auto=format&fit=crop',
-  hide: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop',
-  bhujia: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&auto=format&fit=crop',
-  popcorn: 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=500&auto=format&fit=crop',
-  snickers: 'https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&auto=format&fit=crop',
-  chocolate: 'https://images.unsplash.com/photo-1548813293-c906666fc29b?w=500&auto=format&fit=crop',
-  kitkat: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500&auto=format&fit=crop',
-  almonds: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=500&auto=format&fit=crop',
-  cashews: 'https://images.unsplash.com/photo-1536591375315-198956582373?w=500&auto=format&fit=crop',
-
-  cookie: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop',
-  cookies: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop',
-  chips: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop',
-  snack: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop',
+  grains: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop',
   snacks: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop',
-
-  // Beverages
-  coffee: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop',
-  juice: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop',
-  beverage: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop',
   beverages: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop',
-
-  // Default
   default: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&auto=format&fit=crop',
 };
 
 export function getValidImageUrl(url: string | null | undefined, fallbackName: string, category?: string): string {
+  const cleanName = (fallbackName || '').toLowerCase().trim();
+
+  // 1. Check exact item image dictionary first for 100% unique match!
+  if (cleanName && EXACT_ITEM_IMAGES[cleanName]) {
+    return EXACT_ITEM_IMAGES[cleanName];
+  }
+
+  // 2. Check if name contains any exact keyword key
+  for (const [key, image] of Object.entries(EXACT_ITEM_IMAGES)) {
+    if (cleanName.includes(key)) {
+      return image;
+    }
+  }
+
+  // 3. If provided URL is a valid non-placeholder http URL, use it
   if (url && url.startsWith('http') && !url.includes('loremflickr') && !url.includes('via.placeholder.com')) {
     return url;
   }
 
-  const nameWords = (fallbackName || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
-    .trim()
-    .split(/\s+/);
-
-  const categoryWords = (category || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
-    .trim()
-    .split(/\s+/);
-
-  const allWords = [...nameWords, ...categoryWords];
-
-  for (const word of allWords) {
-    if (word && UNSPLASH_IMAGES[word]) {
-      return UNSPLASH_IMAGES[word];
-    }
+  // 4. Category fallback
+  const cleanCat = (category || '').toLowerCase().trim();
+  if (cleanCat && CATEGORY_FALLBACKS[cleanCat]) {
+    return CATEGORY_FALLBACKS[cleanCat];
   }
 
-  return UNSPLASH_IMAGES.default;
+  return CATEGORY_FALLBACKS.default;
 }
 
 export async function safeFetchJson<T = any>(input: RequestInfo | URL, init?: RequestInit): Promise<T | null> {

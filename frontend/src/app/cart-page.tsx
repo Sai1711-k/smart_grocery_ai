@@ -23,7 +23,7 @@ export function CartPage({ onCheckout }: { onCheckout: () => void }) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-40">
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-900 pb-40">
       {/* Header */}
       <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 px-6 py-5 flex items-center justify-center sticky top-0 z-10 shadow-md">
         <h1 className="text-lg font-black text-white">My Cart</h1>

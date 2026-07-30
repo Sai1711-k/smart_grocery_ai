@@ -63,7 +63,10 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
 
   const filtered = products.filter(p => {
     const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || p.category === selectedCategory || (selectedCategory === 'Top Deals' && p.price < 100);
+    const matchesCategory = !selectedCategory || 
+      p.category === selectedCategory || 
+      (selectedCategory === 'Top Deals' && p.price < 100) ||
+      (selectedCategory === 'Snacks' && (p.category === 'Snacks' || p.category === 'Bakery & Snacks' || p.name.toLowerCase().includes('biscuit') || p.name.toLowerCase().includes('chips') || p.name.toLowerCase().includes('kurkure') || p.name.toLowerCase().includes('lays')));
     return matchesSearch && matchesCategory;
   });
 

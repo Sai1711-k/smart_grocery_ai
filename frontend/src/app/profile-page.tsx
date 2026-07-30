@@ -70,7 +70,7 @@ export function ProfilePage({ onNavigate }: { onNavigate?: (view: string) => voi
   const isAdmin = user?.user_metadata?.role === 'admin' || user?.email === 'sai17042004@gmail.com';
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-24">
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-900 pb-24 transition-colors">
 
       {/* ── Gradient Header ── */}
       <div className="relative bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 px-6 pt-14 pb-24 rounded-b-[52px] shadow-xl overflow-hidden">
