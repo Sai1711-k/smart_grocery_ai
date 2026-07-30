@@ -527,6 +527,8 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
                 );
               })}
             </div>
+          </div>
+        </div>
       </div>
 
       {/* CANCELLATION CONFIRMATION MODAL */}

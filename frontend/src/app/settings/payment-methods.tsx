@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, CreditCard, Plus, Trash2, Check, Smartphone, Wallet, Landmark, Money } from 'lucide-react';
+import { ChevronLeft, CreditCard, Plus, Trash2, Check, Smartphone, Wallet, Landmark, Banknote } from 'lucide-react';
 import { useAuth } from '@/lib/providers';
 
 interface PaymentMethod {
