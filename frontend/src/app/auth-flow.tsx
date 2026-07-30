@@ -226,7 +226,8 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
     if (newOtp.every(d => d !== '') && newOtp.join('').length === 6) {
       if (mode === 'otp') handleVerifySignupOtp(newOtp.join(''));
       else if (mode === 'adminOtp') handleVerifyAdminOtp(newOtp.join(''));
-      else handleVerifyLoginOtp(newOtp.join(''));
+      else if (mode === 'loginOtp') handleVerifyLoginOtp(newOtp.join(''));
+      else if (mode === 'resetPassword' && password && password.length >= 6) handleResetPassword(newOtp.join(''));
     }
   };
 
@@ -245,7 +246,8 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
       otpRefs.current[5]?.focus();
       if (mode === 'otp') handleVerifySignupOtp(pasted);
       else if (mode === 'adminOtp') handleVerifyAdminOtp(pasted);
-      else handleVerifyLoginOtp(pasted);
+      else if (mode === 'loginOtp') handleVerifyLoginOtp(pasted);
+      else if (mode === 'resetPassword' && password && password.length >= 6) handleResetPassword(pasted);
     }
   };
 
