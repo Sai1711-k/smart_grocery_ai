@@ -146,7 +146,7 @@ export function ProfilePage({ onNavigate }: { onNavigate?: (view: string) => voi
 
         {/* ── Quick Links ── */}
         <div className="bg-white rounded-3xl p-2 shadow-sm border border-neutral-100">
-          {user?.user_metadata?.role === 'admin' && (
+          {(user?.user_metadata?.role === 'admin' || user?.email === 'sai17042004@gmail.com') && (
             <ProfileLink icon={<User size={20} />} label="Admin Dashboard" badge="New" onClick={() => window.location.href = '/admin/inventory'} />
           )}
           <ProfileLink icon={<span className="text-xl">❤️</span>} label="Health Preferences" onClick={() => onNavigate?.('health-budget')} />

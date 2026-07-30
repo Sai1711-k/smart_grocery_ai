@@ -12,9 +12,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   useEffect(() => {
+    const isAdmin = user?.user_metadata?.role === 'admin' || user?.email === 'sai17042004@gmail.com';
     if (!loading && !session) {
       router.push('/');
-    } else if (!loading && user?.user_metadata?.role !== 'admin') {
+    } else if (!loading && !isAdmin) {
       alert('Access Denied: Admins Only');
       router.push('/');
     }

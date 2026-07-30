@@ -68,4 +68,38 @@ export class AdminController {
       res.status(500).json({ success: false, error: err.message });
     }
   }
+
+  // 5. Delete an Inventory Item
+  static async deleteInventoryItem(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { error } = await supabaseAdmin
+        .from('provider_inventory')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      res.json({ success: true, message: 'Inventory item removed successfully' });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  }
+
+  // 6. Delete a Product from Global Catalog
+  static async deleteProduct(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      
+      // Delete associated inventory entries first
+      await supabaseAdmin.from('provider_inventory').delete().eq('product_id', id);
+
+      // Delete the product
+      const { error } = await supabaseAdmin.from('products').delete().eq('id', id);
+
+      if (error) throw error;
+      res.json({ success: true, message: 'Product deleted successfully' });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  }
 }

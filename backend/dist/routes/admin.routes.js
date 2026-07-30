@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const admin_controller_1 = require("../controllers/admin.controller");
+const analytics_controller_1 = require("../controllers/analytics.controller");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.use(auth_1.requireAuth, auth_1.requireAdmin);
+router.get('/inventory', admin_controller_1.AdminController.getInventory);
+router.post('/products', admin_controller_1.AdminController.addProduct);
+router.put('/inventory', admin_controller_1.AdminController.setInventory);
+router.delete('/inventory/:id', admin_controller_1.AdminController.deleteInventoryItem);
+router.delete('/products/:id', admin_controller_1.AdminController.deleteProduct);
+router.get('/providers', admin_controller_1.AdminController.getProviders);
+router.get('/analytics/sales', analytics_controller_1.AnalyticsController.getSalesData);
+router.get('/analytics/alerts', analytics_controller_1.AnalyticsController.getStockAlerts);
+exports.default = router;

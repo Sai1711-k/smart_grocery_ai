@@ -10,6 +10,8 @@ router.use(requireAuth, requireAdmin);
 router.get('/inventory', AdminController.getInventory);
 router.post('/products', AdminController.addProduct);
 router.put('/inventory', AdminController.setInventory);
+router.delete('/inventory/:id', AdminController.deleteInventoryItem);
+router.delete('/products/:id', AdminController.deleteProduct);
 router.get('/providers', AdminController.getProviders);
 
 router.get('/analytics/sales', AnalyticsController.getSalesData);

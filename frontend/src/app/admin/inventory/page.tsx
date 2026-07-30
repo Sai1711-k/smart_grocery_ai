@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/providers';
 import { getValidImageUrl } from '@/lib/utils';
-import { Plus, Save, Package, DollarSign, Store } from 'lucide-react';
+import { Plus, Save, Package, DollarSign, Store, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -41,11 +41,12 @@ export default function AdminInventoryPage() {
   const [newProduct, setNewProduct] = useState({ name: '', category: '', description: '', unit: 'kg', image_url: '' });
 
   useEffect(() => {
+    const isAdmin = user?.user_metadata?.role === 'admin' || user?.email === 'sai17042004@gmail.com';
     if (!session) {
       router.push('/');
       return;
     }
-    if (user?.user_metadata?.role !== 'admin') {
+    if (!isAdmin) {
       alert('Access Denied: Admins Only');
       router.push('/');
       return;
@@ -88,6 +89,25 @@ export default function AdminInventoryPage() {
       const data = await res.json();
       if (data.success) {
         alert('Inventory updated successfully!');
+        fetchData();
+      } else {
+        alert('Error: ' + data.error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRemoveInventoryItem = async (inventoryId: string) => {
+    if (!confirm('Are you sure you want to remove this item from provider inventory?')) return;
+    try {
+      const res = await fetch(`${API_BASE}/admin/inventory/${inventoryId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session?.access_token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Item removed from inventory!');
         fetchData();
       } else {
         alert('Error: ' + data.error);
@@ -232,16 +252,25 @@ export default function AdminInventoryPage() {
                       </div>
                     </td>
                     <td className="p-4 text-right">
-                      <button 
-                        onClick={() => {
-                          const stockInput = document.getElementById(`stock-${item.id}`) as HTMLInputElement;
-                          const priceInput = document.getElementById(`price-${item.id}`) as HTMLInputElement;
-                          handleUpdateInventory(item.products.id, item.providers.id, Number(stockInput.value), Number(priceInput.value));
-                        }}
-                        className="bg-neutral-900 text-white p-2 rounded-xl hover:bg-black inline-flex items-center gap-1 text-xs font-bold"
-                      >
-                        <Save size={14} /> Update
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => {
+                            const stockInput = document.getElementById(`stock-${item.id}`) as HTMLInputElement;
+                            const priceInput = document.getElementById(`price-${item.id}`) as HTMLInputElement;
+                            handleUpdateInventory(item.products.id, item.providers.id, Number(stockInput.value), Number(priceInput.value));
+                          }}
+                          className="bg-neutral-900 text-white p-2 px-3 rounded-xl hover:bg-black inline-flex items-center gap-1 text-xs font-bold"
+                        >
+                          <Save size={14} /> Update
+                        </button>
+                        <button 
+                          onClick={() => handleRemoveInventoryItem(item.id)}
+                          className="bg-red-50 text-red-600 p-2 px-3 rounded-xl hover:bg-red-100 inline-flex items-center gap-1 text-xs font-bold border border-red-200"
+                          title="Remove from Inventory"
+                        >
+                          <Trash2 size={14} /> Remove
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
