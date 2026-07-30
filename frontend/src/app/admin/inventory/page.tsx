@@ -276,7 +276,12 @@ export default function AdminInventoryPage() {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-neutral-800 overflow-hidden shrink-0 ring-1 ring-neutral-700">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={getValidImageUrl(item.products?.image_url, item.products?.name || 'product')} alt="" className="w-full h-full object-cover" />
+                            <img
+                              src={getValidImageUrl(item.products?.image_url, item.products?.name || 'product', item.products?.category)}
+                              alt=""
+                              onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, item.products?.name || 'product', item.products?.category); }}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                           <div>
                             <p className="font-bold text-white text-sm">{item.products?.name}</p>

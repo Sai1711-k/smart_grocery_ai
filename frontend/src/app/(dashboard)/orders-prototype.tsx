@@ -172,7 +172,12 @@ export function CheckoutPrototype({ onBack, onSuccess }: { onBack: () => void, o
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-neutral-50 overflow-hidden shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={getValidImageUrl(item.image_url, item.name)} alt={item.name} className="w-full h-full object-cover" />
+                    <img
+                      src={getValidImageUrl(item.image_url, item.name)}
+                      alt={item.name}
+                      onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, item.name); }}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-neutral-900 truncate max-w-[150px]">{item.name}</p>

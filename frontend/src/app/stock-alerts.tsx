@@ -231,7 +231,12 @@ export function StockAlerts({ onBack }: { onBack?: () => void }) {
                 {/* Product Image */}
                 <div className="w-14 h-14 rounded-2xl bg-neutral-50 overflow-hidden shrink-0 border border-neutral-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={getValidImageUrl(alert.image_url, alert.name)} alt={alert.name} className="w-full h-full object-cover" />
+                  <img
+                    src={getValidImageUrl(alert.image_url, alert.name)}
+                    alt={alert.name}
+                    onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, alert.name); }}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 <div className="flex-1 min-w-0">

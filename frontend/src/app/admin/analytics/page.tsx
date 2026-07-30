@@ -135,7 +135,12 @@ export default function AdminAnalyticsPage() {
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-lg bg-neutral-800 overflow-hidden shrink-0 ring-1 ring-neutral-700">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={getValidImageUrl(product.image_url, product.name)} alt="" className="w-full h-full object-cover" />
+                              <img
+                                src={getValidImageUrl(product.image_url, product.name)}
+                                alt=""
+                                onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, product.name); }}
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                             <span className="font-bold text-white text-sm">{product.name}</span>
                           </div>
@@ -177,7 +182,12 @@ export default function AdminAnalyticsPage() {
                       <div className="flex items-start gap-3">
                         <div className={`w-10 h-10 rounded-xl shrink-0 overflow-hidden ring-1 ${isOutOfStock ? 'ring-red-500/30' : 'ring-amber-500/30'}`}>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={getValidImageUrl(alert.image_url, alert.name)} alt="" className="w-full h-full object-cover" />
+                          <img
+                            src={getValidImageUrl(alert.image_url, alert.name)}
+                            alt=""
+                            onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, alert.name); }}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1">

@@ -62,9 +62,6 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
   const [addingIds, setAddingIds] = useState<Record<string, boolean>>({});
 
   const filtered = products.filter(p => {
-    // Only show items that have a valid image URL
-    if (!p.image_url || p.image_url.trim() === '') return false;
-    
     const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !selectedCategory || p.category === selectedCategory || (selectedCategory === 'Top Deals' && p.price < 100);
     return matchesSearch && matchesCategory;
@@ -337,8 +334,11 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                   <div className={`w-full aspect-square bg-neutral-50 rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden ${isOutOfStock ? 'grayscale' : ''}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={getValidImageUrl(product.image_url, product.name)}
+                      src={getValidImageUrl(product.image_url, product.name, product.category)}
                       alt={product.name}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = getValidImageUrl(null, product.name, product.category);
+                      }}
                       className="object-cover w-full h-full rounded-2xl transition-transform duration-500 group-hover:scale-105"
                     />
                     {isOutOfStock && (

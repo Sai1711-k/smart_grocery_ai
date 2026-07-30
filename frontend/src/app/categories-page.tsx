@@ -89,7 +89,7 @@ const CATEGORIES = [
 
 export function CategoriesPage({ onSelectCategory, onBack }: CategoriesPageProps) {
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-24">
+    <div className="min-h-screen bg-slate-50 pb-24">
       {/* Header */}
       <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 px-6 pt-10 pb-8 flex items-center gap-4 shadow-lg relative overflow-hidden rounded-b-[40px]">
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />
@@ -110,7 +110,7 @@ export function CategoriesPage({ onSelectCategory, onBack }: CategoriesPageProps
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className="relative bg-white dark:bg-neutral-900 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 flex flex-col items-center justify-center gap-3 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-95 overflow-hidden group"
+              className="relative bg-white rounded-3xl shadow-sm border border-neutral-100 flex flex-col items-center justify-center gap-3 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-95 overflow-hidden group"
             >
               {/* Gradient icon background */}
               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${cat.bg} shadow-lg group-hover:scale-105 transition-transform duration-200`}>

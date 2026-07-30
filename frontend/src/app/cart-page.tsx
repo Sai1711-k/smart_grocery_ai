@@ -34,7 +34,12 @@ export function CartPage({ onCheckout }: { onCheckout: () => void }) {
           <div key={item.id} className="bg-white p-4 rounded-3xl shadow-sm border border-neutral-100 flex gap-4 relative overflow-hidden">
             <div className="w-24 h-24 bg-neutral-50 rounded-2xl shrink-0 overflow-hidden relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={getValidImageUrl(item.image_url, item.name)} alt={item.name} className="object-cover w-full h-full" />
+              <img
+                src={getValidImageUrl(item.image_url, item.name)}
+                alt={item.name}
+                onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, item.name); }}
+                className="object-cover w-full h-full"
+              />
             </div>
             
             <div className="flex-1 flex flex-col justify-between py-1">
