@@ -304,6 +304,7 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
   const [orderStatus, setOrderStatus] = useState(order.status);
   const [secondsRemaining, setSecondsRemaining] = useState<number>(600); // 10 minutes default
   const [driverProgress, setDriverProgress] = useState<number>(20);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   // 10-minute order modification countdown calculation
   useEffect(() => {
@@ -327,13 +328,12 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
     return () => clearInterval(moveInterval);
   }, []);
 
-  const handleCancelOrder = async () => {
-    if (confirm('Are you sure you want to cancel this order? You will receive a 100% instant refund.')) {
-      setOrderStatus('cancelled');
-      try {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/orders/${order.id}/cancel`, { method: 'POST' });
-      } catch (e) {}
-    }
+  const confirmCancel = async () => {
+    setShowCancelModal(false);
+    setOrderStatus('cancelled');
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/orders/${order.id}/cancel`, { method: 'POST' });
+    } catch (e) {}
   };
 
   const currentIndex = steps.indexOf(orderStatus === 'cancelled' ? 'pending' : orderStatus);
@@ -389,7 +389,7 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
                 </p>
                 <div className="flex gap-2">
                   <button 
-                    onClick={handleCancelOrder}
+                    onClick={() => setShowCancelModal(true)}
                     className="flex-1 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-100 transition-colors border border-rose-200 dark:border-rose-800"
                   >
                     Cancel Order (Instant Refund)
@@ -527,9 +527,38 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
                 );
               })}
             </div>
+      </div>
+
+      {/* CANCELLATION CONFIRMATION MODAL */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-fade-in">
+          <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-neutral-100 dark:border-neutral-800 text-center space-y-4">
+            <div className="w-14 h-14 bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+              ⚠️
+            </div>
+            <div>
+              <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white">Cancel Order #{order.order_number}?</h3>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2 leading-relaxed">
+                Are you sure you want to cancel your order? A 100% instant refund of <span className="font-bold text-emerald-600">₹{order.total_amount}</span> will be credited back to your account.
+              </p>
+            </div>
+            <div className="space-y-2 pt-2">
+              <button
+                onClick={() => setShowCancelModal(false)}
+                className="w-full py-3.5 rounded-2xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/20"
+              >
+                No, Keep My Order
+              </button>
+              <button
+                onClick={confirmCancel}
+                className="w-full py-3 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-100 transition-all border border-rose-200 dark:border-rose-800"
+              >
+                Yes, Cancel Order &amp; Refund
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
