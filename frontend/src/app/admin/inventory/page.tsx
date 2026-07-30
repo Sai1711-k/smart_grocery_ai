@@ -117,6 +117,25 @@ export default function AdminInventoryPage() {
     }
   };
 
+  const handleDeleteProduct = async (productId: string) => {
+    if (!confirm('Are you sure you want to delete this product entirely from the global catalog? This will remove all provider inventory for this product.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/admin/products/${productId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session?.access_token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Product deleted from catalog!');
+        fetchData();
+      } else {
+        alert('Error: ' + data.error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
