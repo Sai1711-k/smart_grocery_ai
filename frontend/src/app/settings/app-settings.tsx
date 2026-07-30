@@ -11,17 +11,17 @@ export function AppSettings({ onBack }: { onBack: () => void }) {
   const languages = ['English', 'Hindi', 'Telugu', 'Tamil', 'Kannada', 'Malayalam', 'Spanish'];
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-20 transition-colors">
-      <div className="bg-white dark:bg-neutral-900 border-b dark:border-neutral-800 px-6 py-5 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
-        <button onClick={onBack} className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white flex items-center justify-center hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors">
+    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-900 pb-20 transition-colors">
+      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-5 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
+        <button onClick={onBack} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
           <ChevronLeft size={20} />
         </button>
-        <h1 className="text-lg font-bold text-neutral-900 dark:text-white">App Settings</h1>
+        <h1 className="text-lg font-bold text-slate-900 dark:text-white">App Settings</h1>
       </div>
 
       <div className="px-6 py-6 space-y-4">
         {/* Appearance */}
-        <div className="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
           <div className="p-5 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-indigo-900/50 text-indigo-400' : 'bg-amber-100 text-amber-600'}`}>

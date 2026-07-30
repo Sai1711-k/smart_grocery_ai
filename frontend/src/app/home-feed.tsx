@@ -230,9 +230,16 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
       </div>
 
       {/* ── Hero Promotional Banner ── */}
-      <div className="px-6 lg:px-12 pt-5">
+      <div className="px-6 lg:px-12 pt-5 cursor-pointer">
         <div className="max-w-7xl mx-auto">
-          <div className={`relative bg-gradient-to-r ${heroSlides[heroIndex].bg} rounded-3xl p-5 text-white overflow-hidden shadow-lg transition-all duration-500`}>
+          <div
+            onClick={() => {
+              if (heroIndex === 0) setSelectedCategory('Vegetables');
+              else if (heroIndex === 1) setSelectedCategory('Top Deals');
+              else if (heroIndex === 2) setSelectedCategory('Fruits');
+            }}
+            className={`relative bg-gradient-to-r ${heroSlides[heroIndex].bg} rounded-3xl p-5 text-white overflow-hidden shadow-lg transition-all duration-500 hover:scale-[1.01] active:scale-[0.99]`}
+          >
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />
             <div className="flex items-center justify-between relative z-10">
               <div className="flex-1">
@@ -246,7 +253,7 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
               <div className="text-6xl ml-4 select-none">{heroSlides[heroIndex].emoji}</div>
             </div>
             {/* Dots */}
-            <div className="flex gap-1.5 mt-4 relative z-10">
+            <div className="flex gap-1.5 mt-4 relative z-10" onClick={e => e.stopPropagation()}>
               {heroSlides.map((_, i) => (
                 <button key={i} onClick={() => setHeroIndex(i)}
                   className={`h-1.5 rounded-full transition-all ${i === heroIndex ? 'bg-white w-5' : 'bg-white/40 w-1.5'}`} />

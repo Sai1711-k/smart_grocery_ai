@@ -158,7 +158,7 @@ export function ChatBot() {
       {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 right-4 md:bottom-8 md:right-6 w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(5,150,105,0.4)] hover:shadow-[0_12px_40px_rgba(5,150,105,0.5)] transition-all z-40 active:scale-95 group ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-20 right-4 md:bottom-6 md:right-6 w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(5,150,105,0.4)] hover:shadow-[0_12px_40px_rgba(5,150,105,0.5)] transition-all z-50 active:scale-95 group ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
       >
         <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-20"></div>
         <Sparkles size={22} className="absolute inset-0 m-auto text-white opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -166,7 +166,7 @@ export function ChatBot() {
       </button>
 
       {/* Chat Panel */}
-      <div className={`fixed bottom-24 right-4 md:bottom-8 md:right-6 w-[calc(100vw-32px)] md:w-[390px] h-[520px] max-h-[75vh] bg-white/95 backdrop-blur-2xl border border-white/40 shadow-2xl rounded-3xl flex flex-col overflow-hidden z-50 transition-all origin-bottom-right duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}>
+      <div className={`fixed bottom-20 right-4 md:bottom-6 md:right-6 w-[calc(100vw-32px)] md:w-[390px] h-[520px] max-h-[75vh] bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-neutral-200/80 dark:border-slate-800 shadow-2xl rounded-3xl flex flex-col overflow-hidden z-50 transition-all origin-bottom-right duration-300 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}>
 
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-4 flex items-center justify-between text-white shrink-0">

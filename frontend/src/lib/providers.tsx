@@ -127,6 +127,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
       if (storedDark === 'true') {
         setDarkModeState(true);
         document.documentElement.classList.add('dark');
+      } else {
+        setDarkModeState(false);
+        document.documentElement.classList.remove('dark');
       }
       const storedLang = localStorage.getItem('grocery_language');
       if (storedLang) {
