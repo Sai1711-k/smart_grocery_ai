@@ -145,14 +145,14 @@ export function ProfilePage({ onNavigate }: { onNavigate?: (view: string) => voi
         </div>
 
         {/* ── Quick Links ── */}
-        <div className="bg-white rounded-3xl p-2 shadow-sm border border-neutral-100">
+        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-2 shadow-sm border border-neutral-100 dark:border-neutral-800">
           {(user?.user_metadata?.role === 'admin' || user?.email === 'sai17042004@gmail.com') && (
-            <ProfileLink icon={<User size={20} />} label="Admin Dashboard" badge="New" onClick={() => window.location.href = '/admin/inventory'} />
+            <ProfileLink icon={<User size={20} />} label="Admin Dashboard" badge="Admin" onClick={() => window.location.href = '/admin/inventory'} />
           )}
-          <ProfileLink icon={<span className="text-xl">❤️</span>} label="Health Preferences" onClick={() => onNavigate?.('health-budget')} />
+          <ProfileLink icon={<span className="text-xl">📊</span>} label="Order History & Past Purchases" onClick={() => onNavigate?.('order-history')} />
+          <ProfileLink icon={<span className="text-xl">❤️</span>} label="Health & Budget Planner" onClick={() => onNavigate?.('health-budget')} />
           <ProfileLink icon={<span className="text-xl">✨</span>} label="AI Diet Planner" onClick={() => onNavigate?.('smart-planner')} badge="AI" />
-          <ProfileLink icon={<span className="text-xl">₹</span>} label="Smart Budget" onClick={() => onNavigate?.('budget-dashboard')} />
-          <div className="h-px bg-neutral-100 my-1 mx-4" />
+          <div className="h-px bg-neutral-100 dark:bg-neutral-800 my-1 mx-4" />
           <ProfileLink icon={<MapPin size={20} />} label="Delivery Addresses" onClick={() => onNavigate?.('settings-addresses')} />
           <ProfileLink icon={<CreditCard size={20} />} label="Payment Methods" onClick={() => onNavigate?.('settings-payments')} />
           <ProfileLink icon={<Bell size={20} />} label="Notifications" onClick={() => onNavigate?.('settings-notifications')} />

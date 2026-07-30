@@ -301,7 +301,42 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
   const labels: Record<string, string> = { pending: 'Order Placed', confirmed: 'Confirmed', processing: 'Processing', shipped: 'On the way', delivered: 'Delivered' };
   const icons = [FileText, CheckCircle, Box, Truck, MapPin];
   
-  const currentIndex = steps.indexOf(order.status);
+  const [orderStatus, setOrderStatus] = useState(order.status);
+  const [secondsRemaining, setSecondsRemaining] = useState<number>(600); // 10 minutes default
+  const [driverProgress, setDriverProgress] = useState<number>(20);
+
+  // 10-minute order modification countdown calculation
+  useEffect(() => {
+    const createdAt = new Date(order.created_at).getTime();
+    const tenMinWindow = createdAt + 10 * 60 * 1000;
+    
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const diff = Math.max(0, Math.floor((tenMinWindow - now) / 1000));
+      setSecondsRemaining(diff);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [order.created_at]);
+
+  // Simulated live driver movement
+  useEffect(() => {
+    const moveInterval = setInterval(() => {
+      setDriverProgress(prev => (prev >= 90 ? 20 : prev + 2));
+    }, 3000);
+    return () => clearInterval(moveInterval);
+  }, []);
+
+  const handleCancelOrder = async () => {
+    if (confirm('Are you sure you want to cancel this order? You will receive a 100% instant refund.')) {
+      setOrderStatus('cancelled');
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/orders/${order.id}/cancel`, { method: 'POST' });
+      } catch (e) {}
+    }
+  };
+
+  const currentIndex = steps.indexOf(orderStatus === 'cancelled' ? 'pending' : orderStatus);
   
   // Calculate ETA (30 mins from creation)
   const createdAt = new Date(order.created_at);
@@ -311,108 +346,169 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
   const etaText = diffMins > 0 ? `Arriving in ${diffMins} mins` : 'Arriving soon';
   const arrivalTimeStr = estimatedArrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+  const minutes = Math.floor(secondsRemaining / 60);
+  const secs = secondsRemaining % 60;
+  const timerDisplay = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 pb-20">
-      <div className="bg-white px-6 py-5 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200">
+    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-20 transition-colors">
+      <div className="bg-white dark:bg-neutral-900 px-6 py-5 flex items-center justify-between sticky top-0 z-10 border-b dark:border-neutral-800 shadow-sm">
+        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-200">
           <ChevronLeft size={20} />
         </button>
-        <h1 className="text-lg font-bold text-neutral-900">Track Order</h1>
+        <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Track &amp; Manage Order</h1>
         <div className="w-10"></div>
       </div>
 
-      <div className="px-6 py-6">
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-100 mb-6 flex justify-between items-center">
-          <div>
-            <p className="text-xs text-neutral-500 mb-1">Order ID</p>
-            <p className="font-bold text-neutral-900">{order.order_number}</p>
+      <div className="px-6 py-6 max-w-lg mx-auto w-full space-y-6">
+        
+        {/* 10-MINUTE ORDER MODIFICATION / CANCELLATION BANNER */}
+        {orderStatus !== 'cancelled' && (
+          <div className={`p-5 rounded-3xl border-2 transition-all ${secondsRemaining > 0 ? 'bg-gradient-to-r from-emerald-900/10 to-teal-900/10 border-emerald-500/30' : 'bg-neutral-100 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800'}`}>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-3 w-3">
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${secondsRemaining > 0 ? 'bg-emerald-400' : 'bg-neutral-400'} opacity-75`}></span>
+                  <span className={`relative inline-flex rounded-full h-3 w-3 ${secondsRemaining > 0 ? 'bg-emerald-500' : 'bg-neutral-500'}`}></span>
+                </span>
+                <h3 className="font-extrabold text-sm text-neutral-900 dark:text-white">
+                  {secondsRemaining > 0 ? '10-Minute Order Window Active' : 'Order Locked & Out for Delivery'}
+                </h3>
+              </div>
+              {secondsRemaining > 0 && (
+                <span className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-3 py-1 rounded-full">
+                  ⏱️ {timerDisplay}
+                </span>
+              )}
+            </div>
+
+            {secondsRemaining > 0 ? (
+              <div className="space-y-3">
+                <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                  You can modify items or cancel for a 100% instant refund within the next {timerDisplay} minutes.
+                </p>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={handleCancelOrder}
+                    className="flex-1 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-100 transition-colors border border-rose-200 dark:border-rose-800"
+                  >
+                    Cancel Order (Instant Refund)
+                  </button>
+                  <button 
+                    onClick={() => window.location.href = '/'}
+                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-600/20"
+                  >
+                    + Add Items to Order
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                Your order is packed and assigned to delivery agent Rahul Sharma.
+              </p>
+            )}
           </div>
-          <button className="flex items-center gap-2 text-primary font-bold text-sm bg-primary-light px-4 py-2 rounded-xl">
+        )}
+
+        {/* CANCELLED STATUS BANNER */}
+        {orderStatus === 'cancelled' && (
+          <div className="p-5 rounded-3xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300">
+            <h3 className="font-extrabold text-base mb-1">❌ Order Cancelled</h3>
+            <p className="text-xs">Your order has been cancelled. 100% refund of ₹{order.total_amount} has been initiated to your payment account.</p>
+          </div>
+        )}
+
+        {/* Order Header */}
+        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+          <div>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Order ID</p>
+            <p className="font-bold text-neutral-900 dark:text-white">{order.order_number}</p>
+          </div>
+          <button className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-xl">
             <Download size={16} /> Invoice
           </button>
         </div>
 
-        {/* Mock Live Tracking Map */}
-        <div className="bg-neutral-200 rounded-3xl h-48 mb-6 relative overflow-hidden shadow-inner">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80" alt="Map" className="w-full h-full object-cover opacity-50 grayscale" />
+        {/* Interactive Live Tracking Map */}
+        <div className="bg-neutral-900 rounded-3xl h-56 relative overflow-hidden shadow-xl border border-neutral-800">
+          <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80" alt="Map" className="w-full h-full object-cover opacity-40 grayscale" />
           
           {/* Animated Route Line */}
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M 20 80 Q 50 50 80 20" fill="transparent" stroke="#22c55e" strokeWidth="3" strokeDasharray="5,5" className="animate-pulse" />
+            <path d="M 20 80 Q 50 40 80 20" fill="transparent" stroke="#10b981" strokeWidth="4" strokeDasharray="4,4" className="animate-pulse" />
           </svg>
           
           {/* Store Pin */}
-          <div className="absolute top-[20%] left-[80%] -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-primary">
-            <MapPin size={16} className="text-primary" />
+          <div className="absolute top-[20%] left-[80%] -translate-x-1/2 -translate-y-1/2 w-9 h-9 bg-white dark:bg-neutral-900 rounded-full flex items-center justify-center shadow-lg border-2 border-emerald-500">
+            <MapPin size={18} className="text-emerald-500" />
           </div>
           
-          {/* Animated Car/Delivery Pin */}
-          <div className="absolute bottom-[80%] right-[20%] -translate-x-1/2 translate-y-1/2 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-bounce" style={{ left: '30%', top: '65%' }}>
-            <Truck size={18} />
+          {/* Live Moving Driver Pin */}
+          <div 
+            className="absolute transition-all duration-1000 ease-in-out w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-emerald-400/40"
+            style={{ left: `${driverProgress}%`, top: `${80 - driverProgress * 0.6}%` }}
+          >
+            <Truck size={20} className="animate-pulse" />
           </div>
           
           {/* ETA Badge */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-white font-bold text-sm text-neutral-900 flex items-center gap-2">
-            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-white/20 font-bold text-sm text-neutral-900 dark:text-white flex items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
             {etaText}
           </div>
         </div>
 
         {/* Route Details */}
-        <div className="bg-white rounded-3xl p-4 shadow-sm border border-neutral-100 mb-6 space-y-3">
+        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0"><Box size={14} /></div>
+            <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 flex items-center justify-center shrink-0"><Box size={14} /></div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">From Store</p>
-              <p className="text-sm font-bold text-neutral-900 truncate">FreshCart Main Hub</p>
+              <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">From Hub</p>
+              <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">FreshCart Super Hub #104</p>
             </div>
           </div>
-          <div className="ml-4 border-l-2 border-dashed border-neutral-200 h-4 my-1"></div>
+          <div className="ml-4 border-l-2 border-dashed border-neutral-200 dark:border-neutral-700 h-4 my-1"></div>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center shrink-0"><MapPin size={14} /></div>
+            <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center shrink-0"><MapPin size={14} /></div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">Delivery To</p>
-              <p className="text-sm font-bold text-neutral-900 truncate">{order.delivery_address}</p>
+              <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">{order.delivery_address}</p>
             </div>
           </div>
-          <div className="pt-3 mt-3 border-t border-neutral-100 flex justify-between items-center">
-            <span className="text-sm font-bold text-neutral-600">Expected Arrival</span>
-            <span className="text-sm font-black text-primary">{arrivalTimeStr}</span>
+          <div className="pt-3 mt-3 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+            <span className="text-sm font-bold text-neutral-600 dark:text-neutral-400">Expected Arrival</span>
+            <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{arrivalTimeStr}</span>
           </div>
         </div>
 
         {/* Driver Details */}
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-neutral-100 mb-6 flex items-center justify-between">
+        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-neutral-200 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200&q=80" alt="Driver" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h3 className="font-bold text-neutral-900 text-sm">Rahul Sharma</h3>
-              <p className="text-xs text-neutral-500 flex items-center gap-1 mt-0.5"><span className="text-orange-400 font-black">★ 4.9</span> (2.4k deliveries)</p>
+              <h3 className="font-bold text-neutral-900 dark:text-white text-sm">Rahul Sharma</h3>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-0.5"><span className="text-amber-400 font-black">★ 4.9</span> (2.4k deliveries)</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <button className="w-10 h-10 rounded-full bg-primary-light text-primary flex items-center justify-center">
+            <button onClick={() => alert('Opening live chat with delivery agent Rahul...')} className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
               <span className="text-lg">💬</span>
             </button>
-            <button className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md shadow-primary/30">
+            <button onClick={() => alert('Calling delivery agent Rahul Sharma at +91 98765 43210')} className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30">
               <span className="text-lg">📞</span>
             </button>
           </div>
         </div>
 
-        <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-6">Delivery Status</h2>
+        <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Delivery Status</h2>
         
-        {/* Vertical Timeline */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-100 pl-8">
+        {/* Timeline */}
+        <div className="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 pl-8">
           <div className="relative">
-            {/* Background Line */}
-            <div className="absolute left-6 top-6 bottom-6 w-1 bg-neutral-100 rounded-full"></div>
-            {/* Active Line */}
-            <div className="absolute left-6 top-6 w-1 bg-primary rounded-full transition-all duration-1000" style={{ height: `${(currentIndex / (steps.length - 1)) * 100}%` }}></div>
+            <div className="absolute left-6 top-6 bottom-6 w-1 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
+            <div className="absolute left-6 top-6 w-1 bg-emerald-600 rounded-full transition-all duration-1000" style={{ height: `${(currentIndex / (steps.length - 1)) * 100}%` }}></div>
             
             <div className="space-y-8 relative z-10">
               {steps.map((step, idx) => {
@@ -420,11 +516,11 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
                 const Icon = icons[idx];
                 return (
                   <div key={step} className="flex gap-6 items-center">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-4 transition-colors duration-500 ${isCompleted ? 'bg-primary border-primary-light text-white' : 'bg-white border-neutral-100 text-neutral-300'}`}>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-4 transition-colors duration-500 ${isCompleted ? 'bg-emerald-600 border-emerald-100 dark:border-emerald-900 text-white' : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 text-neutral-400'}`}>
                       <Icon size={20} />
                     </div>
                     <div>
-                      <h3 className={`font-bold text-sm ${isCompleted ? 'text-neutral-900' : 'text-neutral-400'}`}>{labels[step]}</h3>
+                      <h3 className={`font-bold text-sm ${isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>{labels[step]}</h3>
                       <p className="text-xs text-neutral-400 mt-1">{isCompleted ? new Date(order.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--'}</p>
                     </div>
                   </div>
