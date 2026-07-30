@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, MapPin, Plus } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, MapPin, ChevronRight, Tag, Zap, Gift } from 'lucide-react';
 import { useCart, useAuth } from '@/lib/providers';
 import { getValidImageUrl } from '@/lib/utils';
 import { StockAlertBell } from './stock-alerts';
@@ -156,40 +156,107 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
     return null;
   };
 
+  // Hero Banner slides
+  const heroSlides = [
+    {
+      bg: 'from-emerald-600 to-teal-700',
+      icon: <Zap size={28} className="text-yellow-300" />,
+      badge: '⚡ Flash Deal',
+      title: 'Up to 40% Off',
+      subtitle: 'On fresh vegetables today',
+      cta: 'Shop Now',
+      emoji: '🥦',
+    },
+    {
+      bg: 'from-violet-600 to-purple-700',
+      icon: <Gift size={28} className="text-pink-300" />,
+      badge: '🎁 Special Offer',
+      title: 'Free Delivery',
+      subtitle: 'On all orders above ₹200',
+      cta: 'Order Now',
+      emoji: '🚀',
+    },
+    {
+      bg: 'from-sky-600 to-blue-700',
+      icon: <Tag size={28} className="text-cyan-300" />,
+      badge: '🏷️ New Items',
+      title: 'Fresh Arrivals',
+      subtitle: 'Organic & seasonal produce',
+      cta: 'Explore',
+      emoji: '🍎',
+    },
+  ];
+  const [heroIndex, setHeroIndex] = useState(0);
+  // Auto-rotate hero
+  useEffect(() => {
+    const t = setInterval(() => setHeroIndex(i => (i + 1) % heroSlides.length), 3500);
+    return () => clearInterval(t);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-neutral-50 pb-24">
       {/* Header */}
-      <div className="px-6 lg:px-12 pt-8 pb-6 rounded-b-[40px] bg-primary text-white shadow-lg relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
+      <div className="px-6 lg:px-12 pt-8 pb-6 rounded-b-[44px] bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-xl relative z-10 overflow-hidden">
+        {/* Decorative glow blobs */}
+        <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-8 w-24 h-24 rounded-full bg-teal-400/10 blur-xl pointer-events-none" />
+        <div className="max-w-7xl mx-auto relative">
+          <div className="flex justify-between items-center mb-5">
             <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/10 shrink-0">
-              <MapPin size={20} className="text-white" />
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/20 shrink-0">
+                <MapPin size={18} className="text-white" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-white/60 font-bold uppercase tracking-widest">Delivering to</span>
+                <span className="text-sm font-bold truncate max-w-[200px]">
+                  {preferences?.selectedStore || 'Smart Grocery (Tech Park)'}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[10px] text-white/70 font-semibold uppercase tracking-wider">Delivering to</span>
-              <span className="text-sm font-bold truncate max-w-[200px]">
-                {preferences?.selectedStore || 'Smart Grocery (Tech Park)'}
-              </span>
-            </div>
+            <StockAlertBell onClick={() => onOpenAlerts?.()} />
           </div>
-          <StockAlertBell onClick={() => onOpenAlerts?.()} />
-        </div>
 
-        {/* Search */}
-        <div className="relative max-w-2xl">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-            <Search size={20} className="text-neutral-400" />
+          {/* Search */}
+          <div className="relative max-w-2xl">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <Search size={18} className="text-neutral-400" />
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white text-neutral-900 shadow-md outline-none font-medium placeholder:text-neutral-400 focus:ring-4 focus:ring-white/20 transition-all border border-transparent"
+              placeholder="Search fresh groceries..."
+            />
           </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-neutral-900 shadow-md outline-none font-medium placeholder:text-neutral-400 focus:ring-4 focus:ring-primary/20 transition-all border border-transparent"
-            placeholder="Search fresh groceries..."
-          />
         </div>
-        </div> {/* end max-w-7xl */}
+      </div>
+
+      {/* ── Hero Promotional Banner ── */}
+      <div className="px-6 lg:px-12 pt-5">
+        <div className="max-w-7xl mx-auto">
+          <div className={`relative bg-gradient-to-r ${heroSlides[heroIndex].bg} rounded-3xl p-5 text-white overflow-hidden shadow-lg transition-all duration-500`}>
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex-1">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full">{heroSlides[heroIndex].badge}</span>
+                <h2 className="text-2xl font-black mt-2 leading-tight">{heroSlides[heroIndex].title}</h2>
+                <p className="text-white/80 text-xs mt-1 font-medium">{heroSlides[heroIndex].subtitle}</p>
+                <button className="mt-3 flex items-center gap-1.5 text-xs font-black bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-all">
+                  {heroSlides[heroIndex].cta} <ChevronRight size={14} />
+                </button>
+              </div>
+              <div className="text-6xl ml-4 select-none">{heroSlides[heroIndex].emoji}</div>
+            </div>
+            {/* Dots */}
+            <div className="flex gap-1.5 mt-4 relative z-10">
+              {heroSlides.map((_, i) => (
+                <button key={i} onClick={() => setHeroIndex(i)}
+                  className={`h-1.5 rounded-full transition-all ${i === heroIndex ? 'bg-white w-5' : 'bg-white/40 w-1.5'}`} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Categories */}
@@ -297,15 +364,13 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                       <span className="text-base font-black text-primary">₹{product.price}</span>
                       <span className="text-[10px] text-neutral-400 ml-1">/{product.unit}</span>
                     </div>
-                    {isOutOfStock ? (
-                      <div className="px-2 py-1 bg-neutral-100 rounded-lg text-[10px] font-bold text-neutral-400">
+                    {isOutOfStock ? <div className="px-2 py-1 bg-neutral-100 rounded-lg text-[10px] font-bold text-neutral-400">
                         Out of Stock
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        disabled={isOutOfStock}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                      </div> : (
+                        <button
+                          onClick={() => handleAddToCart(product)}
+                          disabled={isOutOfStock}
+                          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-sm ${
                           addingIds[product.id] 
                             ? 'bg-green-500 text-white shadow-md shadow-green-500/30' 
                             : 'bg-primary text-white hover:bg-primary-hover shadow-md shadow-primary/20 hover:scale-105 active:scale-95'

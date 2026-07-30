@@ -23,10 +23,10 @@ export function CartPage({ onCheckout }: { onCheckout: () => void }) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 pb-32">
+    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-40">
       {/* Header */}
-      <div className="bg-white px-6 py-5 flex items-center justify-center sticky top-0 z-10 shadow-sm">
-        <h1 className="text-lg font-bold text-neutral-900">My Cart</h1>
+      <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 px-6 py-5 flex items-center justify-center sticky top-0 z-10 shadow-md">
+        <h1 className="text-lg font-black text-white">My Cart</h1>
       </div>
 
       <div className="px-6 py-6 space-y-4">
@@ -65,16 +65,32 @@ export function CartPage({ onCheckout }: { onCheckout: () => void }) {
       </div>
 
       {/* Floating Checkout Bar */}
-      <div className="fixed bottom-[64px] left-0 right-0 max-w-[428px] mx-auto bg-white p-6 rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.05)] border-t border-neutral-100">
-        <div className="flex justify-between items-center mb-4 px-2">
-          <span className="text-neutral-500 font-medium">Total Price</span>
-          <span className="text-2xl font-black text-primary">₹{total}</span>
+      <div className="fixed bottom-[80px] left-0 right-0 max-w-[428px] mx-auto bg-white dark:bg-neutral-900 px-5 pb-4 pt-4 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] border-t border-neutral-100 dark:border-neutral-800">
+        {/* Price Breakdown */}
+        <div className="space-y-1.5 mb-3">
+          <div className="flex justify-between text-xs text-neutral-400 font-medium">
+            <span>Subtotal ({items.length} items)</span>
+            <span className="text-neutral-600 font-semibold">₹{cartTotal}</span>
+          </div>
+          <div className="flex justify-between text-xs text-neutral-400 font-medium">
+            <span>Delivery Fee</span>
+            <span className="text-neutral-600 font-semibold">₹{deliveryFee}</span>
+          </div>
+          <div className="flex justify-between text-xs text-neutral-400 font-medium">
+            <span>GST (5%)</span>
+            <span className="text-neutral-600 font-semibold">₹{tax}</span>
+          </div>
+          <div className="h-px bg-neutral-100 dark:bg-neutral-800 my-1" />
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-bold text-neutral-700 dark:text-white">Total Payable</span>
+            <span className="text-xl font-black text-primary">₹{total}</span>
+          </div>
         </div>
         <button
           onClick={onCheckout}
-          className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg hover:bg-primary-hover shadow-lg shadow-primary/30 transition-transform active:scale-95"
+          className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-4 rounded-2xl font-black text-base hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-600/30 transition-transform active:scale-95"
         >
-          Proceed to Checkout
+          Proceed to Checkout →
         </button>
       </div>
     </div>

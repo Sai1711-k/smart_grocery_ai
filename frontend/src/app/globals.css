@@ -3,9 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #111827;
-  --primary: #22c55e;
-  --primary-hover: #16a34a;
-  --primary-light: #dcfce7;
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-light: #d1fae5;
+  --secondary: #0284c7;
+  --accent: #7c3aed;
+  --warning: #d97706;
+  --danger: #dc2626;
 }
 
 @theme inline {
@@ -14,22 +18,33 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  /* We will implement a specific dark mode for the analytics dashboard manually via classes instead of system preference for better control */
+/* ── Dark Mode ── */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #f3f4f6;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), 'Inter', Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Scrollbar for a cleaner look */
+.dark body,
+.dark {
+  background-color: #0a0a0a;
+  color: #f3f4f6;
+}
+
+/* ── Custom Scrollbar ── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -44,8 +59,11 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #d1d5db;
 }
+.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
+}
 
-/* Toast slide-in animation */
+/* ── Toast Animation ── */
 @keyframes slide-in-right {
   from {
     transform: translateX(100%);
@@ -56,16 +74,34 @@ body {
     opacity: 1;
   }
 }
-
 .animate-slide-in-right {
   animation: slide-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Hide scrollbar utility */
-.no-scrollbar::-webkit-scrollbar {
+/* ── Fade In ── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out forwards;
+}
+
+/* ── Hide Scrollbar Utility ── */
+.no-scrollbar::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
-.no-scrollbar {
+.no-scrollbar,
+.hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ── Gradient Text Utility ── */
+.gradient-text {
+  background: linear-gradient(135deg, #059669, #0284c7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

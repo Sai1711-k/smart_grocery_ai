@@ -208,7 +208,15 @@ export function AppProviders({ children }: { children: ReactNode }) {
         if (!ct || !ct.includes('application/json')) return null;
         return r.json();
       })
-      .then(d => { if (d && d.success) setCartItems(d.data); })
+      .then(d => {
+        if (d && d.success) {
+          // Normalize provider_id: backend may return null, frontend needs string
+          setCartItems((d.data || []).map((item: any) => ({
+            ...item,
+            provider_id: item.provider_id || '',
+          })));
+        }
+      })
       .catch(() => {});
     } else {
       setCartItems([]);

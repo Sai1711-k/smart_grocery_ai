@@ -90,6 +90,7 @@ export default function Page() {
     if (view === 'health-budget') return 'profile';
     if (view === 'smart-planner') return 'profile';
     if (view === 'budget-dashboard') return 'profile';
+    if (view === 'pantry') return 'profile';
     if (view === 'history') return 'history';
     if (view === 'categories') return 'categories';
     return view;
@@ -99,52 +100,52 @@ export default function Page() {
   return (
     <>
       {/* Main Content Area (Scrollable) */}
-      <div className="flex-1 overflow-y-auto bg-neutral-50 pb-20">
+      <div className="flex-1 overflow-y-auto bg-neutral-50 dark:bg-neutral-950 pb-20">
         {renderScreen()}
       </div>
 
       {/* Bottom Navigation Bar */}
       {!['address', 'payment'].includes(view) && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-neutral-100 h-16 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.06)]">
+        <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border-t border-neutral-100 dark:border-neutral-800 h-16 z-50 shadow-[0_-4px_30px_rgba(0,0,0,0.06)]">
           <div className="max-w-3xl mx-auto flex justify-around items-center h-full">
-            <NavItem 
-              icon={<Home size={20} />} 
-              label="Home" 
-              isActive={activeNav === 'home'} 
-              onClick={() => { setHomeCategory(null); setView('home'); }} 
+            <NavItem
+              icon={<Home size={20} />}
+              label="Home"
+              isActive={activeNav === 'home'}
+              onClick={() => { setHomeCategory(null); setView('home'); }}
             />
-            <NavItem 
-              icon={<LayoutGrid size={20} />} 
-              label="Categories" 
-              isActive={activeNav === 'categories'} 
-              onClick={() => setView('categories')} 
+            <NavItem
+              icon={<LayoutGrid size={20} />}
+              label="Categories"
+              isActive={activeNav === 'categories'}
+              onClick={() => setView('categories')}
             />
-            <NavItem 
+            <NavItem
               icon={
                 <div className="relative">
                   <ShoppingBag size={20} />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1.5 -right-2.5 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                    <span className="absolute -top-1.5 -right-2.5 bg-red-500 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
                       {cartCount}
                     </span>
                   )}
                 </div>
-              } 
-              label="Cart" 
-              isActive={activeNav === 'cart'} 
-              onClick={() => setView('cart')} 
+              }
+              label="Cart"
+              isActive={activeNav === 'cart'}
+              onClick={() => setView('cart')}
             />
-            <NavItem 
-              icon={<ClipboardList size={20} />} 
-              label="Orders" 
-              isActive={activeNav === 'history'} 
-              onClick={() => setView('history')} 
+            <NavItem
+              icon={<ClipboardList size={20} />}
+              label="Orders"
+              isActive={activeNav === 'history'}
+              onClick={() => setView('history')}
             />
-            <NavItem 
-              icon={<User size={20} />} 
-              label="Profile" 
-              isActive={activeNav === 'profile'} 
-              onClick={() => setView('profile')} 
+            <NavItem
+              icon={<User size={20} />}
+              label="Profile"
+              isActive={activeNav === 'profile'}
+              onClick={() => setView('profile')}
             />
           </div>
         </nav>
@@ -159,14 +160,18 @@ export default function Page() {
 // Sub-component for nav items
 function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void }) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className={`flex flex-col items-center justify-center px-2 h-full transition-all ${isActive ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600'}`}
+      className={`flex flex-col items-center justify-center px-3 h-full transition-all relative ${isActive ? 'text-primary' : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'}`}
     >
-      <div className={`mb-0.5 transition-transform ${isActive ? 'scale-110' : ''}`}>
+      {/* Active indicator dot */}
+      {isActive && (
+        <div className="absolute top-1 w-1 h-1 rounded-full bg-primary" />
+      )}
+      <div className={`mb-0.5 transition-all ${isActive ? 'scale-110' : ''}`}>
         {icon}
       </div>
-      <span className={`text-[10px] font-semibold ${isActive ? 'font-bold' : ''}`}>{label}</span>
+      <span className={`text-[10px] ${isActive ? 'font-black' : 'font-semibold'}`}>{label}</span>
     </button>
   );
 }

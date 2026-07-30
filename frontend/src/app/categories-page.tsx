@@ -1,50 +1,124 @@
 'use client';
 
-import { ArrowLeft, Sparkles, Apple, Carrot, Beef, Milk, Cookie, Wheat, Droplet, Flame } from 'lucide-react';
+import { ArrowLeft, Sparkles, Apple, Carrot, Beef, Milk, Cookie, Wheat, Droplet, Flame, Coffee, ShoppingBasket } from 'lucide-react';
 
 interface CategoriesPageProps {
   onSelectCategory: (categoryId: string) => void;
   onBack?: () => void;
 }
 
-export function CategoriesPage({ onSelectCategory, onBack }: CategoriesPageProps) {
-  const categories = [
-    { id: 'For You', name: 'For You', icon: <Sparkles size={24} className="text-purple-500" />, bg: 'bg-purple-100' },
-    { id: 'Top Deals', name: 'Top Deals', icon: <Flame size={24} className="text-orange-500" />, bg: 'bg-orange-100' },
-    { id: 'Fruits', name: 'Fruits', icon: <Apple size={24} className="text-red-500" />, bg: 'bg-red-100' },
-    { id: 'Vegetables', name: 'Vegetables', icon: <Carrot size={24} className="text-orange-500" />, bg: 'bg-orange-100' },
-    { id: 'Dairy', name: 'Dairy', icon: <Milk size={24} className="text-blue-500" />, bg: 'bg-blue-100' },
-    { id: 'Bakery', name: 'Bakery', icon: <Wheat size={24} className="text-amber-500" />, bg: 'bg-amber-100' },
-    { id: 'Meat', name: 'Non-veg & Meat', icon: <Beef size={24} className="text-rose-500" />, bg: 'bg-rose-100' },
-    { id: 'Oils', name: 'Oils', icon: <Droplet size={24} className="text-yellow-500" />, bg: 'bg-yellow-100' },
-    { id: 'Grains', name: 'Grains', icon: <Wheat size={24} className="text-emerald-500" />, bg: 'bg-emerald-100' },
-    { id: 'Snacks', name: 'Snacks', icon: <Cookie size={24} className="text-amber-600" />, bg: 'bg-amber-100' },
-  ];
+const CATEGORIES = [
+  {
+    id: 'For You',
+    name: 'For You',
+    icon: <Sparkles size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-violet-500 to-purple-600',
+    emoji: '✨',
+  },
+  {
+    id: 'Top Deals',
+    name: 'Top Deals',
+    icon: <Flame size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-orange-500 to-red-500',
+    emoji: '🔥',
+  },
+  {
+    id: 'Fruits',
+    name: 'Fruits',
+    icon: <Apple size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-red-400 to-rose-500',
+    emoji: '🍎',
+  },
+  {
+    id: 'Vegetables',
+    name: 'Vegetables',
+    icon: <Carrot size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-emerald-500 to-green-600',
+    emoji: '🥦',
+  },
+  {
+    id: 'Dairy',
+    name: 'Dairy',
+    icon: <Milk size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-sky-400 to-blue-500',
+    emoji: '🥛',
+  },
+  {
+    id: 'Bakery',
+    name: 'Bakery',
+    icon: <Wheat size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-amber-400 to-yellow-500',
+    emoji: '🍞',
+  },
+  {
+    id: 'Meat',
+    name: 'Non-Veg & Meat',
+    icon: <Beef size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-rose-500 to-pink-600',
+    emoji: '🥩',
+  },
+  {
+    id: 'Oils',
+    name: 'Oils & Fats',
+    icon: <Droplet size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-yellow-400 to-amber-500',
+    emoji: '🫒',
+  },
+  {
+    id: 'Grains',
+    name: 'Grains & Rice',
+    icon: <ShoppingBasket size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-teal-500 to-emerald-600',
+    emoji: '🍚',
+  },
+  {
+    id: 'Snacks',
+    name: 'Snacks',
+    icon: <Cookie size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-orange-400 to-amber-500',
+    emoji: '🍪',
+  },
+  {
+    id: 'Beverages',
+    name: 'Beverages',
+    icon: <Coffee size={26} className="text-white" />,
+    bg: 'bg-gradient-to-br from-brown-500 to-amber-700',
+    emoji: '☕',
+  },
+];
 
+export function CategoriesPage({ onSelectCategory, onBack }: CategoriesPageProps) {
   return (
-    <div className="min-h-screen bg-neutral-50 pb-24">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-24">
       {/* Header */}
-      <div className="bg-white px-6 py-4 flex items-center gap-4 sticky top-0 z-10 border-b border-neutral-100 shadow-sm">
+      <div className="bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 px-6 pt-10 pb-8 flex items-center gap-4 shadow-lg relative overflow-hidden rounded-b-[40px]">
+        <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />
         {onBack && (
-          <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-neutral-100">
+          <button onClick={onBack} className="p-2 -ml-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors text-white">
             <ArrowLeft size={20} />
           </button>
         )}
-        <h1 className="text-xl font-black">Categories</h1>
+        <div>
+          <h1 className="text-2xl font-black text-white">Categories</h1>
+          <p className="text-white/70 text-xs font-medium mt-0.5">Browse {CATEGORIES.length} categories</p>
+        </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-5">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {categories.map((cat) => (
+          {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-100 flex flex-col items-center justify-center gap-4 hover:shadow-md transition-all active:scale-95"
+              className="relative bg-white dark:bg-neutral-900 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 flex flex-col items-center justify-center gap-3 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-95 overflow-hidden group"
             >
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${cat.bg}`}>
+              {/* Gradient icon background */}
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${cat.bg} shadow-lg group-hover:scale-105 transition-transform duration-200`}>
                 {cat.icon}
               </div>
-              <span className="font-bold text-neutral-700 text-sm text-center">{cat.name}</span>
+              <span className="font-bold text-neutral-700 dark:text-neutral-200 text-sm text-center leading-tight">{cat.name}</span>
+              {/* Hover glow */}
+              <div className={`absolute inset-0 ${cat.bg} opacity-0 group-hover:opacity-5 transition-opacity rounded-3xl`} />
             </button>
           ))}
         </div>
