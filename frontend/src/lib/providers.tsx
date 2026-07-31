@@ -127,9 +127,11 @@ export function AppProviders({ children }: { children: ReactNode }) {
       if (storedDark === 'true') {
         setDarkModeState(true);
         document.documentElement.classList.add('dark');
+        document.body?.classList.add('dark');
       } else {
         setDarkModeState(false);
         document.documentElement.classList.remove('dark');
+        document.body?.classList.remove('dark');
       }
       const storedLang = localStorage.getItem('grocery_language');
       if (storedLang) {
@@ -144,8 +146,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
       localStorage.setItem('grocery_dark_mode', String(dark));
       if (dark) {
         document.documentElement.classList.add('dark');
+        document.body?.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
+        document.body?.classList.remove('dark');
       }
     }
   };

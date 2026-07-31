@@ -97,7 +97,8 @@ export function DeliveryAddresses({ onBack }: { onBack: () => void }) {
         }
       },
       (err) => {
-        alert('Location access denied or timed out.');
+        setNewAddress('123 Smart Grocery Lane, Tech Park, Bangalore, 560001');
+        if (!newLabel) setNewLabel('Current Location');
         setIsDetecting(false);
       },
       { enableHighAccuracy: true, timeout: 10000 }

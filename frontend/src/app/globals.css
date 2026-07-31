@@ -24,10 +24,43 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* ── Light / Soft Background ── */
+/* ── Light / Dark Mode Global Overrides ── */
 .dark {
   --background: #0f172a;
   --foreground: #f8fafc;
+  color-scheme: dark;
+}
+
+html.dark,
+body.dark {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-neutral-50 {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-white {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html.dark .text-neutral-900,
+html.dark .text-neutral-800,
+html.dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-neutral-600,
+html.dark .text-neutral-500 {
+  color: #94a3b8 !important;
+}
+
+html.dark .border-neutral-100,
+html.dark .border-slate-200 {
+  border-color: #334155 !important;
 }
 
 body {
