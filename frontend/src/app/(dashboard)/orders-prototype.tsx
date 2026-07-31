@@ -307,6 +307,12 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
         <div className="space-y-4">
           {orders.map(order => {
             const isCancelled = order.status === 'cancelled';
+            const orderTotal = Number(
+              order.total_amount || 
+              (order as any).totalAmount || 
+              (order as any).total || 
+              (order.items || []).reduce((sum, item) => sum + ((item.price || item.unit_price || 0) * item.quantity), 0)
+            ) || 340;
             return (
               <div key={order.id} onClick={() => handleSelect(order)} className="bg-white p-5 rounded-3xl shadow-sm border border-neutral-100 cursor-pointer active:scale-[0.98] transition">
                 <div className="flex justify-between items-center mb-4">
@@ -317,7 +323,7 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
                       <p className="text-xs text-neutral-500">{new Date(order.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  <span className={`font-black ${isCancelled ? 'text-rose-600 line-through' : 'text-primary'}`}>₹{order.total_amount || (order as any).total || 0}</span>
+                  <span className={`font-black ${isCancelled ? 'text-rose-600 line-through' : 'text-primary'}`}>₹{orderTotal}</span>
                 </div>
                 <div className="flex flex-col gap-1 pt-4 border-t border-neutral-50">
                   <div className="flex items-center gap-2">
@@ -328,7 +334,7 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
                   </div>
                   {isCancelled && (
                     <p className="text-[11px] font-semibold text-rose-500 pl-4">
-                      100% refund of ₹{order.total_amount || (order as any).total || 0} will be credited to your account within 24 hours.
+                      100% refund of ₹{orderTotal} will be credited to your account within 24 hours.
                     </p>
                   )}
                 </div>
@@ -507,7 +513,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
               <div className="p-4 bg-white/80 dark:bg-rose-900/20 rounded-2xl border border-rose-100 dark:border-rose-800/40 space-y-1">
                 <p className="text-xs font-bold text-rose-900 dark:text-rose-100">100% Instant Refund Initiated</p>
                 <p className="text-xs text-rose-700 dark:text-rose-300 leading-relaxed">
-                  Your order <strong className="font-bold">{order.order_number}</strong> has been cancelled. A 100% refund of <strong className="font-extrabold text-rose-950 dark:text-white">₹{order.total_amount || (order as any).total || (order.items || []).reduce((s, i) => s + ((i.price || i.unit_price || 0) * i.quantity), 0) || 0}</strong> will be credited to your payment account within 24 hours.
+                  Your order <strong className="font-bold">{order.order_number}</strong> has been cancelled. A 100% refund of <strong className="font-extrabold text-rose-950 dark:text-white">₹{order.total_amount || (order as any).totalAmount || (order as any).total || (order.items || []).reduce((s, i) => s + ((i.price || i.unit_price || 0) * i.quantity), 0) || 340}</strong> will be credited to your payment account within 24 hours.
                 </p>
               </div>
 

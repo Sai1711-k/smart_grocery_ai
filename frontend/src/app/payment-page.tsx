@@ -117,16 +117,24 @@ export function PaymentPage({ onBack, onSuccess, totalAmount, deliveryAddress }:
     }));
 
     const orderPayload = {
+      id: generatedOrderId,
       order_id: generatedOrderId,
       order_number: generatedOrderId,
+      customer_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Customer',
       customerName: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Customer',
-      customerEmail: user?.email || 'customer@example.com',
+      customer_email: user?.email || 'customer@example.com',
+      delivery_address: deliveryAddress || '123 Tech Park, Flat 402, Bengaluru',
       deliveryAddress: deliveryAddress || '123 Tech Park, Flat 402, Bengaluru',
+      payment_method: paymentMethods.find(p => p.id === selectedMethod)?.label || 'Online Payment',
       paymentMethod: paymentMethods.find(p => p.id === selectedMethod)?.label || 'Online Payment',
+      items: orderItems,
       cartItems: orderItems,
-      totalAmount: finalAmount,
+      total_amount: finalAmount > 0 ? finalAmount : totalAmount,
+      totalAmount: finalAmount > 0 ? finalAmount : totalAmount,
+      total: finalAmount > 0 ? finalAmount : totalAmount,
       subtotal: totalAmount,
       tax: taxAmount,
+      delivery_fee: deliveryFee,
       deliveryFee: deliveryFee,
       status: 'PREPARING',
       created_at: new Date().toISOString()
