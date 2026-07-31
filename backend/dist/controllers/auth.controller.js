@@ -16,8 +16,8 @@ const pendingSignupStore = new Map();
 // Pending login data store
 const pendingLoginStore = new Map();
 const OTP_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL
-// Helper to fast-fail DB queries when Supabase is asleep
-const withTimeout = (promise, ms = 1000) => {
+// Helper to fast-fail DB queries when Supabase is asleep (10s threshold for cloud auth)
+const withTimeout = (promise, ms = 10000) => {
     return Promise.race([
         promise,
         new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), ms))
