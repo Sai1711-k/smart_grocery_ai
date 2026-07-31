@@ -3,28 +3,22 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth, useCart } from '@/lib/providers';
 import { ArrowLeft, Sparkles, AlertCircle, ShoppingCart, Info, TrendingDown, Leaf, Target, X } from 'lucide-react';
+import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
 
 // Simulated AI Database of products
 const AI_DATABASE = [
-  { id: 'ai1', name: 'Organic Tofu', price: 120, diet: ['vegan', 'high-protein', 'balanced'], category: 'Protein', baseQty: 2, cals: 144, img: '🧊' },
-  { id: 'ai2', name: 'Grass-Fed Ribeye', price: 850, diet: ['keto', 'high-protein', 'balanced'], category: 'Protein', baseQty: 1, cals: 290, img: '🥩' },
-  { id: 'ai3', name: 'Almond Milk (Unsweetened)', price: 250, diet: ['vegan', 'keto', 'balanced'], category: 'Dairy Alt', baseQty: 1, cals: 30, img: '🥛' },
-  { id: 'ai4', name: 'Whole Wheat Bread', price: 60, diet: ['vegan', 'high-protein', 'balanced'], category: 'Carbs', baseQty: 1, cals: 80, img: '🍞' },
-  { id: 'ai5', name: 'Avocado (Haas)', price: 180, diet: ['vegan', 'keto', 'paleo', 'balanced', 'gluten-free'], category: 'Fats', baseQty: 3, cals: 160, img: '🥑' },
-  { id: 'ai6', name: 'Quinoa (500g)', price: 320, diet: ['vegan', 'gluten-free', 'balanced'], category: 'Carbs', baseQty: 1, cals: 222, img: '🌾' },
-  { id: 'ai7', name: 'Free-Range Eggs (Dozen)', price: 150, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Protein', baseQty: 1, cals: 70, img: '🥚' },
-  { id: 'ai8', name: 'Fresh Spinach Bunch', price: 40, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Vegetables', baseQty: 2, cals: 7, img: '🥬' },
-  { id: 'ai9', name: 'Greek Yogurt', price: 200, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Dairy', baseQty: 2, cals: 100, img: '🥣' },
-  { id: 'ai10', name: 'Mixed Berries (Frozen)', price: 450, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Fruits', baseQty: 1, cals: 50, img: '🫐' },
-  { id: 'ai11', name: 'Kurkure Masala Munch', price: 20, diet: ['balanced'], category: 'Snacks', baseQty: 2, cals: 150, img: '🌶️' },
-  { id: 'ai12', name: 'Lays Classic Salted', price: 20, diet: ['balanced', 'vegan'], category: 'Snacks', baseQty: 2, cals: 160, img: '🥔' },
-  { id: 'ai13', name: 'Oreo Biscuits', price: 40, diet: ['balanced'], category: 'Snacks', baseQty: 1, cals: 140, img: '🍪' },
-  { id: 'ai14', name: 'Dark Chocolate (70%)', price: 150, diet: ['balanced', 'vegan', 'keto'], category: 'Snacks', baseQty: 1, cals: 210, img: '🍫' },
-  { id: 'ai15', name: 'Doritos Nacho Cheese', price: 30, diet: ['balanced'], category: 'Snacks', baseQty: 2, cals: 150, img: '🧀' },
-  { id: 'ai16', name: 'Haldiram Bhujia', price: 50, diet: ['balanced', 'vegan'], category: 'Snacks', baseQty: 1, cals: 300, img: '🥨' },
-  { id: 'ai17', name: 'Act II Popcorn', price: 25, diet: ['balanced', 'vegan', 'gluten-free'], category: 'Snacks', baseQty: 2, cals: 120, img: '🍿' },
-  { id: 'ai18', name: 'Snickers Bar', price: 50, diet: ['balanced'], category: 'Snacks', baseQty: 2, cals: 250, img: '🥜' },
-  { id: 'ai19', name: 'Pringles Sour Cream', price: 110, diet: ['balanced'], category: 'Snacks', baseQty: 1, cals: 150, img: '🫙' }
+  { id: 'ai1', name: 'Organic Tofu', price: 120, diet: ['vegan', 'high-protein', 'balanced'], category: 'Protein', baseQty: 2, cals: 144, img: '🧊', image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Paneer_cubes.jpg' },
+  { id: 'ai2', name: 'Grass-Fed Ribeye', price: 850, diet: ['keto', 'high-protein', 'balanced'], category: 'Protein', baseQty: 1, cals: 290, img: '🥩', image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Raw_chicken_breast.jpg' },
+  { id: 'ai3', name: 'Almond Milk (Unsweetened)', price: 250, diet: ['vegan', 'keto', 'balanced'], category: 'Dairy Alt', baseQty: 1, cals: 30, img: '🥛', image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Glass_of_Milk_%283367496550%29.jpg' },
+  { id: 'ai4', name: 'Whole Wheat Bread', price: 60, diet: ['vegan', 'high-protein', 'balanced'], category: 'Carbs', baseQty: 1, cals: 80, img: '🍞', image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Whole_wheat_bread.jpg' },
+  { id: 'ai5', name: 'Avocado (Haas)', price: 180, diet: ['vegan', 'keto', 'paleo', 'balanced', 'gluten-free'], category: 'Fats', baseQty: 3, cals: 160, img: '🥑', image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Vegetable-Carrots.jpg' },
+  { id: 'ai6', name: 'Quinoa (500g)', price: 320, diet: ['vegan', 'gluten-free', 'balanced'], category: 'Carbs', baseQty: 1, cals: 222, img: '🌾', image_url: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Basmati_Rice_raw.jpg' },
+  { id: 'ai7', name: 'Free-Range Eggs (Dozen)', price: 150, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Protein', baseQty: 1, cals: 70, img: '🥚', image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Chicken_egg_2009-06-04.jpg' },
+  { id: 'ai8', name: 'Fresh Spinach Bunch', price: 40, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Vegetables', baseQty: 2, cals: 7, img: '🥬', image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/38/Spinach_leaves.jpg' },
+  { id: 'ai9', name: 'Greek Yogurt', price: 200, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Dairy', baseQty: 2, cals: 100, img: '🥣', image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Yogurt_in_a_bowl.jpg' },
+  { id: 'ai10', name: 'Mixed Berries (Frozen)', price: 450, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Fruits', baseQty: 1, cals: 50, img: '🫐', image_url: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg' },
+  { id: 'ai11', name: 'Kurkure Masala Munch', price: 20, diet: ['balanced'], category: 'Snacks', baseQty: 2, cals: 150, img: '🌶️', image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { id: 'ai12', name: 'Lays Classic Salted', price: 20, diet: ['balanced', 'vegan'], category: 'Snacks', baseQty: 2, cals: 160, img: '🥔', image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
 ];
 
 export function SmartPlanner({ onBack }: { onBack: () => void }) {
@@ -42,40 +36,32 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
   const [recommendedItems, setRecommendedItems] = useState<any[]>([]);
   const [isLoadingAI, setIsLoadingAI] = useState(true);
 
-  // AI Logic: Attempt real API, fallback to local
   useEffect(() => {
-    async function fetchAI() {
-      setIsLoadingAI(true);
-      try {
-        const res = await fetch('/api/ai/recommend', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ diets, familySize, monthlyBudget })
-        });
-        if (!res.ok) throw new Error('AI request failed');
-        const ct = res.headers.get('content-type');
-        if (!ct || !ct.includes('application/json')) throw new Error('AI non-JSON response');
-        const json = await res.json();
+    // Generate immediate local items so user is NEVER stuck loading
+    const localItems = AI_DATABASE.filter(item => {
+      if (diets.includes('balanced')) return true;
+      return item.diet.some(d => diets.includes(d));
+    }).map(item => ({
+      ...item,
+      recommendedQty: Math.ceil(item.baseQty * (familySize > 4 ? familySize * 0.8 : familySize))
+    }));
+
+    setRecommendedItems(localItems);
+    setIsLoadingAI(false);
+
+    // Background call to API
+    fetch('/api/ai/recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ diets, familySize, monthlyBudget })
+    })
+      .then(res => res.json())
+      .then(json => {
         if (json.success && json.items && json.items.length > 0) {
           setRecommendedItems(json.items);
-          return;
         }
-        throw new Error('AI failed or returned empty');
-      } catch (err) {
-        // Fallback to local filtering if real API fails (or if dummy keys are used)
-        const localItems = AI_DATABASE.filter(item => {
-          if (diets.includes('balanced')) return true;
-          return item.diet.some(d => diets.includes(d));
-        }).map(item => ({
-          ...item,
-          recommendedQty: Math.ceil(item.baseQty * (familySize > 4 ? familySize * 0.8 : familySize))
-        }));
-        setRecommendedItems(localItems);
-      } finally {
-        setIsLoadingAI(false);
-      }
-    }
-    fetchAI();
+      })
+      .catch(() => {});
   }, [diets, familySize, monthlyBudget]);
 
   const totalCost = recommendedItems.reduce((acc, item) => acc + (item.price * item.recommendedQty), 0);
@@ -185,9 +171,21 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
                 onClick={() => setSelectedItem(item)}
                 className="bg-white p-3 rounded-2xl shadow-sm border border-neutral-100 flex items-center gap-4 cursor-pointer hover:bg-neutral-50 hover:border-indigo-100 transition-all active:scale-[0.98]"
               >
-                <div className="w-14 h-14 bg-neutral-50 rounded-xl flex items-center justify-center text-3xl border border-neutral-100">
-                  {item.img}
-                </div>
+                <img 
+                  src={getValidImageUrl(item.image_url, item.name, item.category)} 
+                  alt="" 
+                  onError={(e) => {
+                    const t = e.currentTarget;
+                    if (!t.getAttribute('data-retried')) {
+                      t.setAttribute('data-retried', 'true');
+                      t.src = t.src;
+                    } else {
+                      t.onerror = null;
+                      t.src = generateFoodSvgDataUri(item.name, item.category);
+                    }
+                  }}
+                  className="w-14 h-14 rounded-xl object-cover border border-neutral-100 shrink-0" 
+                />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-neutral-800 truncate text-sm">{item.name}</h3>
                   <div className="flex items-center gap-2 mt-1">
