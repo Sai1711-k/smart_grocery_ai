@@ -368,6 +368,7 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                     <img
                       src={getValidImageUrl(product.image_url, product.name, product.category)}
                       alt=""
+                      referrerPolicy="no-referrer"
                       onError={(e) => {
                         const target = e.currentTarget;
                         target.onerror = null;

@@ -234,7 +234,8 @@ export function StockAlerts({ onBack }: { onBack?: () => void }) {
                   <img
                     src={getValidImageUrl(alert.image_url, alert.name)}
                     alt={alert.name}
-                    onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, alert.name); }}
+                    referrerPolicy="no-referrer"
+                    onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = getValidImageUrl(null, alert.name); }}
                     className="w-full h-full object-cover"
                   />
                 </div>

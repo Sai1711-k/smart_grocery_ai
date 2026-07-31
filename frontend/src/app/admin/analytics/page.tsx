@@ -138,7 +138,8 @@ export default function AdminAnalyticsPage() {
                               <img
                                 src={getValidImageUrl(product.image_url, product.name)}
                                 alt=""
-                                onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, product.name); }}
+                                referrerPolicy="no-referrer"
+                                onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = getValidImageUrl(null, product.name); }}
                                 className="w-full h-full object-cover"
                               />
                             </div>
@@ -185,7 +186,8 @@ export default function AdminAnalyticsPage() {
                           <img
                             src={getValidImageUrl(alert.image_url, alert.name)}
                             alt=""
-                            onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, alert.name); }}
+                            referrerPolicy="no-referrer"
+                            onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = getValidImageUrl(null, alert.name); }}
                             className="w-full h-full object-cover"
                           />
                         </div>

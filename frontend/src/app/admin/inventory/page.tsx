@@ -279,7 +279,8 @@ export default function AdminInventoryPage() {
                             <img
                               src={getValidImageUrl(item.products?.image_url, item.products?.name || 'product', item.products?.category)}
                               alt=""
-                              onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, item.products?.name || 'product', item.products?.category); }}
+                              referrerPolicy="no-referrer"
+                              onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = getValidImageUrl(null, item.products?.name || 'product', item.products?.category); }}
                               className="w-full h-full object-cover"
                             />
                           </div>

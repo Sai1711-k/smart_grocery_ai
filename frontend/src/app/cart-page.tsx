@@ -37,7 +37,8 @@ export function CartPage({ onCheckout }: { onCheckout: () => void }) {
               <img
                 src={getValidImageUrl(item.image_url, item.name)}
                 alt={item.name}
-                onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, item.name); }}
+                referrerPolicy="no-referrer"
+                onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = getValidImageUrl(null, item.name); }}
                 className="object-cover w-full h-full"
               />
             </div>

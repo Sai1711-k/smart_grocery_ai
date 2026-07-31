@@ -181,6 +181,7 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
                 <img 
                   src={getValidImageUrl(item.image_url, item.name, item.category)} 
                   alt="" 
+                  referrerPolicy="no-referrer"
                   onError={(e) => {
                     const t = e.currentTarget;
                     t.onerror = null;

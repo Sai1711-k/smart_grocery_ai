@@ -179,7 +179,8 @@ export function CheckoutPrototype({ onBack, onSuccess }: { onBack: () => void, o
                     <img
                       src={getValidImageUrl(item.image_url, item.name)}
                       alt={item.name}
-                      onError={(e) => { (e.target as HTMLImageElement).src = getValidImageUrl(null, item.name); }}
+                     onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = getValidImageUrl(null, item.name); }}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -308,8 +309,8 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 px-6 py-8">
-      <h1 className="text-2xl font-black text-neutral-900 dark:text-white mb-6">My Orders & History</h1>
+    <div className="flex flex-col min-h-screen bg-neutral-50 px-6 py-8">
+      <h1 className="text-2xl font-black text-neutral-900 mb-6">My Orders & History</h1>
       
       {loading ? (
         <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
@@ -317,9 +318,9 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
         <div className="space-y-6 max-w-md mx-auto w-full">
           {/* SECTION 1: ACTIVE PLACED ORDERS */}
           <div>
-            <h2 className="text-xs font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Active Orders</h2>
+            <h2 className="text-xs font-black text-neutral-400 uppercase tracking-wider mb-3">Active Orders</h2>
             {activeOrders.length === 0 ? (
-              <div className="p-6 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 text-center text-neutral-400 dark:text-neutral-500 font-bold text-sm">
+              <div className="p-6 bg-white rounded-3xl border border-neutral-100 text-center text-neutral-400 font-bold text-sm">
                 No active orders placed
               </div>
             ) : (
@@ -332,24 +333,24 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
                     (order.items || []).reduce((sum, item) => sum + ((item.price || item.unit_price || 0) * item.quantity), 0)
                   ) || 340;
                   return (
-                    <div key={order.id} onClick={() => handleSelect(order)} className="bg-white dark:bg-neutral-900 p-5 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 cursor-pointer active:scale-[0.98] transition">
+                    <div key={order.id} onClick={() => handleSelect(order)} className="bg-white p-5 rounded-3xl shadow-sm border border-neutral-100 cursor-pointer active:scale-[0.98] transition">
                       <div className="flex justify-between items-center mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-full flex items-center justify-center font-bold">
+                          <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold">
                             <Package size={18} />
                           </div>
                           <div>
-                            <h3 className="font-bold text-neutral-900 dark:text-white text-sm">{order.order_number}</h3>
+                            <h3 className="font-bold text-neutral-900 text-sm">{order.order_number}</h3>
                             <p className="text-[11px] text-neutral-400">{new Date(order.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
-                        <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm">₹{orderTotal}</span>
+                        <span className="font-black text-emerald-600 text-sm">₹{orderTotal}</span>
                       </div>
-                      <div className="flex items-center justify-between pt-3 border-t border-neutral-100 dark:border-neutral-800">
-                        <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-extrabold rounded-full uppercase">
+                      <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
+                        <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-extrabold rounded-full uppercase">
                           {order.status}
                         </span>
-                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Track Order →</span>
+                        <span className="text-xs font-bold text-emerald-600">Track Order →</span>
                       </div>
                     </div>
                   );
@@ -360,9 +361,9 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
 
           {/* SECTION 2: ORDER HISTORY (DELIVERED & CANCELLED) */}
           <div>
-            <h2 className="text-xs font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Order History & Refunds</h2>
+            <h2 className="text-xs font-black text-neutral-400 uppercase tracking-wider mb-3">Order History & Refunds</h2>
             {historyOrders.length === 0 ? (
-              <div className="p-6 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 text-center text-neutral-400 dark:text-neutral-500 font-bold text-sm">
+              <div className="p-6 bg-white rounded-3xl border border-neutral-100 text-center text-neutral-400 font-bold text-sm">
                 No past order history
               </div>
             ) : (
@@ -379,25 +380,25 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
                   ) || 340;
 
                   return (
-                    <div key={order.id} className="bg-white dark:bg-neutral-900 p-5 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-3">
+                    <div key={order.id} className="bg-white p-5 rounded-3xl shadow-sm border border-neutral-100 space-y-3">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 ${isCancelled ? 'bg-rose-100 dark:bg-rose-900/40 text-rose-600' : 'bg-emerald-100 text-emerald-600'} rounded-full flex items-center justify-center font-bold`}>
+                          <div className={`w-10 h-10 ${isCancelled ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'} rounded-full flex items-center justify-center font-bold`}>
                             {isCancelled ? '❌' : '✓'}
                           </div>
                           <div>
-                            <h3 className="font-bold text-neutral-900 dark:text-white text-sm">{order.order_number}</h3>
+                            <h3 className="font-bold text-neutral-900 text-sm">{order.order_number}</h3>
                             <p className="text-[11px] text-neutral-400">{new Date(order.created_at).toLocaleDateString()}</p>
                           </div>
                         </div>
-                        <span className={`font-black text-sm ${isCancelled ? 'text-rose-600 line-through' : 'text-neutral-900 dark:text-white'}`}>₹{orderTotal}</span>
+                        <span className={`font-black text-sm ${isCancelled ? 'text-rose-600 line-through' : 'text-neutral-900'}`}>₹{orderTotal}</span>
                       </div>
 
                       {/* Refund notice according to payment method */}
                       {isCancelled ? (
-                        <div className="p-3 bg-rose-50 dark:bg-rose-950/40 rounded-2xl border border-rose-100 dark:border-rose-900/40 text-xs text-rose-700 dark:text-rose-300 space-y-1">
+                        <div className="p-3 bg-rose-50 rounded-2xl border border-rose-100 text-xs text-rose-700 space-y-1">
                           <div className="flex items-center justify-between font-bold">
-                            <span className="uppercase text-[10px] tracking-wider text-rose-800 dark:text-rose-200">Cancelled Order</span>
+                            <span className="uppercase text-[10px] tracking-wider text-rose-800">Cancelled Order</span>
                             <span className="text-[10px] text-rose-500 font-normal">Method: {payMethod}</span>
                           </div>
                           <p className="leading-relaxed">
@@ -409,12 +410,12 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
                           </p>
                         </div>
                       ) : (
-                        <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl text-xs text-emerald-700 dark:text-emerald-300 font-medium">
+                        <div className="p-2.5 bg-emerald-50 rounded-2xl text-xs text-emerald-700 font-medium">
                           Delivered Successfully • Paid via {payMethod}
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                      <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
                         <span className="text-[11px] text-neutral-400">{(order.items || []).length} Items</span>
                         <button 
                           onClick={() => handleClearHistoryItem(order.id)} 
@@ -512,14 +513,14 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
   const arrivalTimeStr = estimatedArrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-24">
+    <div className="flex flex-col min-h-screen bg-neutral-50 pb-24">
       {/* Top Header */}
-      <div className="bg-white dark:bg-neutral-900 px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center gap-4 sticky top-0 z-30 shadow-sm">
-        <button onClick={onBack} className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-700 dark:text-neutral-200 hover:bg-neutral-200 transition">
+      <div className="bg-white px-6 py-4 border-b border-neutral-100 flex items-center gap-4 sticky top-0 z-30 shadow-sm">
+        <button onClick={onBack} className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-700 hover:bg-neutral-200 transition">
           <ChevronLeft size={18} />
         </button>
         <div>
-          <h1 className="font-bold text-neutral-900 dark:text-white text-base">Order Tracking</h1>
+          <h1 className="font-bold text-neutral-900 text-base">Order Tracking</h1>
           <p className="text-xs text-neutral-500 font-medium">{order.order_number}</p>
         </div>
       </div>
@@ -527,16 +528,16 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
       <div className="px-6 py-6 space-y-6 max-w-md mx-auto w-full">
         {/* ACTIVE 10-MIN WINDOW BANNER */}
         {orderStatus !== 'cancelled' && (
-          <div className="p-5 rounded-3xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 shadow-sm">
+          <div className="p-5 rounded-3xl bg-emerald-50/80 border border-emerald-200 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <h3 className="font-extrabold text-sm text-emerald-950 dark:text-emerald-300">
+                <h3 className="font-extrabold text-sm text-emerald-950">
                   {secondsRemaining > 0 ? '10-Minute Order Window Active' : 'Order Locked & In Transit'}
                 </h3>
               </div>
               {secondsRemaining > 0 && (
-                <span className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-3 py-1 rounded-full">
+                <span className="font-mono font-black text-sm text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">
                   ⏱️ {timerDisplay}
                 </span>
               )}
@@ -544,13 +545,13 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
 
             {secondsRemaining > 0 ? (
               <div className="space-y-3">
-                <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                <p className="text-xs text-neutral-600 leading-relaxed">
                   You can modify items or cancel for a 100% instant refund within the next {timerDisplay} minutes.
                 </p>
                 <div className="flex gap-2">
                   <button 
                     onClick={() => setShowCancelModal(true)}
-                    className="flex-1 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-100 transition-colors border border-rose-200 dark:border-rose-800"
+                    className="flex-1 py-2.5 rounded-xl bg-rose-50 text-rose-600 font-bold text-xs hover:bg-rose-100 transition-colors border border-rose-200"
                   >
                     Cancel Order (Instant Refund)
                   </button>
@@ -566,8 +567,8 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                 </div>
               </div>
             ) : (
-              <div className="p-3 bg-neutral-100 dark:bg-neutral-800/60 rounded-2xl border border-neutral-200 dark:border-neutral-700 text-center mt-2">
-                <p className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
+              <div className="p-3 bg-neutral-100 rounded-2xl border border-neutral-200 text-center mt-2">
+                <p className="text-xs font-bold text-neutral-700">
                   🔒 10-Minute Order Window Closed — Order Locked & In Transit
                 </p>
                 <p className="text-[11px] text-neutral-400 mt-1">
@@ -580,12 +581,12 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
 
         {/* CANCELLED STATUS VIEW – Redirect to Order History */}
         {orderStatus === 'cancelled' ? (
-          <div className="p-6 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 text-center space-y-4">
-            <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/40 text-rose-600 rounded-full flex items-center justify-center font-bold text-xl mx-auto">
+          <div className="p-6 bg-white rounded-3xl border border-neutral-100 text-center space-y-4">
+            <div className="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center font-bold text-xl mx-auto">
               ❌
             </div>
             <div>
-              <h3 className="font-extrabold text-neutral-900 dark:text-white text-base">Order {order.order_number} Cancelled</h3>
+              <h3 className="font-extrabold text-neutral-900 text-base">Order {order.order_number} Cancelled</h3>
               <p className="text-xs text-neutral-500 mt-1">This order has been moved to your Order History.</p>
             </div>
             <button
@@ -598,12 +599,12 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
         ) : (
           <>
             {/* Order Header */}
-            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-100 flex justify-between items-center">
               <div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Order ID</p>
-                <p className="font-bold text-neutral-900 dark:text-white">{order.order_number}</p>
+                <p className="text-xs text-neutral-500 mb-1">Order ID</p>
+                <p className="font-bold text-neutral-900">{order.order_number}</p>
               </div>
-              <button className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-xl">
+              <button className="flex items-center gap-2 text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl">
                 <Download size={16} /> Invoice
               </button>
             </div>
@@ -635,48 +636,48 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
               </div>
 
               {/* ETA Badge Overlay */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-white/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-slate-200 font-bold text-sm text-slate-900 flex items-center gap-2">
                 <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
                 {etaText}
               </div>
             </div>
 
             {/* Route Details */}
-            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-3">
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-neutral-100 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 flex items-center justify-center shrink-0"><Box size={14} /></div>
+                <div className="w-8 h-8 rounded-full bg-neutral-100 text-neutral-500 flex items-center justify-center shrink-0"><Box size={14} /></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">From Hub</p>
-                  <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">FreshCart Super Hub #104</p>
+                  <p className="text-sm font-bold text-neutral-900 truncate">FreshCart Super Hub #104</p>
                 </div>
               </div>
-              <div className="ml-4 border-l-2 border-dashed border-neutral-200 dark:border-neutral-700 h-4 my-1"></div>
+              <div className="ml-4 border-l-2 border-dashed border-neutral-200 h-4 my-1"></div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center shrink-0"><MapPin size={14} /></div>
+                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><MapPin size={14} /></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">Delivery To</p>
-                  <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">{order.delivery_address}</p>
+                  <p className="text-sm font-bold text-neutral-900 truncate">{order.delivery_address}</p>
                 </div>
               </div>
-              <div className="pt-3 mt-3 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
-                <span className="text-sm font-bold text-neutral-600 dark:text-neutral-400">Expected Arrival</span>
-                <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{arrivalTimeStr}</span>
+              <div className="pt-3 mt-3 border-t border-neutral-100 flex justify-between items-center">
+                <span className="text-sm font-bold text-neutral-600">Expected Arrival</span>
+                <span className="text-sm font-black text-emerald-600">{arrivalTimeStr}</span>
               </div>
             </div>
 
             {/* Driver Details */}
-            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+            <div className="bg-white rounded-3xl p-5 shadow-sm border border-neutral-100 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-neutral-200 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm">
                   <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200&q=80" alt="Driver" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-neutral-900 dark:text-white text-sm">Rahul Sharma</h3>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-0.5"><span className="text-amber-400 font-black">★ 4.9</span> (2.4k deliveries)</p>
+                  <h3 className="font-bold text-neutral-900 text-sm">Rahul Sharma</h3>
+                  <p className="text-xs text-neutral-500 flex items-center gap-1 mt-0.5"><span className="text-amber-400 font-black">★ 4.9</span> (2.4k deliveries)</p>
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => alert('Opening live chat with delivery agent Rahul...')} className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
+                <button onClick={() => alert('Opening live chat with delivery agent Rahul...')} className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
                   <span className="text-lg">💬</span>
                 </button>
                 <button onClick={() => alert('Calling delivery agent Rahul Sharma at +91 98765 43210')} className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30">
@@ -686,9 +687,9 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
             </div>
             {/* Delivery Status Timeline */}
             <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Delivery Status</h2>
-            <div className="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 pl-8">
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-neutral-100 pl-8">
               <div className="relative">
-                <div className="absolute left-6 top-6 bottom-6 w-1 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
+                <div className="absolute left-6 top-6 bottom-6 w-1 bg-neutral-100 rounded-full"></div>
                 <div className="absolute left-6 top-6 w-1 bg-emerald-600 rounded-full transition-all duration-1000" style={{ height: `${(currentIndex / (steps.length - 1)) * 100}%` }}></div>
                 
                 <div className="space-y-8 relative z-10">
@@ -697,11 +698,11 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                     const Icon = icons[idx];
                     return (
                       <div key={step} className="flex gap-6 items-center">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-4 transition-colors duration-500 ${isCompleted ? 'bg-emerald-600 border-emerald-100 dark:border-emerald-900 text-white' : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 text-neutral-400'}`}>
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-4 transition-colors duration-500 ${isCompleted ? 'bg-emerald-600 border-emerald-100 text-white' : 'bg-white border-neutral-100 text-neutral-400'}`}>
                           <Icon size={20} />
                         </div>
                         <div>
-                          <h3 className={`font-bold text-sm ${isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>{labels[step]}</h3>
+                          <h3 className={`font-bold text-sm ${isCompleted ? 'text-neutral-900' : 'text-neutral-400'}`}>{labels[step]}</h3>
                           <p className="text-xs text-neutral-400 mt-1">{isCompleted ? new Date(order.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--'}</p>
                         </div>
                       </div>
@@ -717,13 +718,13 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
       {/* CANCELLATION CONFIRMATION MODAL */}
       {showCancelModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-fade-in">
-          <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-neutral-100 dark:border-neutral-800 text-center space-y-4">
-            <div className="w-14 h-14 bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-neutral-100 text-center space-y-4">
+            <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-2xl">
               ⚠️
             </div>
             <div>
-              <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white">Cancel Order #{order.order_number}?</h3>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2 leading-relaxed">
+              <h3 className="font-extrabold text-lg text-neutral-900">Cancel Order #{order.order_number}?</h3>
+              <p className="text-xs text-neutral-500 mt-2 leading-relaxed">
                 Are you sure you want to cancel your order? A 100% instant refund of <span className="font-bold text-emerald-600">₹{order.total_amount}</span> will be credited back to your account.
               </p>
             </div>
@@ -736,7 +737,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
               </button>
               <button
                 onClick={confirmCancel}
-                className="w-full py-3 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-100 transition-all border border-rose-200 dark:border-rose-800"
+                className="w-full py-3 rounded-2xl bg-rose-50 text-rose-600 font-bold text-xs hover:bg-rose-100 transition-all border border-rose-200"
               >
                 Yes, Cancel Order &amp; Refund
               </button>
