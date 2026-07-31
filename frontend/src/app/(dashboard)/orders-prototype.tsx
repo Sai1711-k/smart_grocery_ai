@@ -325,6 +325,18 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
     return () => clearInterval(interval);
   }, [order.created_at]);
 
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Get real device location for live Google Map tracking
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => console.log('Geolocation permission pending, using local hub coordinates.')
+      );
+    }
+  }, []);
+
   // Simulated live driver movement
   useEffect(() => {
     const moveInterval = setInterval(() => {
@@ -434,30 +446,34 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
           </button>
         </div>
 
-        {/* Interactive Live Tracking Map */}
-        <div className="bg-neutral-900 rounded-3xl h-56 relative overflow-hidden shadow-xl border border-neutral-800">
-          <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80" alt="Map" className="w-full h-full object-cover opacity-40 grayscale" />
-          
-          {/* Animated Route Line */}
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M 20 80 Q 50 40 80 20" fill="transparent" stroke="#10b981" strokeWidth="4" strokeDasharray="4,4" className="animate-pulse" />
-          </svg>
-          
-          {/* Store Pin */}
-          <div className="absolute top-[20%] left-[80%] -translate-x-1/2 -translate-y-1/2 w-9 h-9 bg-white dark:bg-neutral-900 rounded-full flex items-center justify-center shadow-lg border-2 border-emerald-500">
-            <MapPin size={18} className="text-emerald-500" />
-          </div>
-          
-          {/* Live Moving Driver Pin */}
+        {/* Interactive Live Google Maps Tracking */}
+        <div className="bg-slate-900 rounded-3xl h-64 relative overflow-hidden shadow-xl border border-slate-800">
+          <iframe
+            title="Real Live Google Map Tracking"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            loading="lazy"
+            allowFullScreen
+            src={`https://maps.google.com/maps?q=${coords ? `${coords.lat},${coords.lng}` : '12.9716,77.5946'}&z=15&output=embed`}
+            className="w-full h-full object-cover"
+          />
+
+          {/* Animated GPS Live Driver Pulse Overlay */}
           <div 
-            className="absolute transition-all duration-1000 ease-in-out w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-emerald-400/40"
-            style={{ left: `${driverProgress}%`, top: `${80 - driverProgress * 0.6}%` }}
+            className="absolute z-10 transition-all duration-1000 ease-in-out w-11 h-11 bg-gradient-to-tr from-emerald-600 to-teal-500 text-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-emerald-400/50"
+            style={{ left: `${Math.min(85, Math.max(15, driverProgress))}%`, top: `${Math.min(75, Math.max(20, 75 - driverProgress * 0.5))}%` }}
           >
-            <Truck size={20} className="animate-pulse" />
+            <Truck size={22} className="animate-pulse" />
           </div>
-          
-          {/* ETA Badge */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-white/20 font-bold text-sm text-neutral-900 dark:text-white flex items-center gap-2">
+
+          {/* Store Pin */}
+          <div className="absolute top-[25%] right-[20%] z-10 w-9 h-9 bg-white text-emerald-600 rounded-full flex items-center justify-center shadow-lg border-2 border-emerald-500">
+            <MapPin size={18} className="text-emerald-600" />
+          </div>
+
+          {/* ETA Badge Overlay */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
             {etaText}
           </div>
