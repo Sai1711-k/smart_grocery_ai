@@ -223,7 +223,7 @@ export function CheckoutPrototype({ onBack, onSuccess }: { onBack: () => void, o
 // 2. ORDER HISTORY & TRACKING (Mobile)
 // ============================================
 
-export function OrderHistoryPrototype({ initialOrderId, onBack }: { initialOrderId?: string | null, onBack?: () => void }) {
+export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { initialOrderId?: string | null, onBack?: () => void, onNavigate?: (view: string) => void }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -288,7 +288,7 @@ export function OrderHistoryPrototype({ initialOrderId, onBack }: { initialOrder
   };
 
   if (selectedOrder) {
-    return <OrderTrackingView order={selectedOrder} onBack={() => { setSelectedOrder(null); if (onBack) onBack(); }} />;
+    return <OrderTrackingView order={selectedOrder} onBack={() => { setSelectedOrder(null); if (onBack) onBack(); }} onNavigate={onNavigate} />;
   }
 
   return (
@@ -324,18 +324,17 @@ export function OrderHistoryPrototype({ initialOrderId, onBack }: { initialOrder
   );
 }
 
-function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void }) {
+function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack: () => void, onNavigate?: (view: string) => void }) {
   const steps = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
   const labels: Record<string, string> = { pending: 'Order Placed', confirmed: 'Confirmed', processing: 'Processing', shipped: 'On the way', delivered: 'Delivered' };
   const icons = [FileText, CheckCircle, Box, Truck, MapPin];
   
   const [orderStatus, setOrderStatus] = useState(order.status);
   const [secondsRemaining, setSecondsRemaining] = useState<number>(600); // 10 minutes default
-  const [driverProgress, setDriverProgress] = useState<number>(20);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  // 10-minute order modification countdown calculation
   useEffect(() => {
+    if (orderStatus === 'cancelled') return;
     const createdAt = new Date(order.created_at).getTime();
     const tenMinWindow = createdAt + 10 * 60 * 1000;
     
@@ -346,9 +345,10 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [order.created_at]);
+  }, [order.created_at, orderStatus]);
 
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [driverProgress, setDriverProgress] = useState(35);
 
   // Get real device location for live Google Map tracking
   useEffect(() => {
@@ -376,43 +376,38 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
     } catch (e) {}
   };
 
-  const currentIndex = steps.indexOf(orderStatus === 'cancelled' ? 'pending' : orderStatus);
-  
-  // Calculate ETA (30 mins from creation)
-  const createdAt = new Date(order.created_at);
-  const estimatedArrival = new Date(createdAt.getTime() + 30 * 60000);
-  const now = new Date();
-  const diffMins = Math.max(0, Math.floor((estimatedArrival.getTime() - now.getTime()) / 60000));
-  const etaText = diffMins > 0 ? `Arriving in ${diffMins} mins` : 'Arriving soon';
+  const mins = Math.floor(secondsRemaining / 60);
+  const secs = secondsRemaining % 60;
+  const timerDisplay = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+  const currentStepIndex = steps.indexOf(orderStatus);
+  const currentIndex = currentStepIndex;
+  const etaText = orderStatus === 'delivered' ? 'Delivered' : orderStatus === 'cancelled' ? 'Order Cancelled' : 'Arriving in 25 mins';
+  const estimatedArrival = new Date(new Date(order.created_at).getTime() + 30 * 60000);
   const arrivalTimeStr = estimatedArrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  const minutes = Math.floor(secondsRemaining / 60);
-  const secs = secondsRemaining % 60;
-  const timerDisplay = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-20 transition-colors">
-      <div className="bg-white dark:bg-neutral-900 px-6 py-5 flex items-center justify-between sticky top-0 z-10 border-b dark:border-neutral-800 shadow-sm">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white hover:bg-neutral-200">
-          <ChevronLeft size={20} />
+    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 pb-24">
+      {/* Top Header */}
+      <div className="bg-white dark:bg-neutral-900 px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center gap-4 sticky top-0 z-30 shadow-sm">
+        <button onClick={onBack} className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-700 dark:text-neutral-200 hover:bg-neutral-200 transition">
+          <ChevronLeft size={18} />
         </button>
-        <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Track &amp; Manage Order</h1>
-        <div className="w-10"></div>
+        <div>
+          <h1 className="font-bold text-neutral-900 dark:text-white text-base">Order Tracking</h1>
+          <p className="text-xs text-neutral-500 font-medium">{order.order_number}</p>
+        </div>
       </div>
 
-      <div className="px-6 py-6 max-w-lg mx-auto w-full space-y-6">
-        
-        {/* 10-MINUTE ORDER MODIFICATION / CANCELLATION BANNER */}
+      <div className="px-6 py-6 space-y-6 max-w-md mx-auto w-full">
+        {/* ACTIVE 10-MIN WINDOW BANNER */}
         {orderStatus !== 'cancelled' && (
-          <div className={`p-5 rounded-3xl border-2 transition-all ${secondsRemaining > 0 ? 'bg-gradient-to-r from-emerald-900/10 to-teal-900/10 border-emerald-500/30' : 'bg-neutral-100 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800'}`}>
+          <div className="p-5 rounded-3xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="relative flex h-3 w-3">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${secondsRemaining > 0 ? 'bg-emerald-400' : 'bg-neutral-400'} opacity-75`}></span>
-                  <span className={`relative inline-flex rounded-full h-3 w-3 ${secondsRemaining > 0 ? 'bg-emerald-500' : 'bg-neutral-500'}`}></span>
-                </span>
-                <h3 className="font-extrabold text-sm text-neutral-900 dark:text-white">
-                  {secondsRemaining > 0 ? '10-Minute Order Window Active' : 'Order Locked & Out for Delivery'}
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <h3 className="font-extrabold text-sm text-emerald-950 dark:text-emerald-300">
+                  {secondsRemaining > 0 ? '10-Minute Order Window Active' : 'Order Locked & In Transit'}
                 </h3>
               </div>
               {secondsRemaining > 0 && (
@@ -435,7 +430,10 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
                     Cancel Order (Instant Refund)
                   </button>
                   <button 
-                    onClick={() => window.location.href = '/'}
+                    onClick={() => {
+                      if (onNavigate) onNavigate('home');
+                      else onBack();
+                    }}
                     className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-600/20"
                   >
                     + Add Items to Order
@@ -443,9 +441,14 @@ function OrderTrackingView({ order, onBack }: { order: Order, onBack: () => void
                 </div>
               </div>
             ) : (
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Your order is packed and assigned to delivery agent Rahul Sharma.
-              </p>
+              <div className="p-3 bg-neutral-100 dark:bg-neutral-800/60 rounded-2xl border border-neutral-200 dark:border-neutral-700 text-center mt-2">
+                <p className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
+                  🔒 10-Minute Order Window Closed — Order Locked & In Transit
+                </p>
+                <p className="text-[11px] text-neutral-400 mt-1">
+                  Modifications, item additions, and order cancellations are now disabled.
+                </p>
+              </div>
             )}
           </div>
         )}

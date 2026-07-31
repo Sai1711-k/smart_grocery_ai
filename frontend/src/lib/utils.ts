@@ -17,6 +17,9 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'chocolate muffin': 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Muffin_chocolate.jpg',
   'blueberry muffin': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Blueberry_muffins_cropped.jpg',
   'muffin': 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Muffin_chocolate.jpg',
+  'choco chip cookies': 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Chocolate_chip_cookies.jpg',
+  'oatmeal cookies': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Butter_cookies.jpg',
+  'fruit cake': 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Jam_biscuits.jpg',
 
   // 🍎 Fruits
   'red delicious apple': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg',
@@ -161,15 +164,53 @@ const CATEGORY_FALLBACKS: Record<string, string> = {
   default: 'https://upload.wikimedia.org/wikipedia/commons/7/71/Sliced_bread.jpg',
 };
 
+// Fail-safe SVG Food Data URI Generator - Guarantees NO white squares can ever exist!
+export function generateFoodSvgDataUri(name: string, category?: string): string {
+  const cleanName = (name || 'Fresh Grocery').toUpperCase();
+  const catName = (category || 'FRESH').toUpperCase();
+  
+  // Pick vibrant theme color based on category
+  let bgGradient = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
+  let icon = '🥗';
+  
+  if (catName.includes('BAKERY') || cleanName.includes('BREAD') || cleanName.includes('BUN')) {
+    bgGradient = 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)';
+    icon = '🍞';
+  } else if (catName.includes('FRUIT') || cleanName.includes('APPLE') || cleanName.includes('MANGO')) {
+    bgGradient = 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)';
+    icon = '🍎';
+  } else if (catName.includes('DAIRY') || cleanName.includes('MILK') || cleanName.includes('CHEESE') || cleanName.includes('PANEER')) {
+    bgGradient = 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)';
+    icon = '🧀';
+  } else if (catName.includes('SNACK') || cleanName.includes('CHIPS') || cleanName.includes('BISCUIT')) {
+    bgGradient = 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)';
+    icon = '🍪';
+  } else if (catName.includes('BEVERAGE') || cleanName.includes('JUICE') || cleanName.includes('COFFEE')) {
+    bgGradient = 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)';
+    icon = '🧃';
+  }
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+    <defs>
+      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <rect width="400" height="400" rx="40" fill="url(#grad)" />
+    <circle cx="200" cy="170" r="80" fill="rgba(255,255,255,0.2)" />
+    <text x="200" y="195" font-size="75" text-anchor="middle" dominant-baseline="middle">${icon}</text>
+    <text x="200" y="300" font-size="22" font-family="system-ui, sans-serif" font-weight="900" fill="#ffffff" text-anchor="middle">${cleanName.substring(0, 20)}</text>
+    <text x="200" y="335" font-size="14" font-family="system-ui, sans-serif" font-weight="700" fill="rgba(255,255,255,0.8)" text-anchor="middle">FRESHCART PREMIUM</text>
+  </svg>`;
+
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
 export function getValidImageUrl(url: string | null | undefined, fallbackName: string, category?: string): string {
   const cleanName = (fallbackName || '').toLowerCase().trim();
 
-  // ALWAYS CHECK EXACT ITEM DICTIONARY FIRST!
-  if (cleanName && EXACT_ITEM_IMAGES[cleanName]) {
-    return EXACT_ITEM_IMAGES[cleanName];
-  }
-
-  // Check if name contains any exact keyword key
+  // If name contains any key in EXACT_ITEM_IMAGES, return it
   for (const [key, image] of Object.entries(EXACT_ITEM_IMAGES)) {
     if (cleanName.includes(key) || key.includes(cleanName)) {
       return image;
@@ -182,12 +223,13 @@ export function getValidImageUrl(url: string | null | undefined, fallbackName: s
     return CATEGORY_FALLBACKS[cleanCat];
   }
 
-  // If provided URL is a valid non-placeholder http URL (excluding CORS-blocked unsplash.com), use it
+  // If provided URL is a valid non-unsplash http URL, use it
   if (url && url.startsWith('http') && !url.includes('unsplash.com') && !url.includes('loremflickr') && !url.includes('via.placeholder.com')) {
     return url;
   }
 
-  return CATEGORY_FALLBACKS.default;
+  // Fail-safe SVG generator fallback
+  return generateFoodSvgDataUri(fallbackName, category);
 }
 
 export async function safeFetchJson<T = any>(input: RequestInfo | URL, init?: RequestInit): Promise<T | null> {

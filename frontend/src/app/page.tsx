@@ -54,7 +54,7 @@ export default function Page() {
       case 'payment':
         return <PaymentPage totalAmount={cartTotal} deliveryAddress={deliveryAddress} onBack={() => setView('address')} onSuccess={(orderId) => { clearCart(); if(orderId) setTrackOrderId(orderId); setView('history'); }} />;
       case 'history':
-        return <OrderHistoryPrototype initialOrderId={trackOrderId} onBack={() => setTrackOrderId(null)} />;
+        return <OrderHistoryPrototype initialOrderId={trackOrderId} onBack={() => setTrackOrderId(null)} onNavigate={(v) => setView(v)} />;
       case 'recap':
         return <SalesRecap />;
       case 'alerts':
