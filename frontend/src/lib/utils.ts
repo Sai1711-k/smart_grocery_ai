@@ -1,4 +1,4 @@
-// 100% VERIFIED HIGH-AVAILABILITY FOOD PHOTO DICTIONARY (WIKIMEDIA COMMONS & RELIABLE CDNS)
+// 100% VERIFIED HIGH-AVAILABILITY FOOD PHOTO DICTIONARY & FAIL-SAFE SVG GENERATOR
 const EXACT_ITEM_IMAGES: Record<string, string> = {
   // 🍞 Bakery
   'burger buns (4 pcs)': 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Hamburger_bun.jpg',
@@ -151,19 +151,6 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'premium whole cashews 200g': 'https://upload.wikimedia.org/wikipedia/commons/3/36/Cashew_nuts.jpg',
 };
 
-const CATEGORY_FALLBACKS: Record<string, string> = {
-  vegetables: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg',
-  fruits: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg',
-  dairy: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Glass_of_Milk_%283367496550%29.jpg',
-  bakery: 'https://upload.wikimedia.org/wikipedia/commons/7/71/Sliced_bread.jpg',
-  meat: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Raw_chicken_breast.jpg',
-  oils: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Sunflower_oil_and_sunflower.jpg',
-  grains: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Basmati_Rice_raw.jpg',
-  snacks: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg',
-  beverages: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Orange_juice_1.jpg',
-  default: 'https://upload.wikimedia.org/wikipedia/commons/7/71/Sliced_bread.jpg',
-};
-
 // Fail-safe SVG Food Data URI Generator - Guarantees NO white squares can ever exist!
 export function generateFoodSvgDataUri(name: string, category?: string): string {
   const cleanName = (name || 'Fresh Grocery').toUpperCase();
@@ -173,21 +160,27 @@ export function generateFoodSvgDataUri(name: string, category?: string): string 
   let bgGradient = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
   let icon = '🥗';
   
-  if (catName.includes('BAKERY') || cleanName.includes('BREAD') || cleanName.includes('BUN')) {
+  if (catName.includes('BAKERY') || cleanName.includes('BREAD') || cleanName.includes('BUN') || cleanName.includes('CAKE') || cleanName.includes('MUFFIN') || cleanName.includes('COOKIE') || cleanName.includes('CROISSANT')) {
     bgGradient = 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)';
     icon = '🍞';
-  } else if (catName.includes('FRUIT') || cleanName.includes('APPLE') || cleanName.includes('MANGO')) {
+  } else if (catName.includes('FRUIT') || cleanName.includes('APPLE') || cleanName.includes('MANGO') || cleanName.includes('BANANA') || cleanName.includes('ORANGE') || cleanName.includes('WATERMELON')) {
     bgGradient = 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)';
     icon = '🍎';
-  } else if (catName.includes('DAIRY') || cleanName.includes('MILK') || cleanName.includes('CHEESE') || cleanName.includes('PANEER')) {
+  } else if (catName.includes('DAIRY') || cleanName.includes('MILK') || cleanName.includes('CHEESE') || cleanName.includes('PANEER') || cleanName.includes('BUTTER') || cleanName.includes('CURD') || cleanName.includes('YOGURT')) {
     bgGradient = 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)';
     icon = '🧀';
-  } else if (catName.includes('SNACK') || cleanName.includes('CHIPS') || cleanName.includes('BISCUIT')) {
+  } else if (catName.includes('SNACK') || cleanName.includes('CHIPS') || cleanName.includes('BISCUIT') || cleanName.includes('KURKURE') || cleanName.includes('LAYS') || cleanName.includes('OREO')) {
     bgGradient = 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)';
     icon = '🍪';
-  } else if (catName.includes('BEVERAGE') || cleanName.includes('JUICE') || cleanName.includes('COFFEE')) {
+  } else if (catName.includes('BEVERAGE') || cleanName.includes('JUICE') || cleanName.includes('COFFEE') || cleanName.includes('TEA') || cleanName.includes('COCA') || cleanName.includes('RED BULL')) {
     bgGradient = 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)';
     icon = '🧃';
+  } else if (catName.includes('MEAT') || cleanName.includes('CHICKEN') || cleanName.includes('MUTTON') || cleanName.includes('FISH')) {
+    bgGradient = 'linear-gradient(135deg, #b91c1c 0%, #dc2626 100%)';
+    icon = '🥩';
+  } else if (catName.includes('OIL') || cleanName.includes('GHEE') || cleanName.includes('MUSTARD')) {
+    bgGradient = 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)';
+    icon = '🫒';
   }
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
@@ -197,7 +190,7 @@ export function generateFoodSvgDataUri(name: string, category?: string): string 
         <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
       </linearGradient>
     </defs>
-    <rect width="400" height="400" rx="40" fill="url(#grad)" />
+    <rect width="400" height="400" rx="32" fill="url(#grad)" />
     <circle cx="200" cy="170" r="80" fill="rgba(255,255,255,0.2)" />
     <text x="200" y="195" font-size="75" text-anchor="middle" dominant-baseline="middle">${icon}</text>
     <text x="200" y="300" font-size="22" font-family="system-ui, sans-serif" font-weight="900" fill="#ffffff" text-anchor="middle">${cleanName.substring(0, 20)}</text>
@@ -215,12 +208,6 @@ export function getValidImageUrl(url: string | null | undefined, fallbackName: s
     if (cleanName.includes(key) || key.includes(cleanName)) {
       return image;
     }
-  }
-
-  // Check Category fallbacks
-  const cleanCat = (category || '').toLowerCase().trim();
-  if (cleanCat && CATEGORY_FALLBACKS[cleanCat]) {
-    return CATEGORY_FALLBACKS[cleanCat];
   }
 
   // If provided URL is a valid non-unsplash http URL, use it

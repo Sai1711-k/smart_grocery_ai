@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, ChevronRight, Tag, Zap, Gift } from 'lucide-react';
 import { useCart, useAuth } from '@/lib/providers';
-import { getValidImageUrl } from '@/lib/utils';
+import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
 import { StockAlertBell } from './stock-alerts';
 
 interface Product {
@@ -367,9 +367,11 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={getValidImageUrl(product.image_url, product.name, product.category)}
-                      alt={product.name}
+                      alt=""
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = getValidImageUrl(null, product.name, product.category);
+                        const target = e.currentTarget;
+                        target.onerror = null;
+                        target.src = generateFoodSvgDataUri(product.name, product.category);
                       }}
                       className="object-cover w-full h-full rounded-2xl transition-transform duration-500 group-hover:scale-105"
                     />

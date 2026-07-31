@@ -454,56 +454,71 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
         )}
 
         {/* CANCELLED STATUS BANNER */}
-        {orderStatus === 'cancelled' && (
-          <div className="p-5 rounded-3xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300">
-            <h3 className="font-extrabold text-base mb-1">❌ Order Cancelled</h3>
-            <p className="text-xs">Your order has been cancelled. 100% refund of ₹{order.total_amount} has been initiated to your payment account.</p>
+        {orderStatus === 'cancelled' ? (
+          <div className="p-6 rounded-3xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/80 text-rose-800 dark:text-rose-200 shadow-sm space-y-3">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">❌</span>
+              <h3 className="font-extrabold text-base">Order Cancelled Successfully</h3>
+            </div>
+            <p className="text-xs font-medium leading-relaxed">
+              Your order <strong className="font-bold">{order.order_number}</strong> has been cancelled. A 100% refund of <strong className="font-extrabold text-rose-900 dark:text-rose-100">₹{order.total_amount || (order as any).total || 0}</strong> will be credited to your payment account within 24 hours.
+            </p>
+            <div className="pt-2">
+              <button 
+                onClick={() => { if (onNavigate) onNavigate('home'); else onBack(); }}
+                className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-colors"
+              >
+                Back to Shopping
+              </button>
+            </div>
           </div>
+        ) : (
+          <>
+            {/* Order Header */}
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+              <div>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Order ID</p>
+                <p className="font-bold text-neutral-900 dark:text-white">{order.order_number}</p>
+              </div>
+              <button className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-xl">
+                <Download size={16} /> Invoice
+              </button>
+            </div>
+
+            {/* Interactive Live Google Maps Tracking */}
+            <div className="bg-slate-900 rounded-3xl h-64 relative overflow-hidden shadow-xl border border-slate-800">
+              <iframe
+                title="Real Live Google Map Tracking"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                src={`https://maps.google.com/maps?q=${coords ? `${coords.lat},${coords.lng}` : '12.9716,77.5946'}&z=15&output=embed`}
+                className="w-full h-full object-cover"
+              />
+
+              {/* Animated GPS Live Driver Pulse Overlay */}
+              <div 
+                className="absolute z-10 transition-all duration-1000 ease-in-out w-11 h-11 bg-gradient-to-tr from-emerald-600 to-teal-500 text-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-emerald-400/50"
+                style={{ left: `${Math.min(85, Math.max(15, driverProgress))}%`, top: `${Math.min(75, Math.max(20, 75 - driverProgress * 0.5))}%` }}
+              >
+                <Truck size={22} className="animate-pulse" />
+              </div>
+
+              {/* Store Pin */}
+              <div className="absolute top-[25%] right-[20%] z-10 w-9 h-9 bg-white text-emerald-600 rounded-full flex items-center justify-center shadow-lg border-2 border-emerald-500">
+                <MapPin size={18} className="text-emerald-600" />
+              </div>
+
+              {/* ETA Badge Overlay */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
+                {etaText}
+              </div>
+            </div>
+          </>
         )}
-
-        {/* Order Header */}
-        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
-          <div>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Order ID</p>
-            <p className="font-bold text-neutral-900 dark:text-white">{order.order_number}</p>
-          </div>
-          <button className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-xl">
-            <Download size={16} /> Invoice
-          </button>
-        </div>
-
-        {/* Interactive Live Google Maps Tracking */}
-        <div className="bg-slate-900 rounded-3xl h-64 relative overflow-hidden shadow-xl border border-slate-800">
-          <iframe
-            title="Real Live Google Map Tracking"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            loading="lazy"
-            allowFullScreen
-            src={`https://maps.google.com/maps?q=${coords ? `${coords.lat},${coords.lng}` : '12.9716,77.5946'}&z=15&output=embed`}
-            className="w-full h-full object-cover"
-          />
-
-          {/* Animated GPS Live Driver Pulse Overlay */}
-          <div 
-            className="absolute z-10 transition-all duration-1000 ease-in-out w-11 h-11 bg-gradient-to-tr from-emerald-600 to-teal-500 text-white rounded-full flex items-center justify-center shadow-2xl ring-4 ring-emerald-400/50"
-            style={{ left: `${Math.min(85, Math.max(15, driverProgress))}%`, top: `${Math.min(75, Math.max(20, 75 - driverProgress * 0.5))}%` }}
-          >
-            <Truck size={22} className="animate-pulse" />
-          </div>
-
-          {/* Store Pin */}
-          <div className="absolute top-[25%] right-[20%] z-10 w-9 h-9 bg-white text-emerald-600 rounded-full flex items-center justify-center shadow-lg border-2 border-emerald-500">
-            <MapPin size={18} className="text-emerald-600" />
-          </div>
-
-          {/* ETA Badge Overlay */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-2.5 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
-            {etaText}
-          </div>
-        </div>
 
         {/* Route Details */}
         <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-3">
