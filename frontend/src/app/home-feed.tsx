@@ -370,8 +370,13 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                       alt=""
                       onError={(e) => {
                         const target = e.currentTarget;
-                        target.onerror = null;
-                        target.src = generateFoodSvgDataUri(product.name, product.category);
+                        if (!target.getAttribute('data-retried')) {
+                          target.setAttribute('data-retried', 'true');
+                          target.src = target.src;
+                        } else {
+                          target.onerror = null;
+                          target.src = generateFoodSvgDataUri(product.name, product.category);
+                        }
                       }}
                       className="object-cover w-full h-full rounded-2xl transition-transform duration-500 group-hover:scale-105"
                     />

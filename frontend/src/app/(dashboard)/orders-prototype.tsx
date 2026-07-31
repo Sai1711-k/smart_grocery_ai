@@ -533,7 +533,16 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                           <img 
                             src={getValidImageUrl(item.image_url, itemName, item.category)} 
                             alt="" 
-                            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = generateFoodSvgDataUri(itemName, item.category); }}
+                            onError={(e) => {
+                              const t = e.currentTarget;
+                              if (!t.getAttribute('data-retried')) {
+                                t.setAttribute('data-retried', 'true');
+                                t.src = t.src;
+                              } else {
+                                t.onerror = null;
+                                t.src = generateFoodSvgDataUri(itemName, item.category);
+                              }
+                            }}
                             className="w-10 h-10 rounded-xl object-cover" 
                           />
                           <div>
@@ -638,36 +647,34 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                 </button>
               </div>
             </div>
+            {/* Delivery Status Timeline */}
+            <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Delivery Status</h2>
+            <div className="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 pl-8">
+              <div className="relative">
+                <div className="absolute left-6 top-6 bottom-6 w-1 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
+                <div className="absolute left-6 top-6 w-1 bg-emerald-600 rounded-full transition-all duration-1000" style={{ height: `${(currentIndex / (steps.length - 1)) * 100}%` }}></div>
+                
+                <div className="space-y-8 relative z-10">
+                  {steps.map((step, idx) => {
+                    const isCompleted = idx <= currentIndex;
+                    const Icon = icons[idx];
+                    return (
+                      <div key={step} className="flex gap-6 items-center">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-4 transition-colors duration-500 ${isCompleted ? 'bg-emerald-600 border-emerald-100 dark:border-emerald-900 text-white' : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 text-neutral-400'}`}>
+                          <Icon size={20} />
+                        </div>
+                        <div>
+                          <h3 className={`font-bold text-sm ${isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>{labels[step]}</h3>
+                          <p className="text-xs text-neutral-400 mt-1">{isCompleted ? new Date(order.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--'}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </>
         )}
-
-        <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Delivery Status</h2>
-        
-        {/* Timeline */}
-        <div className="bg-white dark:bg-neutral-900 p-6 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 pl-8">
-          <div className="relative">
-            <div className="absolute left-6 top-6 bottom-6 w-1 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
-            <div className="absolute left-6 top-6 w-1 bg-emerald-600 rounded-full transition-all duration-1000" style={{ height: `${(currentIndex / (steps.length - 1)) * 100}%` }}></div>
-            
-            <div className="space-y-8 relative z-10">
-              {steps.map((step, idx) => {
-                const isCompleted = idx <= currentIndex;
-                const Icon = icons[idx];
-                return (
-                  <div key={step} className="flex gap-6 items-center">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-4 transition-colors duration-500 ${isCompleted ? 'bg-emerald-600 border-emerald-100 dark:border-emerald-900 text-white' : 'bg-white dark:bg-neutral-800 border-neutral-100 dark:border-neutral-700 text-neutral-400'}`}>
-                      <Icon size={20} />
-                    </div>
-                    <div>
-                      <h3 className={`font-bold text-sm ${isCompleted ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}`}>{labels[step]}</h3>
-                      <p className="text-xs text-neutral-400 mt-1">{isCompleted ? new Date(order.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--'}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* CANCELLATION CONFIRMATION MODAL */}
