@@ -296,51 +296,139 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
     return <OrderTrackingView order={selectedOrder} onBack={() => { setSelectedOrder(null); if (onBack) onBack(); }} onNavigate={onNavigate} />;
   }
 
+  const activeOrders = orders.filter(o => o.status !== 'cancelled' && o.status !== 'delivered');
+  const historyOrders = orders.filter(o => o.status === 'cancelled' || o.status === 'delivered');
+
+  const handleClearHistoryItem = (orderId: string) => {
+    try {
+      const updated = orders.filter(o => o.id !== orderId && o.order_number !== orderId);
+      setOrders(updated);
+      localStorage.setItem('grocery_orders', JSON.stringify(updated));
+    } catch (e) {}
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 px-6 py-8">
-      <h1 className="text-2xl font-black text-neutral-900 mb-6">My Orders</h1>
+    <div className="flex flex-col min-h-screen bg-neutral-50 dark:bg-neutral-950 px-6 py-8">
+      <h1 className="text-2xl font-black text-neutral-900 dark:text-white mb-6">My Orders & History</h1>
+      
       {loading ? (
         <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
-      ) : orders.length === 0 ? (
-        <div className="text-center py-20 text-neutral-400">No orders yet</div>
       ) : (
-        <div className="space-y-4">
-          {orders.map(order => {
-            const isCancelled = order.status === 'cancelled';
-            const orderTotal = Number(
-              order.total_amount || 
-              (order as any).totalAmount || 
-              (order as any).total || 
-              (order.items || []).reduce((sum, item) => sum + ((item.price || item.unit_price || 0) * item.quantity), 0)
-            ) || 340;
-            return (
-              <div key={order.id} onClick={() => handleSelect(order)} className="bg-white p-5 rounded-3xl shadow-sm border border-neutral-100 cursor-pointer active:scale-[0.98] transition">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 ${isCancelled ? 'bg-rose-100 text-rose-600' : 'bg-primary-light text-primary'} rounded-full flex items-center justify-center`}><Package size={20} /></div>
-                    <div>
-                      <h3 className="font-bold text-neutral-900 text-sm">{order.order_number}</h3>
-                      <p className="text-xs text-neutral-500">{new Date(order.created_at).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                  <span className={`font-black ${isCancelled ? 'text-rose-600 line-through' : 'text-primary'}`}>₹{orderTotal}</span>
-                </div>
-                <div className="flex flex-col gap-1 pt-4 border-t border-neutral-50">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${isCancelled ? 'bg-rose-500' : order.status === 'delivered' ? 'bg-primary' : 'bg-orange-500'}`}></div>
-                    <span className={`text-xs font-extrabold uppercase tracking-wider ${isCancelled ? 'text-rose-600' : 'text-neutral-600'}`}>
-                      {isCancelled ? 'CANCELLED' : order.status}
-                    </span>
-                  </div>
-                  {isCancelled && (
-                    <p className="text-[11px] font-semibold text-rose-500 pl-4">
-                      100% refund of ₹{orderTotal} will be credited to your account within 24 hours.
-                    </p>
-                  )}
-                </div>
+        <div className="space-y-6 max-w-md mx-auto w-full">
+          {/* SECTION 1: ACTIVE PLACED ORDERS */}
+          <div>
+            <h2 className="text-xs font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Active Orders</h2>
+            {activeOrders.length === 0 ? (
+              <div className="p-6 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 text-center text-neutral-400 dark:text-neutral-500 font-bold text-sm">
+                No active orders placed
               </div>
-            );
-          })}
+            ) : (
+              <div className="space-y-3">
+                {activeOrders.map(order => {
+                  const orderTotal = Number(
+                    order.total_amount || 
+                    (order as any).totalAmount || 
+                    (order as any).total || 
+                    (order.items || []).reduce((sum, item) => sum + ((item.price || item.unit_price || 0) * item.quantity), 0)
+                  ) || 340;
+                  return (
+                    <div key={order.id} onClick={() => handleSelect(order)} className="bg-white dark:bg-neutral-900 p-5 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 cursor-pointer active:scale-[0.98] transition">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 rounded-full flex items-center justify-center font-bold">
+                            <Package size={18} />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-neutral-900 dark:text-white text-sm">{order.order_number}</h3>
+                            <p className="text-[11px] text-neutral-400">{new Date(order.created_at).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm">₹{orderTotal}</span>
+                      </div>
+                      <div className="flex items-center justify-between pt-3 border-t border-neutral-100 dark:border-neutral-800">
+                        <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-extrabold rounded-full uppercase">
+                          {order.status}
+                        </span>
+                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Track Order →</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* SECTION 2: ORDER HISTORY (DELIVERED & CANCELLED) */}
+          <div>
+            <h2 className="text-xs font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-3">Order History & Refunds</h2>
+            {historyOrders.length === 0 ? (
+              <div className="p-6 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 text-center text-neutral-400 dark:text-neutral-500 font-bold text-sm">
+                No past order history
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {historyOrders.map(order => {
+                  const isCancelled = order.status === 'cancelled';
+                  const payMethod = order.payment_method || (order as any).paymentMethod || 'Online Payment';
+                  const isCOD = payMethod.toLowerCase().includes('cash') || payMethod.toLowerCase().includes('cod');
+                  const orderTotal = Number(
+                    order.total_amount || 
+                    (order as any).totalAmount || 
+                    (order as any).total || 
+                    (order.items || []).reduce((sum, item) => sum + ((item.price || item.unit_price || 0) * item.quantity), 0)
+                  ) || 340;
+
+                  return (
+                    <div key={order.id} className="bg-white dark:bg-neutral-900 p-5 rounded-3xl shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 ${isCancelled ? 'bg-rose-100 dark:bg-rose-900/40 text-rose-600' : 'bg-emerald-100 text-emerald-600'} rounded-full flex items-center justify-center font-bold`}>
+                            {isCancelled ? '❌' : '✓'}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-neutral-900 dark:text-white text-sm">{order.order_number}</h3>
+                            <p className="text-[11px] text-neutral-400">{new Date(order.created_at).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <span className={`font-black text-sm ${isCancelled ? 'text-rose-600 line-through' : 'text-neutral-900 dark:text-white'}`}>₹{orderTotal}</span>
+                      </div>
+
+                      {/* Refund notice according to payment method */}
+                      {isCancelled ? (
+                        <div className="p-3 bg-rose-50 dark:bg-rose-950/40 rounded-2xl border border-rose-100 dark:border-rose-900/40 text-xs text-rose-700 dark:text-rose-300 space-y-1">
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="uppercase text-[10px] tracking-wider text-rose-800 dark:text-rose-200">Cancelled Order</span>
+                            <span className="text-[10px] text-rose-500 font-normal">Method: {payMethod}</span>
+                          </div>
+                          <p className="leading-relaxed">
+                            {isCOD ? (
+                              <span>Paid via <strong>Cash on Delivery</strong> (No refund applicable).</span>
+                            ) : (
+                              <span>100% refund of <strong>₹{orderTotal}</strong> initiated to <strong>{payMethod}</strong> (credited within 24 hours).</span>
+                            )}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl text-xs text-emerald-700 dark:text-emerald-300 font-medium">
+                          Delivered Successfully • Paid via {payMethod}
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                        <span className="text-[11px] text-neutral-400">{(order.items || []).length} Items</span>
+                        <button 
+                          onClick={() => handleClearHistoryItem(order.id)} 
+                          className="text-xs font-bold text-neutral-400 hover:text-rose-500 transition-colors"
+                        >
+                          Remove from History
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -490,79 +578,22 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
           </div>
         )}
 
-        {/* CANCELLED STATUS DEDICATED VIEW */}
+        {/* CANCELLED STATUS VIEW – Redirect to Order History */}
         {orderStatus === 'cancelled' ? (
-          <div className="space-y-6">
-            {/* Beautiful Cancelled Header Card */}
-            <div className="p-6 rounded-3xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/80 text-rose-800 dark:text-rose-200 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 rounded-full flex items-center justify-center font-black text-xl">
-                    ❌
-                  </div>
-                  <div>
-                    <h3 className="font-black text-lg text-rose-900 dark:text-rose-100">Order Cancelled Successfully</h3>
-                    <p className="text-xs font-bold text-rose-600 dark:text-rose-400">Order ID: {order.order_number}</p>
-                  </div>
-                </div>
-                <span className="px-3 py-1 bg-rose-200/60 dark:bg-rose-900/80 text-rose-800 dark:text-rose-200 text-xs font-extrabold rounded-full uppercase tracking-wider">
-                  Cancelled
-                </span>
-              </div>
-
-              <div className="p-4 bg-white/80 dark:bg-rose-900/20 rounded-2xl border border-rose-100 dark:border-rose-800/40 space-y-1">
-                <p className="text-xs font-bold text-rose-900 dark:text-rose-100">100% Instant Refund Initiated</p>
-                <p className="text-xs text-rose-700 dark:text-rose-300 leading-relaxed">
-                  Your order <strong className="font-bold">{order.order_number}</strong> has been cancelled. A 100% refund of <strong className="font-extrabold text-rose-950 dark:text-white">₹{order.total_amount || (order as any).totalAmount || (order as any).total || (order.items || []).reduce((s, i) => s + ((i.price || i.unit_price || 0) * i.quantity), 0) || 340}</strong> will be credited to your payment account within 24 hours.
-                </p>
-              </div>
-
-              <button 
-                onClick={() => { if (onNavigate) onNavigate('home'); else onBack(); }}
-                className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-2xl shadow-md transition-all active:scale-[0.98]"
-              >
-                Back to Shopping
-              </button>
+          <div className="p-6 bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-100 dark:border-neutral-800 text-center space-y-4">
+            <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/40 text-rose-600 rounded-full flex items-center justify-center font-bold text-xl mx-auto">
+              ❌
             </div>
-
-            {/* Order Items Summary */}
-            {order.items && order.items.length > 0 && (
-              <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-4">
-                <h3 className="font-extrabold text-sm text-neutral-900 dark:text-white uppercase tracking-wider">Cancelled Order Items</h3>
-                <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                  {order.items.map((item, idx) => {
-                    const itemName = item.name || item.product_name || 'Grocery Item';
-                    const itemPrice = item.price || item.unit_price || 0;
-                    return (
-                      <div key={idx} className="py-3 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <img 
-                            src={getValidImageUrl(item.image_url, itemName, item.category)} 
-                            alt="" 
-                            onError={(e) => {
-                              const t = e.currentTarget;
-                              if (!t.getAttribute('data-retried')) {
-                                t.setAttribute('data-retried', 'true');
-                                t.src = t.src;
-                              } else {
-                                t.onerror = null;
-                                t.src = generateFoodSvgDataUri(itemName, item.category);
-                              }
-                            }}
-                            className="w-10 h-10 rounded-xl object-cover" 
-                          />
-                          <div>
-                            <p className="font-bold text-xs text-neutral-900 dark:text-white">{itemName}</p>
-                            <p className="text-[11px] text-neutral-500">Qty: {item.quantity}</p>
-                          </div>
-                        </div>
-                        <span className="font-bold text-xs text-neutral-700 dark:text-neutral-300">₹{itemPrice * item.quantity}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            <div>
+              <h3 className="font-extrabold text-neutral-900 dark:text-white text-base">Order {order.order_number} Cancelled</h3>
+              <p className="text-xs text-neutral-500 mt-1">This order has been moved to your Order History.</p>
+            </div>
+            <button
+              onClick={onBack}
+              className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-2xl shadow-md transition-all"
+            >
+              View My Orders & History →
+            </button>
           </div>
         ) : (
           <>
