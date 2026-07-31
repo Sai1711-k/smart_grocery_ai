@@ -151,35 +151,30 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'premium whole cashews 200g': 'https://upload.wikimedia.org/wikipedia/commons/3/36/Cashew_nuts.jpg',
 };
 
-// Fail-safe SVG Food Data URI Generator - Guarantees NO white squares can ever exist!
+// Fail-safe SVG Food Data URI Generator - Matching exact Image 2 Emerald Green Card Design
 export function generateFoodSvgDataUri(name: string, category?: string): string {
   const cleanName = (name || 'Fresh Grocery').toUpperCase();
   const catName = (category || 'FRESH').toUpperCase();
   
-  // Pick vibrant theme color based on category
-  let bgGradient = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
-  let icon = '🥗';
+  // Signature Emerald Green Card Theme from Image 2
+  const bgGradient = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
+  let icon = '🍞';
   
-  if (catName.includes('BAKERY') || cleanName.includes('BREAD') || cleanName.includes('BUN') || cleanName.includes('CAKE') || cleanName.includes('MUFFIN') || cleanName.includes('COOKIE') || cleanName.includes('CROISSANT')) {
-    bgGradient = 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)';
+  if (cleanName.includes('BREAD') || cleanName.includes('BUN') || cleanName.includes('CAKE') || cleanName.includes('MUFFIN') || cleanName.includes('COOKIE') || cleanName.includes('CROISSANT') || catName.includes('BAKERY')) {
     icon = '🍞';
-  } else if (catName.includes('FRUIT') || cleanName.includes('APPLE') || cleanName.includes('MANGO') || cleanName.includes('BANANA') || cleanName.includes('ORANGE') || cleanName.includes('WATERMELON')) {
-    bgGradient = 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)';
+  } else if (cleanName.includes('APPLE') || cleanName.includes('MANGO') || cleanName.includes('BANANA') || cleanName.includes('ORANGE') || cleanName.includes('WATERMELON') || catName.includes('FRUIT')) {
     icon = '🍎';
-  } else if (catName.includes('DAIRY') || cleanName.includes('MILK') || cleanName.includes('CHEESE') || cleanName.includes('PANEER') || cleanName.includes('BUTTER') || cleanName.includes('CURD') || cleanName.includes('YOGURT')) {
-    bgGradient = 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)';
+  } else if (cleanName.includes('TOMATO') || cleanName.includes('POTATO') || cleanName.includes('ONION') || cleanName.includes('CARROT') || cleanName.includes('SPINACH') || cleanName.includes('BROCCOLI') || catName.includes('VEG')) {
+    icon = '🥦';
+  } else if (cleanName.includes('MILK') || cleanName.includes('CHEESE') || cleanName.includes('PANEER') || cleanName.includes('BUTTER') || cleanName.includes('CURD') || cleanName.includes('YOGURT') || catName.includes('DAIRY')) {
     icon = '🧀';
-  } else if (catName.includes('SNACK') || cleanName.includes('CHIPS') || cleanName.includes('BISCUIT') || cleanName.includes('KURKURE') || cleanName.includes('LAYS') || cleanName.includes('OREO')) {
-    bgGradient = 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)';
+  } else if (cleanName.includes('CHIPS') || cleanName.includes('BISCUIT') || cleanName.includes('KURKURE') || cleanName.includes('LAYS') || cleanName.includes('OREO') || catName.includes('SNACK')) {
     icon = '🍪';
-  } else if (catName.includes('BEVERAGE') || cleanName.includes('JUICE') || cleanName.includes('COFFEE') || cleanName.includes('TEA') || cleanName.includes('COCA') || cleanName.includes('RED BULL')) {
-    bgGradient = 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)';
+  } else if (cleanName.includes('JUICE') || cleanName.includes('COFFEE') || cleanName.includes('TEA') || cleanName.includes('COCA') || cleanName.includes('RED BULL') || catName.includes('BEVERAGE')) {
     icon = '🧃';
-  } else if (catName.includes('MEAT') || cleanName.includes('CHICKEN') || cleanName.includes('MUTTON') || cleanName.includes('FISH')) {
-    bgGradient = 'linear-gradient(135deg, #b91c1c 0%, #dc2626 100%)';
+  } else if (cleanName.includes('CHICKEN') || cleanName.includes('MUTTON') || cleanName.includes('FISH') || catName.includes('MEAT')) {
     icon = '🥩';
-  } else if (catName.includes('OIL') || cleanName.includes('GHEE') || cleanName.includes('MUSTARD')) {
-    bgGradient = 'linear-gradient(135deg, #ca8a04 0%, #eab308 100%)';
+  } else if (cleanName.includes('OIL') || cleanName.includes('GHEE') || cleanName.includes('MUSTARD') || catName.includes('OIL')) {
     icon = '🫒';
   }
 
@@ -215,7 +210,7 @@ export function getValidImageUrl(url: string | null | undefined, fallbackName: s
     return url;
   }
 
-  // Fail-safe SVG generator fallback
+  // Fail-safe SVG generator fallback (Matching exact Image 2 Emerald Green Card)
   return generateFoodSvgDataUri(fallbackName, category);
 }
 

@@ -301,24 +301,36 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
         <div className="text-center py-20 text-neutral-400">No orders yet</div>
       ) : (
         <div className="space-y-4">
-          {orders.map(order => (
-            <div key={order.id} onClick={() => handleSelect(order)} className="bg-white p-5 rounded-3xl shadow-sm border border-neutral-100 cursor-pointer active:scale-[0.98] transition">
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary-light text-primary rounded-full flex items-center justify-center"><Package size={20} /></div>
-                  <div>
-                    <h3 className="font-bold text-neutral-900 text-sm">{order.order_number}</h3>
-                    <p className="text-xs text-neutral-500">{new Date(order.created_at).toLocaleDateString()}</p>
+          {orders.map(order => {
+            const isCancelled = order.status === 'cancelled';
+            return (
+              <div key={order.id} onClick={() => handleSelect(order)} className="bg-white p-5 rounded-3xl shadow-sm border border-neutral-100 cursor-pointer active:scale-[0.98] transition">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-12 h-12 ${isCancelled ? 'bg-rose-100 text-rose-600' : 'bg-primary-light text-primary'} rounded-full flex items-center justify-center`}><Package size={20} /></div>
+                    <div>
+                      <h3 className="font-bold text-neutral-900 text-sm">{order.order_number}</h3>
+                      <p className="text-xs text-neutral-500">{new Date(order.created_at).toLocaleDateString()}</p>
+                    </div>
                   </div>
+                  <span className={`font-black ${isCancelled ? 'text-rose-600 line-through' : 'text-primary'}`}>₹{order.total_amount || (order as any).total || 0}</span>
                 </div>
-                <span className="font-black text-primary">₹{order.total_amount}</span>
+                <div className="flex flex-col gap-1 pt-4 border-t border-neutral-50">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isCancelled ? 'bg-rose-500' : order.status === 'delivered' ? 'bg-primary' : 'bg-orange-500'}`}></div>
+                    <span className={`text-xs font-extrabold uppercase tracking-wider ${isCancelled ? 'text-rose-600' : 'text-neutral-600'}`}>
+                      {isCancelled ? 'CANCELLED' : order.status}
+                    </span>
+                  </div>
+                  {isCancelled && (
+                    <p className="text-[11px] font-semibold text-rose-500 pl-4">
+                      100% refund of ₹{order.total_amount || (order as any).total || 0} will be credited to your account within 24 hours.
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 pt-4 border-t border-neutral-50">
-                <div className={`w-2 h-2 rounded-full ${order.status === 'delivered' ? 'bg-primary' : 'bg-orange-500'}`}></div>
-                <span className="text-xs font-bold uppercase tracking-wider text-neutral-600">{order.status}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
@@ -372,9 +384,23 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
   const confirmCancel = async () => {
     setShowCancelModal(false);
     setOrderStatus('cancelled');
+
+    // Save cancellation in local storage array
+    try {
+      const stored = localStorage.getItem('grocery_orders');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const updated = parsed.map((o: Order) => (o.id === order.id || o.order_number === order.order_number) ? { ...o, status: 'cancelled' } : o);
+        localStorage.setItem('grocery_orders', JSON.stringify(updated));
+      }
+    } catch (e) {}
+
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/orders/${order.id}/cancel`, { method: 'POST' });
     } catch (e) {}
+
+    // Immediately exit tracking view and return to My Orders list view
+    onBack();
   };
 
   const mins = Math.floor(secondsRemaining / 60);
