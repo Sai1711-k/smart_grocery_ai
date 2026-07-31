@@ -3,91 +3,108 @@ import { supabaseAdmin } from '@/lib/supabase-server';
 
 const fallbackProducts = [
   // 🍎 Fruits
-  { name: 'Red Delicious Apple', category: 'Fruits', price: 150, image_url: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop' },
-  { name: 'Fresh Robusta Banana', category: 'Fruits', price: 60, image_url: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500&auto=format&fit=crop' },
-  { name: 'Alphonso Mango', category: 'Fruits', price: 200, image_url: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=500&auto=format&fit=crop' },
-  { name: 'Nagpur Oranges', category: 'Fruits', price: 120, image_url: 'https://images.unsplash.com/photo-1557800636-894a64c1696f?w=500&auto=format&fit=crop' },
-  { name: 'Black Seedless Grapes', category: 'Fruits', price: 90, image_url: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=500&auto=format&fit=crop' },
-  { name: 'Fresh Strawberries', category: 'Fruits', price: 250, image_url: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=500&auto=format&fit=crop' },
-  { name: 'Sweet Watermelon', category: 'Fruits', price: 80, image_url: 'https://images.unsplash.com/photo-1587049352847-4d4b1ed74476?w=500&auto=format&fit=crop' },
+  { name: 'Red Delicious Apple', category: 'Fruits', price: 150, image_url: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg' },
+  { name: 'Fresh Robusta Banana', category: 'Fruits', price: 60, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Banana-Single.jpg' },
+  { name: 'Alphonso Mango', category: 'Fruits', price: 200, image_url: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Haden_mango_aa.jpg' },
+  { name: 'Nagpur Oranges', category: 'Fruits', price: 120, image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c4/Orange-Fruit-Pieces.jpg' },
+  { name: 'Black Seedless Grapes', category: 'Fruits', price: 90, image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Kyoho-grape.jpg' },
+  { name: 'Fresh Strawberries', category: 'Fruits', price: 250, image_url: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg' },
+  { name: 'Sweet Watermelon', category: 'Fruits', price: 80, image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/47/Watermelon-slice.jpg' },
 
   // 🥦 Vegetables
-  { name: 'Fresh Hybrid Tomato', category: 'Vegetables', price: 40, image_url: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop' },
-  { name: 'New Crop Potato', category: 'Vegetables', price: 30, image_url: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop' },
-  { name: 'Red Onion', category: 'Vegetables', price: 35, image_url: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500&auto=format&fit=crop' },
-  { name: 'Organic Carrot', category: 'Vegetables', price: 50, image_url: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=500&auto=format&fit=crop' },
-  { name: 'Fresh Spinach Bunch', category: 'Vegetables', price: 20, image_url: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500&auto=format&fit=crop' },
-  { name: 'Green Broccoli', category: 'Vegetables', price: 150, image_url: 'https://images.unsplash.com/photo-1447175008436-08417090ea77?w=500&auto=format&fit=crop' },
-  { name: 'Fresh Cucumber', category: 'Vegetables', price: 30, image_url: 'https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=500&auto=format&fit=crop' },
+  { name: 'Fresh Hybrid Tomato', category: 'Vegetables', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg' },
+  { name: 'New Crop Potato', category: 'Vegetables', price: 30, image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Patatas.jpg' },
+  { name: 'Red Onion', category: 'Vegetables', price: 35, image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/25/Onion_on_White.JPG' },
+  { name: 'Organic Carrot', category: 'Vegetables', price: 50, image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Vegetable-Carrots.jpg' },
+  { name: 'Fresh Spinach Bunch', category: 'Vegetables', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/38/Spinach_leaves.jpg' },
+  { name: 'Green Broccoli', category: 'Vegetables', price: 150, image_url: 'https://upload.wikimedia.org/wikipedia/commons/0/03/Broccoli_and_cross_section_edit.jpg' },
+  { name: 'Fresh Cucumber', category: 'Vegetables', price: 30, image_url: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Cucumbers_anim.gif' },
 
   // 🥛 Dairy
-  { name: 'Full Cream Milk 1L', category: 'Dairy', price: 66, image_url: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=500&auto=format&fit=crop' },
-  { name: 'Amul Salted Butter', category: 'Dairy', price: 55, image_url: 'https://images.unsplash.com/photo-1584278860011-678e36e68948?w=500&auto=format&fit=crop' },
-  { name: 'Amul Processed Cheese Slices', category: 'Dairy', price: 150, image_url: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=500&auto=format&fit=crop' },
-  { name: 'Fresh Malai Paneer 200g', category: 'Dairy', price: 90, image_url: 'https://images.unsplash.com/photo-1631452180519-c014fe946cea?w=500&auto=format&fit=crop' },
-  { name: 'Greek Plain Yogurt', category: 'Dairy', price: 80, image_url: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&auto=format&fit=crop' },
+  { name: 'Full Cream Milk 1L', category: 'Dairy', price: 66, image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Glass_of_Milk_%283367496550%29.jpg' },
+  { name: 'Toned Milk', category: 'Dairy', price: 54, image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Glass_of_Milk_%283367496550%29.jpg' },
+  { name: 'Amul Salted Butter', category: 'Dairy', price: 55, image_url: 'https://upload.wikimedia.org/wikipedia/commons/d/d3/Supreme_piemontesi_butter.jpg' },
+  { name: 'Salted Butter', category: 'Dairy', price: 55, image_url: 'https://upload.wikimedia.org/wikipedia/commons/d/d3/Supreme_piemontesi_butter.jpg' },
+  { name: 'Amul Processed Cheese Slices', category: 'Dairy', price: 150, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Cheddar_cheese_3.jpg' },
+  { name: 'Cheddar Cheese', category: 'Dairy', price: 150, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Cheddar_cheese_3.jpg' },
+  { name: 'Mozzarella Cheese', category: 'Dairy', price: 200, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Cheddar_cheese_3.jpg' },
+  { name: 'Fresh Malai Paneer 200g', category: 'Dairy', price: 90, image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Paneer_cubes.jpg' },
+  { name: 'Paneer 200g', category: 'Dairy', price: 90, image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Paneer_cubes.jpg' },
+  { name: 'Fresh Curd', category: 'Dairy', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Yogurt_in_a_bowl.jpg' },
+  { name: 'Greek Plain Yogurt', category: 'Dairy', price: 80, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Yogurt_in_a_bowl.jpg' },
+  { name: 'Greek Yogurt', category: 'Dairy', price: 80, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Yogurt_in_a_bowl.jpg' },
+  { name: 'Brown Eggs (6 Pack)', category: 'Dairy', price: 60, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Chicken_egg_2009-06-04.jpg' },
 
   // 🍞 Bakery
-  { name: 'Classic White Bread', category: 'Bakery', price: 40, image_url: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&auto=format&fit=crop' },
-  { name: 'Healthy Brown Bread', category: 'Bakery', price: 50, image_url: 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=500&auto=format&fit=crop' },
-  { name: '100% Multigrain Bread', category: 'Bakery', price: 60, image_url: 'https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=500&auto=format&fit=crop' },
-  { name: 'French Butter Croissant', category: 'Bakery', price: 80, image_url: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&auto=format&fit=crop' },
-  { name: 'Rich Chocolate Muffin', category: 'Bakery', price: 60, image_url: 'https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=500&auto=format&fit=crop' },
-  { name: 'Blueberry Muffin', category: 'Bakery', price: 70, image_url: 'https://images.unsplash.com/photo-1598215439218-f79b4ed1cb16?w=500&auto=format&fit=crop' },
+  { name: 'Classic White Bread', category: 'Bakery', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/7/71/Sliced_bread.jpg' },
+  { name: 'White Bread', category: 'Bakery', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/7/71/Sliced_bread.jpg' },
+  { name: 'Healthy Brown Bread', category: 'Bakery', price: 50, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Whole_wheat_bread.jpg' },
+  { name: 'Brown Bread', category: 'Bakery', price: 50, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Whole_wheat_bread.jpg' },
+  { name: '100% Multigrain Bread', category: 'Bakery', price: 60, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Whole_wheat_bread.jpg' },
+  { name: 'Multigrain Bread', category: 'Bakery', price: 60, image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Whole_wheat_bread.jpg' },
+  { name: 'French Butter Croissant', category: 'Bakery', price: 80, image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/28/Croissant_01.jpg' },
+  { name: 'Butter Croissant', category: 'Bakery', price: 80, image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/28/Croissant_01.jpg' },
+  { name: 'Rich Chocolate Muffin', category: 'Bakery', price: 60, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Muffin_chocolate.jpg' },
+  { name: 'Chocolate Muffin', category: 'Bakery', price: 60, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Muffin_chocolate.jpg' },
+  { name: 'Blueberry Muffin', category: 'Bakery', price: 70, image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Blueberry_muffins_cropped.jpg' },
+  { name: 'Burger Buns (4 Pcs)', category: 'Bakery', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Hamburger_bun.jpg' },
+  { name: 'Choco Chip Cookies', category: 'Bakery', price: 50, image_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Chocolate_chip_cookies.jpg' },
+  { name: 'Oatmeal Cookies', category: 'Bakery', price: 45, image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Butter_cookies.jpg' },
+  { name: 'Fruit Cake', category: 'Bakery', price: 90, image_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Jam_biscuits.jpg' },
 
   // 🥩 Meat
-  { name: 'Fresh Chicken Breast 500g', category: 'Meat', price: 280, image_url: 'https://images.unsplash.com/photo-1604871000636-074fa5117945?w=500&auto=format&fit=crop' },
-  { name: 'Chicken Curry Cut 1kg', category: 'Meat', price: 450, image_url: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=500&auto=format&fit=crop' },
-  { name: 'Fresh Mutton Keema 500g', category: 'Meat', price: 650, image_url: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=500&auto=format&fit=crop' },
-  { name: 'Fresh Rohu Fish 1kg', category: 'Meat', price: 300, image_url: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop' },
+  { name: 'Fresh Chicken Breast 500g', category: 'Meat', price: 280, image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Raw_chicken_breast.jpg' },
+  { name: 'Chicken Curry Cut 1kg', category: 'Meat', price: 450, image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Raw_chicken_breast.jpg' },
+  { name: 'Fresh Mutton Keema 500g', category: 'Meat', price: 650, image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Minced_meat.jpg' },
+  { name: 'Fresh Rohu Fish 1kg', category: 'Meat', price: 300, image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8b/Fish_market_fish.jpg' },
 
   // 🫒 Oils & Fats
-  { name: 'Fortune Sunflower Oil 1L', category: 'Oils', price: 140, image_url: 'https://images.unsplash.com/photo-1610725663801-1490960e24d7?w=500&auto=format&fit=crop' },
-  { name: 'Borges Extra Virgin Olive Oil 500ml', category: 'Oils', price: 450, image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop' },
-  { name: 'Dabur Kachi Ghani Mustard Oil 1L', category: 'Oils', price: 160, image_url: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=500&auto=format&fit=crop' },
-  { name: 'Parachute Pure Coconut Oil 500ml', category: 'Oils', price: 200, image_url: 'https://images.unsplash.com/photo-1611078502570-0720b00511de?w=500&auto=format&fit=crop' },
-  { name: 'Pure Cow Ghee 500g', category: 'Oils', price: 350, image_url: 'https://images.unsplash.com/photo-1630145265430-6b6a032dc1df?w=500&auto=format&fit=crop' },
+  { name: 'Fortune Sunflower Oil 1L', category: 'Oils', price: 140, image_url: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Sunflower_oil_and_sunflower.jpg' },
+  { name: 'Borges Extra Virgin Olive Oil 500ml', category: 'Oils', price: 450, image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Olive_oil_bottle.jpg' },
+  { name: 'Dabur Kachi Ghani Mustard Oil 1L', category: 'Oils', price: 160, image_url: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Sunflower_oil_and_sunflower.jpg' },
+  { name: 'Parachute Pure Coconut Oil 500ml', category: 'Oils', price: 200, image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c4/Coconut_oil.jpg' },
+  { name: 'Pure Cow Ghee 500g', category: 'Oils', price: 350, image_url: 'https://upload.wikimedia.org/wikipedia/commons/9/91/Ghee_in_a_jar.jpg' },
 
   // 🍚 Grains & Rice
-  { name: 'India Gate Basmati Rice 1kg', category: 'Grains', price: 120, image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e8ac?w=500&auto=format&fit=crop' },
-  { name: 'Sona Masoori Rice 5kg', category: 'Grains', price: 300, image_url: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=500&auto=format&fit=crop' },
-  { name: 'Aashirvaad Shudh Chakki Atta 5kg', category: 'Grains', price: 220, image_url: 'https://images.unsplash.com/photo-1508338712271-40539c95ae47?w=500&auto=format&fit=crop' },
-  { name: 'Tata Sampann Toor Dal 1kg', category: 'Grains', price: 160, image_url: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=500&auto=format&fit=crop' },
+  { name: 'India Gate Basmati Rice 1kg', category: 'Grains', price: 120, image_url: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Basmati_Rice_raw.jpg' },
+  { name: 'Sona Masoori Rice 5kg', category: 'Grains', price: 300, image_url: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Basmati_Rice_raw.jpg' },
+  { name: 'Aashirvaad Shudh Chakki Atta 5kg', category: 'Grains', price: 220, image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Wheat_flour.jpg' },
+  { name: 'Tata Sampann Toor Dal 1kg', category: 'Grains', price: 160, image_url: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Toor_dal.jpg' },
 
   // ☕ Beverages
-  { name: 'Tropicana 100% Orange Juice 1L', category: 'Beverages', price: 130, image_url: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop' },
-  { name: 'Nescafe Cold Coffee 250ml', category: 'Beverages', price: 65, image_url: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop' },
-  { name: 'Tata Tea Gold 500g', category: 'Beverages', price: 280, image_url: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop' },
-  { name: 'Red Bull Energy Drink 250ml', category: 'Beverages', price: 125, image_url: 'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=500&auto=format&fit=crop' },
-  { name: 'Coca-Cola Original 750ml', category: 'Beverages', price: 45, image_url: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&auto=format&fit=crop' },
-  { name: 'Organic Green Tea 25 Bags', category: 'Beverages', price: 180, image_url: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?w=500&auto=format&fit=crop' },
+  { name: 'Tropicana 100% Orange Juice 1L', category: 'Beverages', price: 130, image_url: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Orange_juice_1.jpg' },
+  { name: 'Nescafe Cold Coffee 250ml', category: 'Beverages', price: 65, image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/45/A_small_cup_of_coffee.JPG' },
+  { name: 'Tata Tea Gold 500g', category: 'Beverages', price: 280, image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Black_tea_cup.jpg' },
+  { name: 'Red Bull Energy Drink 250ml', category: 'Beverages', price: 125, image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Red_Bull_can.jpg' },
+  { name: 'Coca-Cola Original 750ml', category: 'Beverages', price: 45, image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Coca-Cola_Can.jpg' },
+  { name: 'Organic Green Tea 25 Bags', category: 'Beverages', price: 180, image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Black_tea_cup.jpg' },
 
   // 🍪 Snacks & Biscuits
-  { name: 'Kurkure Masala Munch', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=500&auto=format&fit=crop' },
-  { name: 'Kurkure Green Chutney Style', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500&auto=format&fit=crop' },
-  { name: 'Lays Classic Salted Chips', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=500&auto=format&fit=crop' },
-  { name: 'Lays India Magic Masala', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1527842891421-42eec6e703ea?w=500&auto=format&fit=crop' },
-  { name: 'Lays American Style Cream & Onion', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1613919113640-25732ec5e61f?w=500&auto=format&fit=crop' },
-  { name: 'Lays Spanish Tomato Tango', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1566478978921-654b0e8c81ef?w=500&auto=format&fit=crop' },
-  { name: 'Oreo Chocolate Cream Biscuits', category: 'Snacks', price: 40, image_url: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop' },
-  { name: 'Britannia JimJam Biscuits', category: 'Snacks', price: 35, image_url: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=500&auto=format&fit=crop' },
-  { name: 'Parle-G Gold Biscuits', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=500&auto=format&fit=crop' },
-  { name: 'Britannia Good Day Butter Cookies', category: 'Snacks', price: 30, image_url: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&auto=format&fit=crop' },
-  { name: 'Sunfeast Dark Fantasy Choco Fills', category: 'Snacks', price: 50, image_url: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format&fit=crop' },
-  { name: 'Bingo Mad Angles Very Peri Peri', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500&auto=format&fit=crop' },
-  { name: 'Doritos Nacho Cheese Tortilla Chips', category: 'Snacks', price: 30, image_url: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=500&auto=format&fit=crop' },
-  { name: 'Pringles Sour Cream & Onion', category: 'Snacks', price: 110, image_url: 'https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=500&auto=format&fit=crop' },
-  { name: 'Cheetos Cheese Puffs', category: 'Snacks', price: 20, image_url: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?w=500&auto=format&fit=crop' },
-  { name: 'Britannia Bourbon Chocolate Biscuits', category: 'Snacks', price: 30, image_url: 'https://images.unsplash.com/photo-1605807646983-377bc5a76493?w=500&auto=format&fit=crop' },
-  { name: 'Parle Hide & Seek Choco Chip', category: 'Snacks', price: 40, image_url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop' },
-  { name: 'Haldiram Aloo Bhujia 200g', category: 'Snacks', price: 50, image_url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&auto=format&fit=crop' },
-  { name: 'Haldiram Khatta Meetha Mixture', category: 'Snacks', price: 55, image_url: 'https://images.unsplash.com/photo-1601050690187-013098522301?w=500&auto=format&fit=crop' },
-  { name: 'Act II Golden Butter Popcorn', category: 'Snacks', price: 25, image_url: 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=500&auto=format&fit=crop' },
-  { name: 'Snickers Peanut Chocolate Bar', category: 'Snacks', price: 50, image_url: 'https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&auto=format&fit=crop' },
-  { name: 'Cadbury Dairy Milk Silk Chocolate', category: 'Snacks', price: 90, image_url: 'https://images.unsplash.com/photo-1548813293-c906666fc29b?w=500&auto=format&fit=crop' },
-  { name: 'KitKat 4-Finger Chocolate Wafers', category: 'Snacks', price: 40, image_url: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=500&auto=format&fit=crop' },
-  { name: 'Roasted Salted Almonds 200g', category: 'Snacks', price: 220, image_url: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=500&auto=format&fit=crop' },
-  { name: 'Premium Whole Cashews 200g', category: 'Snacks', price: 280, image_url: 'https://images.unsplash.com/photo-1536591375315-198956582373?w=500&auto=format&fit=crop' },
+  { name: 'Kurkure Masala Munch', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Kurkure Green Chutney Style', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Lays Classic Salted Chips', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Lays India Magic Masala', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Lays American Style Cream & Onion', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Lays Spanish Tomato Tango', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Oreo Chocolate Cream Biscuits', category: 'Snacks', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Oreo-Two-Cookies.jpg' },
+  { name: 'Britannia JimJam Biscuits', category: 'Snacks', price: 35, image_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Jam_biscuits.jpg' },
+  { name: 'Parle-G Gold Biscuits', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Butter_cookies.jpg' },
+  { name: 'Britannia Good Day Butter Cookies', category: 'Snacks', price: 30, image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Butter_cookies.jpg' },
+  { name: 'Sunfeast Dark Fantasy Choco Fills', category: 'Snacks', price: 50, image_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Chocolate_chip_cookies.jpg' },
+  { name: 'Bingo Mad Angles Very Peri Peri', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Doritos Nacho Cheese Tortilla Chips', category: 'Snacks', price: 30, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Pringles Sour Cream & Onion', category: 'Snacks', price: 110, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Cheetos Cheese Puffs', category: 'Snacks', price: 20, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Britannia Bourbon Chocolate Biscuits', category: 'Snacks', price: 30, image_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Chocolate_chip_cookies.jpg' },
+  { name: 'Parle Hide & Seek Choco Chip', category: 'Snacks', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/f/f1/Chocolate_chip_cookies.jpg' },
+  { name: 'Haldiram Aloo Bhujia 200g', category: 'Snacks', price: 50, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Haldiram Khatta Meetha Mixture', category: 'Snacks', price: 55, image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { name: 'Act II Golden Butter Popcorn', category: 'Snacks', price: 25, image_url: 'https://upload.wikimedia.org/wikipedia/commons/d/d8/Popcorn_in_bowl.jpg' },
+  { name: 'Snickers Peanut Chocolate Bar', category: 'Snacks', price: 50, image_url: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Snickers_broken.jpg' },
+  { name: 'Cadbury Dairy Milk Silk Chocolate', category: 'Snacks', price: 90, image_url: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Snickers_broken.jpg' },
+  { name: 'KitKat 4-Finger Chocolate Wafers', category: 'Snacks', price: 40, image_url: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Snickers_broken.jpg' },
+  { name: 'Roasted Salted Almonds 200g', category: 'Snacks', price: 220, image_url: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Almonds.jpg' },
+  { name: 'Premium Whole Cashews 200g', category: 'Snacks', price: 280, image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Cashew_nuts.jpg' },
 ];
 
 export async function GET() {
@@ -121,14 +138,11 @@ export async function GET() {
       }));
     }
 
-    // Ensure all 11 categories have products by merging fallbacks for missing categories
-    const existingCategories = new Set(formatted.map((p: any) => (p.category || '').toLowerCase()));
-    
+    // Merge fallback products to guarantee full category coverage and working images
     fallbackProducts.forEach((fp, idx) => {
       const catLower = fp.category.toLowerCase();
-      // If DB has fewer than 2 items for this category or category missing, merge fallback item
-      const categoryCount = formatted.filter((p: any) => (p.category || '').toLowerCase() === catLower).length;
-      if (categoryCount < 3) {
+      const existingName = formatted.find((p: any) => p.name.toLowerCase() === fp.name.toLowerCase());
+      if (!existingName) {
         formatted.push({
           id: `product-item-${idx}-${fp.name.replace(/\s+/g, '-').toLowerCase()}`,
           provider_id: 'freshcart-store',

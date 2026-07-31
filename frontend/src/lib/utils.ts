@@ -182,8 +182,8 @@ export function getValidImageUrl(url: string | null | undefined, fallbackName: s
     return CATEGORY_FALLBACKS[cleanCat];
   }
 
-  // If provided URL is a valid non-placeholder http URL, use it
-  if (url && url.startsWith('http') && !url.includes('loremflickr') && !url.includes('via.placeholder.com')) {
+  // If provided URL is a valid non-placeholder http URL (excluding CORS-blocked unsplash.com), use it
+  if (url && url.startsWith('http') && !url.includes('unsplash.com') && !url.includes('loremflickr') && !url.includes('via.placeholder.com')) {
     return url;
   }
 

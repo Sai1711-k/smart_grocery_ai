@@ -232,32 +232,55 @@ export function OrderHistoryPrototype({ initialOrderId, onBack }: { initialOrder
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
   useEffect(() => {
-    if (!session) return;
-    fetch(`${API_BASE}/orders/history`, {
-      headers: { Authorization: `Bearer ${session.access_token}` }
-    })
-    .then(async res => {
-      if (!res.ok) return null;
-      const ct = res.headers.get('content-type');
-      if (!ct || !ct.includes('application/json')) return null;
-      return res.json();
-    })
-    .then(result => {
-      if (result && result.success) {
-        setOrders(result.data);
-        if (initialOrderId) {
-          const found = result.data.find((o: Order) => o.id === initialOrderId);
-          if (found) {
-            setSelectedOrder(found);
-          } else if (result.data.length > 0) {
-            // Fallback for presentation mock mode or sync delay
-            setSelectedOrder(result.data[0]);
-          }
-        }
+    // 1. Read local orders immediately from localStorage for instant, offline-resilient display
+    let localOrders: Order[] = [];
+    try {
+      const stored = localStorage.getItem('grocery_orders');
+      if (stored) {
+        localOrders = JSON.parse(stored);
+      }
+      const lastOrderStr = localStorage.getItem('grocery_last_order');
+      if (lastOrderStr && localOrders.length === 0) {
+        localOrders = [JSON.parse(lastOrderStr)];
+      }
+    } catch (e) {}
+
+    if (localOrders.length > 0) {
+      setOrders(localOrders);
+      if (initialOrderId) {
+        const found = localOrders.find((o: Order) => o.id === initialOrderId || o.order_number === initialOrderId);
+        setSelectedOrder(found || localOrders[0]);
+      } else {
+        setSelectedOrder(localOrders[0]);
       }
       setLoading(false);
-    })
-    .catch(() => setLoading(false));
+    }
+
+    // 2. Fetch remote orders in background if session available
+    if (session) {
+      fetch(`${API_BASE}/orders/history`, {
+        headers: { Authorization: `Bearer ${session.access_token}` }
+      })
+      .then(async res => {
+        if (!res.ok) return null;
+        const ct = res.headers.get('content-type');
+        if (!ct || !ct.includes('application/json')) return null;
+        return res.json();
+      })
+      .then(result => {
+        if (result && result.success && Array.isArray(result.data) && result.data.length > 0) {
+          setOrders(result.data);
+          if (initialOrderId) {
+            const found = result.data.find((o: Order) => o.id === initialOrderId || o.order_number === initialOrderId);
+            if (found) setSelectedOrder(found);
+          }
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
   }, [session, initialOrderId]);
 
   const handleSelect = (order: Order) => {
