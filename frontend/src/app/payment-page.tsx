@@ -137,20 +137,20 @@ export function PaymentPage({ onBack, onSuccess, totalAmount, deliveryAddress }:
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (session?.access_token) {
+      const isRealJwt = session?.access_token && session.access_token.startsWith('ey');
+      if (isRealJwt) {
         headers['Authorization'] = `Bearer ${session.access_token}`;
-      }
+        const res = await fetch(`${apiUrl}/orders/checkout`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(orderPayload),
+        });
 
-      const res = await fetch(`${apiUrl}/orders/checkout`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(orderPayload),
-      });
-
-      if (res.ok) {
-        const result = await res.json();
-        if (result.success && result.order_id) {
-          finalOrderId = result.order_id;
+        if (res.ok) {
+          const result = await res.json();
+          if (result.success && result.order_id) {
+            finalOrderId = result.order_id;
+          }
         }
       }
     } catch (e: any) {

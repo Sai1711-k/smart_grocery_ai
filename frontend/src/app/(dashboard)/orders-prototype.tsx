@@ -256,8 +256,9 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
       setLoading(false);
     }
 
-    // 2. Fetch remote orders in background if session available
-    if (session) {
+    // 2. Fetch remote orders in background if session available with valid JWT
+    const isRealJwt = session?.access_token && session.access_token.startsWith('ey');
+    if (isRealJwt) {
       fetch(`${API_BASE}/orders/history`, {
         headers: { Authorization: `Bearer ${session.access_token}` }
       })

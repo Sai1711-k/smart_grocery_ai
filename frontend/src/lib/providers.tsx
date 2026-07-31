@@ -201,7 +201,20 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   // Cart Methods
   useEffect(() => {
-    if (session) {
+    // 1. Read local cart first
+    let localCart: CartItem[] = [];
+    try {
+      const stored = localStorage.getItem('grocery_cart');
+      if (stored) localCart = JSON.parse(stored);
+    } catch (e) {}
+
+    if (localCart.length > 0) {
+      setCartItems(localCart);
+    }
+
+    // 2. Fetch remote cart only if session token is a valid JWT from backend/Supabase
+    const isRealJwt = session?.access_token && session.access_token.startsWith('ey');
+    if (isRealJwt) {
       fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
         headers: { Authorization: `Bearer ${session.access_token}` }
       })
@@ -212,46 +225,64 @@ export function AppProviders({ children }: { children: ReactNode }) {
         return r.json();
       })
       .then(d => {
-        if (d && d.success) {
-          // Normalize provider_id: backend may return null, frontend needs string
-          setCartItems((d.data || []).map((item: any) => ({
+        if (d && d.success && Array.isArray(d.data)) {
+          const normalized = d.data.map((item: any) => ({
             ...item,
             provider_id: item.provider_id || '',
-          })));
+          }));
+          setCartItems(normalized);
+          try { localStorage.setItem('grocery_cart', JSON.stringify(normalized)); } catch (e) {}
         }
       })
       .catch(() => {});
-    } else {
-      setCartItems([]);
     }
   }, [session]);
 
+  const saveLocalCart = (items: CartItem[]) => {
+    try { localStorage.setItem('grocery_cart', JSON.stringify(items)); } catch (e) {}
+  };
+
   const addToCart = async (product: Omit<CartItem, 'quantity'>) => {
+    let newItems: CartItem[] = [];
     setCartItems(prev => {
       const existing = prev.find(item => item.id === product.id && item.provider_id === product.provider_id);
       if (existing) {
-        return prev.map(item => (item.id === product.id && item.provider_id === product.provider_id) ? { ...item, quantity: item.quantity + 1 } : item);
+        newItems = prev.map(item => (item.id === product.id && item.provider_id === product.provider_id) ? { ...item, quantity: item.quantity + 1 } : item);
+      } else {
+        newItems = [...prev, { ...product, quantity: 1 }];
       }
-      return [...prev, { ...product, quantity: 1 }];
+      saveLocalCart(newItems);
+      return newItems;
     });
 
-    if (session) {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ product_id: product.id, provider_id: product.provider_id, quantity: (cartItems.find(i => i.id === product.id && i.provider_id === product.provider_id)?.quantity || 0) + 1 })
-      });
+    const isRealJwt = session?.access_token && session.access_token.startsWith('ey');
+    if (isRealJwt) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ product_id: product.id, provider_id: product.provider_id, quantity: (cartItems.find(i => i.id === product.id && i.provider_id === product.provider_id)?.quantity || 0) + 1 })
+        });
+      } catch (e) {}
     }
   };
 
   const removeFromCart = async (id: string, provider_id: string) => {
-    setCartItems(prev => prev.filter(item => !(item.id === id && item.provider_id === provider_id)));
-    if (session) {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ product_id: id, provider_id, quantity: 0 })
-      });
+    setCartItems(prev => {
+      const filtered = prev.filter(item => !(item.id === id && item.provider_id === provider_id));
+      saveLocalCart(filtered);
+      return filtered;
+    });
+
+    const isRealJwt = session?.access_token && session.access_token.startsWith('ey');
+    if (isRealJwt) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ product_id: id, provider_id, quantity: 0 })
+        });
+      } catch (e) {}
     }
   };
 
@@ -259,23 +290,35 @@ export function AppProviders({ children }: { children: ReactNode }) {
     if (quantity <= 0) {
       return removeFromCart(id, provider_id);
     }
-    setCartItems(prev => prev.map(item => (item.id === id && item.provider_id === provider_id) ? { ...item, quantity } : item));
-    if (session) {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ product_id: id, provider_id, quantity })
-      });
+    setCartItems(prev => {
+      const updated = prev.map(item => (item.id === id && item.provider_id === provider_id) ? { ...item, quantity } : item);
+      saveLocalCart(updated);
+      return updated;
+    });
+
+    const isRealJwt = session?.access_token && session.access_token.startsWith('ey');
+    if (isRealJwt) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ product_id: id, provider_id, quantity })
+        });
+      } catch (e) {}
     }
   };
 
   const clearCart = async () => {
     setCartItems([]);
-    if (session) {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
+    saveLocalCart([]);
+    const isRealJwt = session?.access_token && session.access_token.startsWith('ey');
+    if (isRealJwt) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cart`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+      } catch (e) {}
     }
   };
 
