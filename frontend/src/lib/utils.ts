@@ -136,19 +136,25 @@ export function generateFoodSvgDataUri(name: string, category?: string): string 
 export function getValidImageUrl(url: string | null | undefined, fallbackName: string, category?: string): string {
   const cleanName = (fallbackName || '').toLowerCase().trim();
 
-  // Fuzzy keyword matching against EXACT_ITEM_IMAGES
-  for (const [key, image] of Object.entries(EXACT_ITEM_IMAGES)) {
-    if (cleanName.includes(key) || key.includes(cleanName)) {
+  // 1. Explicit Snack / Chips Override (Prevents 'Lays Cream & Onion' from matching 'onion' image & 'Lays Tomato' from matching 'tomato' image)
+  if (cleanName.includes('lays') || cleanName.includes('chips') || cleanName.includes('kurkure') || cleanName.includes('wafer') || cleanName.includes('doritos') || cleanName.includes('pringles')) {
+    return 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg';
+  }
+
+  // 2. Longer multi-word key matching against EXACT_ITEM_IMAGES (Longest keys checked first)
+  const sortedEntries = Object.entries(EXACT_ITEM_IMAGES).sort((a, b) => b[0].length - a[0].length);
+  for (const [key, image] of sortedEntries) {
+    if (cleanName.includes(key)) {
       return image;
     }
   }
 
-  // If provided URL is a valid non-unsplash http URL, use it
+  // 3. If provided URL is a valid non-unsplash http URL, use it
   if (url && url.startsWith('http') && !url.includes('unsplash.com') && !url.includes('loremflickr') && !url.includes('via.placeholder.com')) {
     return url;
   }
 
-  // Fail-safe SVG generator fallback (Matching exact Image 2 Emerald Green Card)
+  // 4. Fail-safe SVG generator fallback (Matching Emerald Green Card)
   return generateFoodSvgDataUri(fallbackName, category);
 }
 

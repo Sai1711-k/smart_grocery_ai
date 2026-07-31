@@ -37,6 +37,8 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
   const [isLoadingAI, setIsLoadingAI] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     // Generate immediate local items so user is NEVER stuck loading
     const localItems = AI_DATABASE.filter(item => {
       if (diets.includes('balanced')) return true;
@@ -49,11 +51,12 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
     setRecommendedItems(localItems);
     setIsLoadingAI(false);
 
-    // Background call to API
+    // Background call to API with signal
     fetch('/api/ai/recommend', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ diets, familySize, monthlyBudget })
+      body: JSON.stringify({ diets, familySize, monthlyBudget }),
+      signal: controller.signal
     })
       .then(res => res.json())
       .then(json => {
@@ -62,6 +65,10 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
         }
       })
       .catch(() => {});
+
+    return () => {
+      controller.abort();
+    };
   }, [diets, familySize, monthlyBudget]);
 
   const totalCost = recommendedItems.reduce((acc, item) => acc + (item.price * item.recommendedQty), 0);
@@ -176,13 +183,8 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
                   alt="" 
                   onError={(e) => {
                     const t = e.currentTarget;
-                    if (!t.getAttribute('data-retried')) {
-                      t.setAttribute('data-retried', 'true');
-                      t.src = t.src;
-                    } else {
-                      t.onerror = null;
-                      t.src = generateFoodSvgDataUri(item.name, item.category);
-                    }
+                    t.onerror = null;
+                    t.src = generateFoodSvgDataUri(item.name, item.category);
                   }}
                   className="w-14 h-14 rounded-xl object-cover border border-neutral-100 shrink-0" 
                 />
