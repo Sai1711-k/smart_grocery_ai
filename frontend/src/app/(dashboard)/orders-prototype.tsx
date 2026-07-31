@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, MapPin, CreditCard, CheckCircle, Package, Truck, Box, FileText, Download } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { useCart, useAuth } from '@/lib/providers';
-import { getValidImageUrl } from '@/lib/utils';
+import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
 
 // ============================================
 // Shared Types
@@ -12,10 +12,14 @@ import { getValidImageUrl } from '@/lib/utils';
 
 interface OrderItem {
   id?: string;
-  product_name: string;
+  name?: string;
+  product_name?: string;
   quantity: number;
-  unit_price: number;
-  total_price: number;
+  price?: number;
+  unit_price?: number;
+  total_price?: number;
+  image_url?: string;
+  category?: string;
 }
 
 interface Order {
@@ -480,24 +484,70 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
           </div>
         )}
 
-        {/* CANCELLED STATUS BANNER */}
+        {/* CANCELLED STATUS DEDICATED VIEW */}
         {orderStatus === 'cancelled' ? (
-          <div className="p-6 rounded-3xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/80 text-rose-800 dark:text-rose-200 shadow-sm space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">❌</span>
-              <h3 className="font-extrabold text-base">Order Cancelled Successfully</h3>
-            </div>
-            <p className="text-xs font-medium leading-relaxed">
-              Your order <strong className="font-bold">{order.order_number}</strong> has been cancelled. A 100% refund of <strong className="font-extrabold text-rose-900 dark:text-rose-100">₹{order.total_amount || (order as any).total || 0}</strong> will be credited to your payment account within 24 hours.
-            </p>
-            <div className="pt-2">
+          <div className="space-y-6">
+            {/* Beautiful Cancelled Header Card */}
+            <div className="p-6 rounded-3xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/80 text-rose-800 dark:text-rose-200 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 rounded-full flex items-center justify-center font-black text-xl">
+                    ❌
+                  </div>
+                  <div>
+                    <h3 className="font-black text-lg text-rose-900 dark:text-rose-100">Order Cancelled Successfully</h3>
+                    <p className="text-xs font-bold text-rose-600 dark:text-rose-400">Order ID: {order.order_number}</p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 bg-rose-200/60 dark:bg-rose-900/80 text-rose-800 dark:text-rose-200 text-xs font-extrabold rounded-full uppercase tracking-wider">
+                  Cancelled
+                </span>
+              </div>
+
+              <div className="p-4 bg-white/80 dark:bg-rose-900/20 rounded-2xl border border-rose-100 dark:border-rose-800/40 space-y-1">
+                <p className="text-xs font-bold text-rose-900 dark:text-rose-100">100% Instant Refund Initiated</p>
+                <p className="text-xs text-rose-700 dark:text-rose-300 leading-relaxed">
+                  Your order <strong className="font-bold">{order.order_number}</strong> has been cancelled. A 100% refund of <strong className="font-extrabold text-rose-950 dark:text-white">₹{order.total_amount || (order as any).total || (order.items || []).reduce((s, i) => s + ((i.price || i.unit_price || 0) * i.quantity), 0) || 0}</strong> will be credited to your payment account within 24 hours.
+                </p>
+              </div>
+
               <button 
                 onClick={() => { if (onNavigate) onNavigate('home'); else onBack(); }}
-                className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-colors"
+                className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm rounded-2xl shadow-md transition-all active:scale-[0.98]"
               >
                 Back to Shopping
               </button>
             </div>
+
+            {/* Order Items Summary */}
+            {order.items && order.items.length > 0 && (
+              <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-4">
+                <h3 className="font-extrabold text-sm text-neutral-900 dark:text-white uppercase tracking-wider">Cancelled Order Items</h3>
+                <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                  {order.items.map((item, idx) => {
+                    const itemName = item.name || item.product_name || 'Grocery Item';
+                    const itemPrice = item.price || item.unit_price || 0;
+                    return (
+                      <div key={idx} className="py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={getValidImageUrl(item.image_url, itemName, item.category)} 
+                            alt="" 
+                            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = generateFoodSvgDataUri(itemName, item.category); }}
+                            className="w-10 h-10 rounded-xl object-cover" 
+                          />
+                          <div>
+                            <p className="font-bold text-xs text-neutral-900 dark:text-white">{itemName}</p>
+                            <p className="text-[11px] text-neutral-500">Qty: {item.quantity}</p>
+                          </div>
+                        </div>
+                        <span className="font-bold text-xs text-neutral-700 dark:text-neutral-300">₹{itemPrice * item.quantity}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <>
@@ -544,52 +594,52 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                 {etaText}
               </div>
             </div>
+
+            {/* Route Details */}
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 flex items-center justify-center shrink-0"><Box size={14} /></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">From Hub</p>
+                  <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">FreshCart Super Hub #104</p>
+                </div>
+              </div>
+              <div className="ml-4 border-l-2 border-dashed border-neutral-200 dark:border-neutral-700 h-4 my-1"></div>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center shrink-0"><MapPin size={14} /></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">Delivery To</p>
+                  <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">{order.delivery_address}</p>
+                </div>
+              </div>
+              <div className="pt-3 mt-3 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+                <span className="text-sm font-bold text-neutral-600 dark:text-neutral-400">Expected Arrival</span>
+                <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{arrivalTimeStr}</span>
+              </div>
+            </div>
+
+            {/* Driver Details */}
+            <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-neutral-200 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm">
+                  <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200&q=80" alt="Driver" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-neutral-900 dark:text-white text-sm">Rahul Sharma</h3>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-0.5"><span className="text-amber-400 font-black">★ 4.9</span> (2.4k deliveries)</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => alert('Opening live chat with delivery agent Rahul...')} className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
+                  <span className="text-lg">💬</span>
+                </button>
+                <button onClick={() => alert('Calling delivery agent Rahul Sharma at +91 98765 43210')} className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30">
+                  <span className="text-lg">📞</span>
+                </button>
+              </div>
+            </div>
           </>
         )}
-
-        {/* Route Details */}
-        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 flex items-center justify-center shrink-0"><Box size={14} /></div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">From Hub</p>
-              <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">FreshCart Super Hub #104</p>
-            </div>
-          </div>
-          <div className="ml-4 border-l-2 border-dashed border-neutral-200 dark:border-neutral-700 h-4 my-1"></div>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center shrink-0"><MapPin size={14} /></div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">Delivery To</p>
-              <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">{order.delivery_address}</p>
-            </div>
-          </div>
-          <div className="pt-3 mt-3 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
-            <span className="text-sm font-bold text-neutral-600 dark:text-neutral-400">Expected Arrival</span>
-            <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">{arrivalTimeStr}</span>
-          </div>
-        </div>
-
-        {/* Driver Details */}
-        <div className="bg-white dark:bg-neutral-900 rounded-3xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-neutral-200 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm">
-              <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200&q=80" alt="Driver" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <h3 className="font-bold text-neutral-900 dark:text-white text-sm">Rahul Sharma</h3>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1 mt-0.5"><span className="text-amber-400 font-black">★ 4.9</span> (2.4k deliveries)</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => alert('Opening live chat with delivery agent Rahul...')} className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
-              <span className="text-lg">💬</span>
-            </button>
-            <button onClick={() => alert('Calling delivery agent Rahul Sharma at +91 98765 43210')} className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30">
-              <span className="text-lg">📞</span>
-            </button>
-          </div>
-        </div>
 
         <h2 className="text-sm font-bold text-neutral-500 uppercase tracking-wider mb-4">Delivery Status</h2>
         
