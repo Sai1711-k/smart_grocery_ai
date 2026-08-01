@@ -82,7 +82,7 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
         provider_id: 'ai-smart-planner',
         name: item.name,
         price: item.price,
-        image_url: 'https://via.placeholder.com/150' // Mocks real images
+        image_url: getValidImageUrl(item.image_url, item.name, item.category)
       });
       // We manually update quantity to recommended
       // In a real app we'd pass quantity directly to addToCart, but let's assume we do it fast here

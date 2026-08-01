@@ -255,15 +255,15 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
       </div>
 
       {/* ── Hero Promotional Banner ── */}
-      <div className="px-6 lg:px-12 pt-5 cursor-pointer">
+      <div className="px-6 lg:px-12 pt-5">
         <div className="max-w-7xl mx-auto">
           <div
             onClick={() => {
-              if (heroIndex === 0) setSelectedCategory('Vegetables');
-              else if (heroIndex === 1) setSelectedCategory('Top Deals');
-              else if (heroIndex === 2) setSelectedCategory('Fruits');
+              const targetCat = heroIndex === 0 ? 'Vegetables' : heroIndex === 1 ? 'Top Deals' : 'Fruits';
+              setSelectedCategory(targetCat);
+              document.getElementById('product-feed')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className={`relative bg-gradient-to-r ${heroSlides[heroIndex].bg} rounded-3xl p-5 text-white overflow-hidden shadow-lg transition-all duration-500 hover:scale-[1.01] active:scale-[0.99]`}
+            className={`relative bg-gradient-to-r ${heroSlides[heroIndex].bg} rounded-3xl p-5 text-white overflow-hidden shadow-lg transition-all duration-500 hover:scale-[1.01] active:scale-[0.99] cursor-pointer`}
           >
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 blur-2xl" />
             <div className="flex items-center justify-between relative z-10">
@@ -271,7 +271,15 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                 <span className="text-[10px] font-black uppercase tracking-widest bg-white/20 px-2.5 py-1 rounded-full">{heroSlides[heroIndex].badge}</span>
                 <h2 className="text-2xl font-black mt-2 leading-tight">{heroSlides[heroIndex].title}</h2>
                 <p className="text-white/80 text-xs mt-1 font-medium">{heroSlides[heroIndex].subtitle}</p>
-                <button className="mt-3 flex items-center gap-1.5 text-xs font-black bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-all">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const targetCat = heroIndex === 0 ? 'Vegetables' : heroIndex === 1 ? 'Top Deals' : 'Fruits';
+                    setSelectedCategory(targetCat);
+                    document.getElementById('product-feed')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="mt-3 flex items-center gap-1.5 text-xs font-black bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl transition-all active:scale-95 shadow-sm"
+                >
                   {heroSlides[heroIndex].cta} <ChevronRight size={14} />
                 </button>
               </div>
@@ -324,7 +332,7 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
       </div>
 
       {/* Popular Products */}
-      <div className="px-6 lg:px-12 pb-8">
+      <div id="product-feed" className="px-6 lg:px-12 pb-8 scroll-mt-6">
         <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-black text-neutral-950">
