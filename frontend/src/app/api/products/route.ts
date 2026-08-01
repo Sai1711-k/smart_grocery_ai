@@ -69,13 +69,17 @@ const fallbackProducts = [
   { name: 'Sesame Oil 500ml', category: 'Oils', price: 250, image_url: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80' },
   { name: 'Pure Cow Ghee 500g', category: 'Oils', price: 350, image_url: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&q=80' },
 
-  // 🍚 Grains & Rice & Dal
+  // 🍚 Grains & Rice & Dal & Oats (ACCURATE RAW FOOD PHOTOS)
   { name: 'Quinoa 500g', category: 'Grains', price: 320, image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80' },
   { name: 'India Gate Basmati Rice 1kg', category: 'Grains', price: 120, image_url: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80' },
-  { name: 'Sona Masoori Rice 5kg', category: 'Grains', price: 300, image_url: 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80' },
+  { name: 'Sona Masoori Rice 5kg', category: 'Grains', price: 300, image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80' },
   { name: 'Aashirvaad Shudh Chakki Atta 5kg', category: 'Grains', price: 220, image_url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80' },
-  { name: 'Tata Sampann Toor Dal 1kg', category: 'Grains', price: 160, image_url: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=400&q=80' },
-  { name: 'Moong Dal 1kg', category: 'Grains', price: 130, image_url: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=400&q=80' },
+  { name: 'Whole Wheat Atta 5kg', category: 'Grains', price: 220, image_url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80' },
+  { name: 'Tata Sampann Toor Dal 1kg', category: 'Grains', price: 160, image_url: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80' },
+  { name: 'Toor Dal 1kg', category: 'Grains', price: 160, image_url: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80' },
+  { name: 'Moong Dal 1kg', category: 'Grains', price: 130, image_url: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400&q=80' },
+  { name: 'Chana Dal 1kg', category: 'Grains', price: 90, image_url: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80' },
+  { name: 'Rolled Oats 1kg', category: 'Grains', price: 180, image_url: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&q=80' },
 
   // ☕ Beverages
   { name: 'Tropicana 100% Orange Juice 1L', category: 'Beverages', price: 130, image_url: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&q=80' },

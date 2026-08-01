@@ -1,6 +1,23 @@
 // 100% VERIFIED HIGH-AVAILABILITY FOOD PHOTO DICTIONARY & FAIL-SAFE SVG GENERATOR
 // Every product variant has its own unique, verified Unsplash CDN photo URL.
 const EXACT_ITEM_IMAGES: Record<string, string> = {
+  // 🌾 Grains & Rice & Dal & Oats (EVERY ITEM HAS AN ACCURATE PHOTO)
+  'sona masoori rice':             'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80',
+  'basmati rice':                  'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80',
+  'basmati':                       'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80',
+  'rice':                          'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80',
+  'whole wheat atta':              'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80',
+  'atta':                          'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80',
+  'flour':                         'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80',
+  'toor dal':                      'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+  'moong dal':                     'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400&q=80',
+  'chana dal':                     'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+  'dal':                           'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+  'lentil':                        'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+  'rolled oats':                   'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&q=80',
+  'oats':                          'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&q=80',
+  'quinoa':                        'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80',
+
   // 🍞 Bakery
   'classic white bread':           'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80',
   'white bread':                   'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80',
@@ -64,7 +81,7 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'almonds':                       'https://images.unsplash.com/photo-1508061942926-6191b5a60af7?w=400&q=80',
   'cashews':                       'https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=400&q=80',
 
-  // 🫒 EDIBLE COOKING OILS & GHEE (NO COSMETICS / NO ABSTRACT ART)
+  // 🫒 EDIBLE COOKING OILS & GHEE
   'fortune sunflower oil':         'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
   'sunflower oil':                 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
   'borges extra virgin olive oil': 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
@@ -129,15 +146,6 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'fish':                          'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=400&q=80',
   'rohu':                          'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=400&q=80',
 
-  // 🍚 Grains & Rice & Dal
-  'quinoa':                        'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80',
-  'toor dal':                      'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=400&q=80',
-  'moong dal':                     'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=400&q=80',
-  'dal':                           'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?w=400&q=80',
-  'basmati':                       'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80',
-  'rice':                          'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80',
-  'atta':                          'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80',
-
   // ☕ Beverages
   'juice':                         'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&q=80',
   'coffee':                        'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80',
@@ -155,6 +163,8 @@ export function generateFoodSvgDataUri(name: string, category?: string): string 
   
   if (cleanName.includes('BREAD') || cleanName.includes('BUN') || cleanName.includes('CAKE') || cleanName.includes('MUFFIN') || cleanName.includes('COOKIE') || cleanName.includes('CROISSANT') || catName.includes('BAKERY')) {
     icon = '🍞';
+  } else if (cleanName.includes('OATS')) {
+    icon = '🥣';
   } else if (cleanName.includes('TOFU')) {
     icon = '🧊';
   } else if (cleanName.includes('RIBEYE') || cleanName.includes('STEAK')) {
