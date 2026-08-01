@@ -979,17 +979,19 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
   }
 
   // ═══════════════════════════════════════════
-  // OTP VERIFICATION SCREEN (Signup & Login & Admin)
+  // OTP VERIFICATION SCREEN (Signup & Mobile Login & Admin)
   // ═══════════════════════════════════════════
   const isLoginOtp = mode === 'loginOtp';
   const isAdminOtp = mode === 'adminOtp';
+  const isMobileNum = /^\d+$/.test(email.replace(/\D/g, '')) && email.replace(/\D/g, '').length >= 8;
+  const cleanMobile = email.replace(/\D/g, '');
 
   return (
     <div className={`min-h-screen ${isAdminOtp ? 'bg-neutral-900' : 'bg-white'} flex flex-col`}>
       <div className="px-6 pt-8 pb-4">
         <button
           onClick={() => { 
-            setMode(isAdminOtp ? 'adminLogin' : isLoginOtp ? 'login' : 'signup'); 
+            setMode(isAdminOtp ? 'adminLogin' : isLoginOtp ? 'login' : 'welcome'); 
             setOtp(['', '', '', '', '', '']); 
             setError(''); 
           }}
@@ -1003,20 +1005,31 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
         <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${isAdminOtp ? 'bg-neutral-800 border border-neutral-700' : 'bg-emerald-50'}`}>
           <ShieldCheck size={28} className={isAdminOtp ? 'text-emerald-500' : 'text-emerald-600'} />
         </div>
+
         <h2 className={`text-3xl font-black mb-2 ${isAdminOtp ? 'text-white' : 'text-neutral-900'}`}>
-          {isAdminOtp ? 'Admin Approval Required' : isLoginOtp ? 'New device detected' : 'Verify your email'}
+          {isAdminOtp 
+            ? 'Admin Approval Required' 
+            : isLoginOtp 
+            ? 'New Device Detected' 
+            : isMobileNum 
+            ? 'Verify Mobile Number' 
+            : 'Verify your email'}
         </h2>
-        <p className={`mb-2 ${isAdminOtp ? 'text-neutral-400' : 'text-neutral-500'}`}>
+
+        <p className={`mb-2 text-base ${isAdminOtp ? 'text-neutral-400' : 'text-neutral-500'}`}>
           {isAdminOtp 
             ? 'We sent a verification code to the Main Admin.'
             : isLoginOtp
-            ? 'We sent a verification code to confirm this device'
+            ? 'We sent a 6-digit OTP code to confirm this device'
+            : isMobileNum
+            ? 'Enter 6-digit OTP code sent via SMS to'
             : 'Enter the 6-digit code sent to'}
         </p>
-        <p className={`font-bold text-lg mb-10 ${isAdminOtp ? 'text-white' : 'text-neutral-900'}`}>
-          {isAdminOtp ? 'sai17042004@gmail.com' : email}
+
+        <p className={`font-black text-xl mb-10 flex items-center gap-2 ${isAdminOtp ? 'text-white' : 'text-neutral-900'}`}>
+          <span>{isAdminOtp ? 'sai17042004@gmail.com' : isMobileNum ? `+91 ${cleanMobile}` : email}</span>
           {!isAdminOtp && (
-            <button onClick={() => { setMode(isLoginOtp ? 'login' : 'signup'); setOtp(['', '', '', '', '', '']); }} className="text-emerald-600 text-sm font-bold ml-3">
+            <button onClick={() => { setMode('welcome'); setOtp(['', '', '', '', '', '']); }} className="text-emerald-600 text-xs font-bold ml-2 hover:underline">
               Change
             </button>
           )}
@@ -1033,7 +1046,7 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
               value={digit}
               onChange={e => handleOtpChange(idx, e.target.value)}
               onKeyDown={e => handleOtpKeyDown(idx, e)}
-              className={`w-14 h-16 text-center text-2xl font-black rounded-xl border-2 outline-none transition-all ${
+              className={`w-12 h-14 sm:w-14 sm:h-16 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-all ${
                 digit
                   ? isAdminOtp ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' : 'border-emerald-500 bg-emerald-50 text-emerald-700'
                   : isAdminOtp ? 'border-neutral-700 bg-neutral-800 text-white focus:border-emerald-500' : 'border-neutral-200 bg-neutral-50 text-neutral-900 focus:border-emerald-500 focus:bg-white'
@@ -1043,34 +1056,33 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
           ))}
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center font-medium mb-4">{error}</p>}
+        {error && <p className="text-red-500 text-sm text-center font-bold mb-4">{error}</p>}
         {!error && (
-          <p className="text-emerald-600 text-sm text-center font-medium mb-4">
-            📬 Check your inbox and spam folder
+          <p className="text-emerald-600 text-sm text-center font-bold mb-4 flex items-center justify-center gap-1.5">
+            {isMobileNum ? '💬 SMS OTP code sent to your mobile phone' : '📬 Check your inbox and spam folder'}
           </p>
         )}
 
         {verifying && (
-          <div className="flex items-center justify-center gap-2 text-emerald-500 font-semibold mb-4">
-            <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-            Verifying...
+          <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold mb-4">
+            <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            Verifying OTP...
           </div>
         )}
 
-        {/* Resend */}
-        <div className="text-center mt-6">
+        {/* Resend OTP */}
+        <div className="text-center mt-8">
           {resendTimer > 0 ? (
-            <p className="text-neutral-400 text-sm">
-              Resend code in <span className="font-bold text-neutral-600">{resendTimer}s</span>
+            <p className="text-neutral-400 text-sm font-medium">
+              Resend OTP in <span className="font-bold text-emerald-600">{resendTimer}s</span>
             </p>
           ) : (
             <button onClick={handleResend} className="text-emerald-600 font-bold text-sm hover:underline">
-              Didn't receive the email? Resend code
+              {isMobileNum ? "Didn't receive SMS? Resend OTP" : "Didn't receive the email? Resend code"}
             </button>
           )}
         </div>
-
-        </div>
+      </div>
     </div>
   );
 }
