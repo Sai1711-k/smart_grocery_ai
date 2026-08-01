@@ -381,69 +381,146 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
   };
 
   // ═══════════════════════════════════════════
-  // WELCOME SCREEN
+  // WELCOME SCREEN (IMAGE 3 - BLINKIT ONBOARDING STYLE)
   // ═══════════════════════════════════════════
   if (mode === 'welcome') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-green-500 to-teal-500 flex flex-col relative overflow-hidden">
-        {/* Admin Login Button - Top Right */}
-        <div className="absolute top-4 right-4 z-20">
+      <div className="min-h-screen bg-neutral-900 flex flex-col relative overflow-hidden text-neutral-900">
+        {/* Floating Product Cards Background Grid (Image 3 Style) */}
+        <div className="absolute top-0 left-0 right-0 h-[48%] bg-slate-100 overflow-hidden pointer-events-none z-0">
+          <div className="grid grid-cols-4 gap-3 p-4 opacity-90 scale-105 transform -rotate-1">
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">👶</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Pampers Pants</span>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">🍌</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Fresh Bananas</span>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">🥣</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Rolled Oats</span>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">🍫</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Dairy Milk</span>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">🍦</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Vanilla Ice Cream</span>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">🌻</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Fortune Oil</span>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">☕</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Nescafe Coffee</span>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+              <span className="text-3xl mb-1">🍃</span>
+              <span className="text-[10px] font-bold text-neutral-600 truncate max-w-full">Paan Leaf</span>
+            </div>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-100/60 to-white"></div>
+        </div>
+
+        {/* Top Header Controls */}
+        <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
           <button 
             onClick={() => setMode('adminLogin')}
-            className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm font-bold rounded-full backdrop-blur transition-all border border-white/20 shadow-lg shadow-black/10"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-neutral-900/70 hover:bg-neutral-900 text-white text-xs font-bold rounded-full backdrop-blur transition-all border border-neutral-700 shadow-md"
           >
-            <ShieldCheck size={16} />
+            <ShieldCheck size={14} className="text-emerald-400" />
             Admin Login
           </button>
-        </div>
 
-        {/* Decorative */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/3 -left-20 w-60 h-60 bg-white/5 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-20 right-10 w-40 h-40 bg-yellow-400/10 rounded-full blur-2xl"></div>
-          <div className="absolute top-[15%] left-[10%] text-5xl animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>🥬</div>
-          <div className="absolute top-[25%] right-[15%] text-4xl animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}>🍎</div>
-          <div className="absolute top-[45%] left-[20%] text-3xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}>🥛</div>
-          <div className="absolute top-[55%] right-[10%] text-5xl animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '3.2s' }}>🍞</div>
-          <div className="absolute top-[35%] left-[60%] text-3xl animate-bounce" style={{ animationDelay: '0.7s', animationDuration: '3.8s' }}>🥑</div>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center items-center px-8 relative z-10">
-          <div className="w-28 h-28 bg-white rounded-[32px] shadow-2xl shadow-black/20 flex items-center justify-center mb-8 rotate-6 hover:rotate-0 transition-transform duration-500">
-            <span className="text-6xl">🛒</span>
-          </div>
-          <h1 className="text-5xl font-black text-white tracking-tight mb-3 text-center">
-            Fresh<span className="text-yellow-300">Cart</span>
-          </h1>
-          <p className="text-white/80 text-lg text-center max-w-sm leading-relaxed">
-            Groceries delivered fresh to your doorstep in minutes
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 mt-8 mb-12">
-            {['🚀 10-min delivery', '💰 Best Prices', '🌿 Farm Fresh', '🎁 Daily Offers'].map(f => (
-              <span key={f} className="bg-white/15 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2 rounded-full border border-white/20">
-                {f}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="px-8 pb-12 relative z-10 space-y-3">
+          {/* Image 3 Top-Right Skip Login Button */}
           <button
-            onClick={() => setMode('signup')}
-            className="w-full bg-white text-emerald-700 py-5 rounded-2xl font-bold text-lg shadow-2xl shadow-black/20 flex items-center justify-center gap-3 hover:bg-emerald-50 active:scale-[0.98] transition-all"
+            onClick={onComplete}
+            className="px-4 py-2 bg-white/90 hover:bg-white text-neutral-800 text-xs font-black rounded-full shadow-lg backdrop-blur border border-neutral-200 transition-all active:scale-95"
           >
-            Create Account
-            <ArrowRight size={22} />
+            Skip login
           </button>
+        </div>
+
+        {/* Bottom Onboarding Card Container */}
+        <div className="mt-auto bg-white rounded-t-[36px] px-8 pt-8 pb-10 shadow-2xl relative z-10 space-y-5 border-t border-neutral-100 animate-slide-up">
+          {/* Yellow App Logo Badge */}
+          <div className="w-16 h-16 bg-amber-400 rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-2 text-3xl font-black text-neutral-900 border-2 border-amber-300">
+            🛒
+          </div>
+
+          <div className="text-center space-y-1">
+            <h2 className="text-2xl font-black text-neutral-900 tracking-tight">
+              India's last minute app
+            </h2>
+            <p className="text-sm font-bold text-neutral-500">
+              Log In or Sign Up
+            </p>
+          </div>
+
+          {/* +91 Mobile Number Entry Box */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center gap-3 bg-white px-4 py-4 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 shadow-sm transition-all">
+              <span className="text-lg font-black text-neutral-700 border-r border-neutral-200 pr-3">+91</span>
+              <input
+                type="tel"
+                maxLength={10}
+                placeholder="Enter mobile number"
+                value={email.replace(/\D/g, '')}
+                onChange={e => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val.length <= 10) setEmail(val);
+                }}
+                className="flex-1 bg-transparent text-neutral-900 text-lg font-bold outline-none placeholder:text-neutral-400 placeholder:font-medium"
+              />
+            </div>
+
+            <button
+              onClick={() => {
+                if (email.length >= 10) {
+                  setMode('login');
+                } else {
+                  setMode('signup');
+                }
+              }}
+              className="w-full bg-slate-400 hover:bg-emerald-600 text-white py-4 rounded-2xl font-black text-base shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              <span>Continue</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+
+          {/* Divider OR */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-neutral-200"></div>
+            <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">OR</span>
+            <div className="flex-1 h-px bg-neutral-200"></div>
+          </div>
+
+          {/* Login with Zomato / Google (Image 3 Feature) */}
           <button
-            onClick={() => setMode('login')}
-            className="w-full bg-white/15 backdrop-blur text-white py-4 rounded-2xl font-bold text-base flex items-center justify-center gap-3 hover:bg-white/25 active:scale-[0.98] transition-all border border-white/30"
+            onClick={onComplete}
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white py-4 rounded-2xl font-black text-sm shadow-lg shadow-rose-500/20 transition-all active:scale-[0.98] flex flex-col items-center justify-center leading-tight"
           >
-            I already have an account
+            <span>Login with <strong className="font-extrabold italic text-base">zomato</strong></span>
+            <span className="text-[10px] font-medium text-rose-100 opacity-90 mt-0.5">Access your saved addresses from Zomato automatically!</span>
           </button>
-          <p className="text-center text-white/50 text-xs mt-4">
-            By continuing, you agree to our Terms &amp; Privacy Policy
+
+          {/* Existing Account Link */}
+          <div className="flex items-center justify-center gap-4 text-xs font-bold pt-2">
+            <button onClick={() => setMode('login')} className="text-emerald-600 hover:underline">
+              Email &amp; Passkey Login
+            </button>
+            <span className="text-neutral-300">•</span>
+            <button onClick={() => setMode('signup')} className="text-emerald-600 hover:underline">
+              Create New Account
+            </button>
+          </div>
+
+          <p className="text-center text-neutral-400 text-[11px] font-medium pt-2">
+            By continuing, you agree to our <span className="underline cursor-pointer">Terms of service</span> &amp; <span className="underline cursor-pointer">Privacy policy</span>
           </p>
         </div>
       </div>
