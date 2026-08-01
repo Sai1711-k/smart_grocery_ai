@@ -1,0 +1,15 @@
+{
+  "name": "selenium-tests",
+  "version": "1.0.0",
+  "description": "Selenium E2E Test Suite for Smart Grocery AI Web Frontend",
+  "main": "tests/login-tests.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node tests/login-tests.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.29.0",
+    "chromedriver": "^133.0.0",
+    "xlsx": "^0.18.5"
+  }
+}
