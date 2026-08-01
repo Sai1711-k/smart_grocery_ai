@@ -7,18 +7,18 @@ import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
 
 // Simulated AI Database of products
 const AI_DATABASE = [
-  { id: 'ai1', name: 'Organic Tofu', price: 120, diet: ['vegan', 'high-protein', 'balanced'], category: 'Protein', baseQty: 2, cals: 144, img: '🧊', image_url: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Paneer_cubes.jpg' },
-  { id: 'ai2', name: 'Grass-Fed Ribeye', price: 850, diet: ['keto', 'high-protein', 'balanced'], category: 'Protein', baseQty: 1, cals: 290, img: '🥩', image_url: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Raw_chicken_breast.jpg' },
-  { id: 'ai3', name: 'Almond Milk (Unsweetened)', price: 250, diet: ['vegan', 'keto', 'balanced'], category: 'Dairy Alt', baseQty: 1, cals: 30, img: '🥛', image_url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Glass_of_Milk_%283367496550%29.jpg' },
-  { id: 'ai4', name: 'Whole Wheat Bread', price: 60, diet: ['vegan', 'high-protein', 'balanced'], category: 'Carbs', baseQty: 1, cals: 80, img: '🍞', image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Whole_wheat_bread.jpg' },
-  { id: 'ai5', name: 'Avocado (Haas)', price: 180, diet: ['vegan', 'keto', 'paleo', 'balanced', 'gluten-free'], category: 'Fats', baseQty: 3, cals: 160, img: '🥑', image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Vegetable-Carrots.jpg' },
-  { id: 'ai6', name: 'Quinoa (500g)', price: 320, diet: ['vegan', 'gluten-free', 'balanced'], category: 'Carbs', baseQty: 1, cals: 222, img: '🌾', image_url: 'https://upload.wikimedia.org/wikipedia/commons/1/13/Basmati_Rice_raw.jpg' },
-  { id: 'ai7', name: 'Free-Range Eggs (Dozen)', price: 150, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Protein', baseQty: 1, cals: 70, img: '🥚', image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Chicken_egg_2009-06-04.jpg' },
-  { id: 'ai8', name: 'Fresh Spinach Bunch', price: 40, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Vegetables', baseQty: 2, cals: 7, img: '🥬', image_url: 'https://upload.wikimedia.org/wikipedia/commons/3/38/Spinach_leaves.jpg' },
-  { id: 'ai9', name: 'Greek Yogurt', price: 200, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Dairy', baseQty: 2, cals: 100, img: '🥣', image_url: 'https://upload.wikimedia.org/wikipedia/commons/5/50/Yogurt_in_a_bowl.jpg' },
-  { id: 'ai10', name: 'Mixed Berries (Frozen)', price: 450, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Fruits', baseQty: 1, cals: 50, img: '🫐', image_url: 'https://upload.wikimedia.org/wikipedia/commons/e/e1/Strawberries.jpg' },
-  { id: 'ai11', name: 'Kurkure Masala Munch', price: 20, diet: ['balanced'], category: 'Snacks', baseQty: 2, cals: 150, img: '🌶️', image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
-  { id: 'ai12', name: 'Lays Classic Salted', price: 20, diet: ['balanced', 'vegan'], category: 'Snacks', baseQty: 2, cals: 160, img: '🥔', image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/69/Potato_chips.jpg' },
+  { id: 'ai1', name: 'Organic Tofu', price: 120, diet: ['vegan', 'high-protein', 'balanced'], category: 'Protein', baseQty: 2, cals: 144, img: '🧊', image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80' },
+  { id: 'ai2', name: 'Grass-Fed Ribeye', price: 850, diet: ['keto', 'high-protein', 'balanced'], category: 'Protein', baseQty: 1, cals: 290, img: '🥩', image_url: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=400&q=80' },
+  { id: 'ai3', name: 'Almond Milk (Unsweetened)', price: 250, diet: ['vegan', 'keto', 'balanced'], category: 'Dairy Alt', baseQty: 1, cals: 30, img: '🥛', image_url: 'https://images.unsplash.com/photo-1556761223-4c4282c73f77?w=400&q=80' },
+  { id: 'ai4', name: 'Whole Wheat Bread', price: 60, diet: ['vegan', 'high-protein', 'balanced'], category: 'Carbs', baseQty: 1, cals: 80, img: '🍞', image_url: 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?w=400&q=80' },
+  { id: 'ai5', name: 'Avocado (Haas)', price: 180, diet: ['vegan', 'keto', 'paleo', 'balanced', 'gluten-free'], category: 'Fats', baseQty: 3, cals: 160, img: '🥑', image_url: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&q=80' },
+  { id: 'ai6', name: 'Quinoa (500g)', price: 320, diet: ['vegan', 'gluten-free', 'balanced'], category: 'Carbs', baseQty: 1, cals: 222, img: '🌾', image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80' },
+  { id: 'ai7', name: 'Free-Range Eggs (Dozen)', price: 150, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Protein', baseQty: 1, cals: 70, img: '🥚', image_url: 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&q=80' },
+  { id: 'ai8', name: 'Fresh Spinach Bunch', price: 40, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Vegetables', baseQty: 2, cals: 7, img: '🥬', image_url: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&q=80' },
+  { id: 'ai9', name: 'Greek Yogurt', price: 200, diet: ['keto', 'high-protein', 'gluten-free', 'balanced'], category: 'Dairy', baseQty: 2, cals: 100, img: '🥣', image_url: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80' },
+  { id: 'ai10', name: 'Mixed Berries (Frozen)', price: 450, diet: ['vegan', 'keto', 'gluten-free', 'balanced'], category: 'Fruits', baseQty: 1, cals: 50, img: '🫐', image_url: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&q=80' },
+  { id: 'ai11', name: 'Kurkure Masala Munch', price: 20, diet: ['balanced'], category: 'Snacks', baseQty: 2, cals: 150, img: '🌶️', image_url: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&q=80' },
+  { id: 'ai12', name: 'Lays Classic Salted', price: 20, diet: ['balanced', 'vegan'], category: 'Snacks', baseQty: 2, cals: 160, img: '🥔', image_url: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&q=80' },
 ];
 
 export function SmartPlanner({ onBack }: { onBack: () => void }) {
