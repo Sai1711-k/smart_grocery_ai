@@ -20,7 +20,7 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'burger buns':                   'https://images.unsplash.com/photo-1586816001966-79b736744398?w=400&q=80',
   'bun':                           'https://images.unsplash.com/photo-1586816001966-79b736744398?w=400&q=80',
 
-  // 🍪 Biscuits & Cookies & Chocolates (EVERY PRODUCT HAS A UNIQUE PHOTO)
+  // 🍪 Biscuits & Cookies & Chocolates
   'oreo chocolate cream':          'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&q=80',
   'oreo':                          'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&q=80',
   'britannia bourbon chocolate':   'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80',
@@ -45,7 +45,7 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'cadbury dairy milk':            'https://images.unsplash.com/photo-1511381939415-e44015466834?w=400&q=80',
   'kitkat':                        'https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=400&q=80',
 
-  // 🥔 Chips & Indian Savory Snacks (EACH BRAND HAS ITS OWN UNIQUE PHOTO)
+  // 🥔 Chips & Indian Savory Snacks
   'lays classic salted':           'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&q=80',
   'lays india magic masala':       'https://images.unsplash.com/photo-1621447504864-d8686e12698c?w=400&q=80',
   'lays american style cream':     'https://images.unsplash.com/photo-1528751014936-863e6e7a319c?w=400&q=80',
@@ -64,19 +64,19 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   'almonds':                       'https://images.unsplash.com/photo-1508061942926-6191b5a60af7?w=400&q=80',
   'cashews':                       'https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=400&q=80',
 
-  // 🫒 Oils & Fats (EVERY OIL HAS A DISTINCT PHOTO)
+  // 🫒 EDIBLE COOKING OILS & GHEE (NO COSMETICS / NO ABSTRACT ART)
   'fortune sunflower oil':         'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
   'sunflower oil':                 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
   'borges extra virgin olive oil': 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
   'olive oil':                     'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
-  'dabur kachi ghani mustard oil': 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&q=80',
-  'mustard oil':                   'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&q=80',
-  'parachute pure coconut oil':    'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80',
-  'coconut oil':                   'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80',
-  'groundnut oil':                 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&q=80',
-  'sesame oil':                    'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&q=80',
-  'pure cow ghee':                 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400&q=80',
-  'ghee':                          'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400&q=80',
+  'dabur kachi ghani mustard oil': 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',
+  'mustard oil':                   'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',
+  'parachute pure coconut oil':    'https://images.unsplash.com/photo-1546554137-f86b9593a222?w=400&q=80',
+  'coconut oil':                   'https://images.unsplash.com/photo-1546554137-f86b9593a222?w=400&q=80',
+  'groundnut oil':                 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80',
+  'sesame oil':                    'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',
+  'pure cow ghee':                 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&q=80',
+  'ghee':                          'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&q=80',
 
   // 🍎 Fruits
   'mango':                         'https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&q=80',

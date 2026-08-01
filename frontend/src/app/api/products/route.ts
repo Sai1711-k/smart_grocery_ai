@@ -58,16 +58,16 @@ const fallbackProducts = [
   { name: 'Fresh Mutton Keema 500g', category: 'Meat', price: 650, image_url: 'https://images.unsplash.com/photo-1603048297172-c92544798d5a?w=400&q=80' },
   { name: 'Fresh Rohu Fish 1kg', category: 'Meat', price: 300, image_url: 'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=400&q=80' },
 
-  // 🫒 Oils & Fats (EVERY OIL HAS A UNIQUE PHOTO)
+  // 🫒 EDIBLE COOKING OILS & GHEE (NO COSMETICS / REAL FOOD PHOTOS)
   { name: 'Fortune Sunflower Oil 1L', category: 'Oils', price: 140, image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80' },
   { name: 'Sunflower Oil 1L', category: 'Oils', price: 140, image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80' },
   { name: 'Borges Extra Virgin Olive Oil 500ml', category: 'Oils', price: 450, image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80' },
-  { name: 'Dabur Kachi Ghani Mustard Oil 1L', category: 'Oils', price: 160, image_url: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&q=80' },
-  { name: 'Parachute Pure Coconut Oil 500ml', category: 'Oils', price: 200, image_url: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80' },
-  { name: 'Coconut Oil 500ml', category: 'Oils', price: 200, image_url: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80' },
-  { name: 'Groundnut Oil 1L', category: 'Oils', price: 180, image_url: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&q=80' },
-  { name: 'Sesame Oil 500ml', category: 'Oils', price: 250, image_url: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=400&q=80' },
-  { name: 'Pure Cow Ghee 500g', category: 'Oils', price: 350, image_url: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400&q=80' },
+  { name: 'Dabur Kachi Ghani Mustard Oil 1L', category: 'Oils', price: 160, image_url: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80' },
+  { name: 'Parachute Pure Coconut Oil 500ml', category: 'Oils', price: 200, image_url: 'https://images.unsplash.com/photo-1546554137-f86b9593a222?w=400&q=80' },
+  { name: 'Coconut Oil 500ml', category: 'Oils', price: 200, image_url: 'https://images.unsplash.com/photo-1546554137-f86b9593a222?w=400&q=80' },
+  { name: 'Groundnut Oil 1L', category: 'Oils', price: 180, image_url: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&q=80' },
+  { name: 'Sesame Oil 500ml', category: 'Oils', price: 250, image_url: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80' },
+  { name: 'Pure Cow Ghee 500g', category: 'Oils', price: 350, image_url: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&q=80' },
 
   // 🍚 Grains & Rice & Dal
   { name: 'Quinoa 500g', category: 'Grains', price: 320, image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80' },
