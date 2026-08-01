@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { supabaseAdmin } from '../config/supabase';
 import crypto from 'crypto';
 import { EmailService } from '../services/email.service';
+import { SmsService } from '../services/sms.service';
 import { generateOtp } from '../utils/otp';
 import { generateFingerprint } from '../utils/deviceInfo';
 
@@ -454,6 +455,85 @@ export class AuthController {
         requiresVerification: false
       });
     } catch (error: any) {
+      res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  }
+
+  // ──────────────────────────────────────────────
+  // 8. MOBILE OTP – Send SMS OTP to phone number
+  // ──────────────────────────────────────────────
+  static async sendMobileOtp(req: Request, res: Response) {
+    try {
+      const { phone: rawPhone } = req.body;
+      const phone = (rawPhone || '').replace(/[\s\-\+]/g, '').replace(/^91/, '').slice(-10);
+
+      if (!phone || phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+        return res.status(400).json({ error: 'Please enter a valid 10-digit Indian mobile number' });
+      }
+
+      const otp = generateOtp();
+      const storeKey = `mobile_${phone}`;
+      otpStore.set(storeKey, { otp, expires: Date.now() + OTP_TTL_MS });
+
+      try {
+        await SmsService.sendOtp(phone, otp);
+        console.log(`[SMS] OTP sent successfully to +91 ${phone}`);
+        return res.status(200).json({
+          message: `OTP sent via SMS to +91 ${phone}`,
+          requiresOtp: true,
+          status: 'sms_otp_sent',
+        });
+      } catch (smsErr: any) {
+        console.error('[SMS] Failed sending OTP:', smsErr.message);
+        return res.status(503).json({
+          error: `SMS delivery failed: ${smsErr.message}`,
+          status: 'sms_failed',
+        });
+      }
+    } catch (error: any) {
+      console.error('Mobile OTP error:', error);
+      res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  }
+
+  // ──────────────────────────────────────────────
+  // 9. MOBILE OTP – Verify SMS OTP & Create Session
+  // ──────────────────────────────────────────────
+  static async verifyMobileOtp(req: Request, res: Response) {
+    try {
+      const { phone: rawPhone, otp } = req.body;
+      const phone = (rawPhone || '').replace(/[\s\-\+]/g, '').replace(/^91/, '').slice(-10);
+
+      const storeKey = `mobile_${phone}`;
+      const storedData = otpStore.get(storeKey);
+
+      if (!storedData || storedData.expires < Date.now()) {
+        return res.status(400).json({ error: 'OTP expired or not requested. Please request a new OTP.' });
+      }
+      if (storedData.otp !== otp) {
+        return res.status(400).json({ error: 'Invalid OTP. Please check the SMS on your phone.' });
+      }
+
+      otpStore.delete(storeKey);
+
+      const userId = 'user-mob-' + phone;
+      const mockEmail = `${phone}@smartgrocery.app`;
+
+      return res.status(200).json({
+        message: 'Mobile verification successful',
+        session: { access_token: 'mob-token-' + Date.now(), refresh_token: 'mob-refresh-' + Date.now() },
+        user: {
+          id: userId,
+          email: mockEmail,
+          phone: `+91${phone}`,
+          user_metadata: {
+            full_name: `Customer (+91 ${phone})`,
+            role: 'customer'
+          }
+        },
+      });
+    } catch (error: any) {
+      console.error('Mobile OTP verification error:', error);
       res.status(500).json({ error: error.message || 'Internal server error' });
     }
   }

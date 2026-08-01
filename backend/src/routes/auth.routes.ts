@@ -12,6 +12,10 @@ router.post('/signup/verify', AuthController.verifyOtp);
 router.post('/login', deviceDetection, AuthController.login);
 router.post('/login/verify', AuthController.verifyLoginOtp);
 
+// Mobile number + SMS OTP flow
+router.post('/mobile/send-otp', AuthController.sendMobileOtp);
+router.post('/mobile/verify-otp', AuthController.verifyMobileOtp);
+
 // Forgot password flow
 router.post('/forgot-password', AuthController.forgotPassword);
 router.post('/reset-password', AuthController.resetPassword);
