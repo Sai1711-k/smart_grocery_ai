@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronLeft, MapPin, CreditCard, CheckCircle, Package, Truck, Box, FileText, Download } from 'lucide-react';
+import { ChevronLeft, MapPin, CreditCard, CheckCircle, Package, Truck, Box, FileText, Download, ArrowRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { useCart, useAuth } from '@/lib/providers';
 import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
@@ -314,16 +314,47 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
       
       {loading ? (
         <div className="flex justify-center py-20"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
+      ) : orders.length === 0 ? (
+        /* ── Beautiful Empty State ── */
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-16">
+          <div className="relative mb-6">
+            <div className="w-28 h-28 bg-gradient-to-br from-emerald-100 to-teal-50 rounded-full flex items-center justify-center shadow-lg shadow-emerald-100/50">
+              <Package size={48} className="text-emerald-400" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center animate-bounce" style={{ animationDuration: '2s' }}>
+              <span className="text-lg">📦</span>
+            </div>
+          </div>
+          <h2 className="text-xl font-black text-neutral-800 mb-2">No Orders Received Yet</h2>
+          <p className="text-sm text-neutral-400 font-medium max-w-xs mb-8 leading-relaxed">
+            Looks like you haven't placed any orders yet. Browse our fresh groceries and get started with your first order!
+          </p>
+          <button
+            onClick={() => onNavigate?.('home')}
+            className="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-sm rounded-2xl shadow-lg shadow-emerald-500/25 transition-all active:scale-[0.97] flex items-center gap-2"
+          >
+            <span>🛒</span>
+            <span>Start Shopping</span>
+            <ArrowRight size={16} />
+          </button>
+          <div className="flex items-center gap-4 mt-8">
+            {[
+              { icon: '⚡', text: '10-min delivery' },
+              { icon: '💰', text: 'Best prices' },
+              { icon: '🌿', text: 'Farm fresh' },
+            ].map(b => (
+              <span key={b.text} className="flex items-center gap-1 text-[11px] text-neutral-400 font-bold">
+                <span>{b.icon}</span>{b.text}
+              </span>
+            ))}
+          </div>
+        </div>
       ) : (
         <div className="space-y-6 max-w-md mx-auto w-full">
           {/* SECTION 1: ACTIVE PLACED ORDERS */}
+          {activeOrders.length > 0 && (
           <div>
             <h2 className="text-xs font-black text-neutral-400 uppercase tracking-wider mb-3">Active Orders</h2>
-            {activeOrders.length === 0 ? (
-              <div className="p-6 bg-white rounded-3xl border border-neutral-100 text-center text-neutral-400 font-bold text-sm">
-                No active orders placed
-              </div>
-            ) : (
               <div className="space-y-3">
                 {activeOrders.map(order => {
                   const orderTotal = Number(
@@ -356,17 +387,13 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
                   );
                 })}
               </div>
-            )}
           </div>
+          )}
 
           {/* SECTION 2: ORDER HISTORY (DELIVERED & CANCELLED) */}
+          {historyOrders.length > 0 && (
           <div>
             <h2 className="text-xs font-black text-neutral-400 uppercase tracking-wider mb-3">Order History & Refunds</h2>
-            {historyOrders.length === 0 ? (
-              <div className="p-6 bg-white rounded-3xl border border-neutral-100 text-center text-neutral-400 font-bold text-sm">
-                No past order history
-              </div>
-            ) : (
               <div className="space-y-3">
                 {historyOrders.map(order => {
                   const isCancelled = order.status === 'cancelled';
@@ -428,8 +455,8 @@ export function OrderHistoryPrototype({ initialOrderId, onBack, onNavigate }: { 
                   );
                 })}
               </div>
-            )}
           </div>
+          )}
         </div>
       )}
     </div>
