@@ -371,10 +371,17 @@ async function runAppiumTestSuite() {
       hostname: '127.0.0.1',
       port: 4723,
       path: '/',
+      logLevel: 'silent',
       capabilities: appiumCapabilities
-    });
-    console.log('📱 Connected to Appium Android Driver successfully!');
-    useAppiumDriver = true;
+    }).catch(() => null);
+
+    if (driver) {
+      console.log('📱 Connected to Appium Android Driver successfully!');
+      useAppiumDriver = true;
+    } else {
+      console.log('ℹ️ Note: Appium local server not running on port 4723.');
+      console.log('⚡ Executing automated mobile assertion & schema engine for all 300 test cases...\n');
+    }
   } catch (err) {
     console.log(`ℹ️ Note: Appium local server not running on port 4723 (${err.message}).`);
     console.log('⚡ Executing automated mobile assertion & schema engine for all 300 test cases...\n');
@@ -510,6 +517,7 @@ async function runAppiumTestSuite() {
   XLSX.writeFile(workbook, REPORT_OUTPUT_PATH);
 
   console.log(`🎉 SUCCESS! Excel Report generated at:\n   👉 ${REPORT_OUTPUT_PATH}\n`);
+  process.exit(0);
 }
 
 runAppiumTestSuite().catch(err => {
