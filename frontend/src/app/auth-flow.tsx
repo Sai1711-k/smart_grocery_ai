@@ -557,50 +557,70 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
   }
 
   // ═══════════════════════════════════════════
+  // ═══════════════════════════════════════════
   // SIGNUP SCREEN
   // ═══════════════════════════════════════════
   if (mode === 'signup') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        <div className="px-6 pt-8 pb-4">
-          <button onClick={() => setMode('welcome')} className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition">
-            <ChevronLeft size={22} />
-          </button>
+      <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-green-500 to-teal-700 flex flex-col justify-center items-center relative overflow-hidden text-neutral-900 p-4 md:p-8">
+        {/* Floating Animated Produce Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-20">
+          <div className="absolute -top-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 -left-20 w-80 h-80 bg-white/5 rounded-full blur-2xl" />
+          <div className="absolute top-[15%] left-[12%] text-5xl animate-bounce" style={{ animationDuration: '3.5s' }}>🥬</div>
+          <div className="absolute top-[25%] right-[15%] text-4xl animate-bounce" style={{ animationDelay: '0.7s', animationDuration: '3.8s' }}>🍎</div>
+          <div className="absolute bottom-[20%] left-[15%] text-4xl animate-bounce" style={{ animationDelay: '1.2s', animationDuration: '4s' }}>🥑</div>
         </div>
 
-        <div className="flex-1 px-8 pt-4">
-          <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
-            <User size={28} className="text-emerald-600" />
+        {/* Centered Glassmorphic Signup Card */}
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-white/40 p-8 relative z-10 animate-slide-up">
+          <div className="flex items-center justify-between mb-6">
+            <button 
+              onClick={() => setMode('welcome')} 
+              className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-700 hover:bg-neutral-200 transition active:scale-95"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <div className="flex items-center gap-1.5 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              <Sparkles size={14} className="text-emerald-600" />
+              <span className="text-[11px] font-extrabold text-emerald-800 uppercase tracking-wider">Create Account</span>
+            </div>
           </div>
-          <h2 className="text-3xl font-black text-neutral-900 mb-2">Create your<br />account</h2>
-          <p className="text-neutral-500 mb-8">Sign up with your email &amp; password</p>
+
+          <div className="mb-6 text-center">
+            <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/25">
+              <UserPlus size={26} />
+            </div>
+            <h2 className="text-2xl font-black text-neutral-900 tracking-tight">Join Smart Grocery AI</h2>
+            <p className="text-xs text-neutral-500 font-medium mt-1">Sign up with your email to start ordering fresh produce</p>
+          </div>
 
           {/* Full Name */}
           <div className="mb-4">
-            <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 block">Full Name</label>
-            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-4 rounded-xl border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
-              <User size={20} className="text-neutral-400" />
+            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-1.5 block">Full Name</label>
+            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-3.5 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
+              <User size={18} className="text-neutral-400 shrink-0" />
               <input
                 type="text"
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 placeholder="John Doe"
-                className="flex-1 bg-transparent text-neutral-900 text-lg font-semibold outline-none placeholder:text-neutral-300"
+                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-400 placeholder:font-normal"
               />
             </div>
           </div>
 
           {/* Email */}
           <div className="mb-4">
-            <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 block">Email</label>
-            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-4 rounded-xl border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
-              <Mail size={20} className="text-neutral-400" />
+            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-1.5 block">Email Address</label>
+            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-3.5 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
+              <Mail size={18} className="text-neutral-400 shrink-0" />
               <input
                 type="email"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError(''); }}
                 placeholder="you@example.com"
-                className="flex-1 bg-transparent text-neutral-900 text-lg font-semibold outline-none placeholder:text-neutral-300"
+                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-400 placeholder:font-normal"
                 autoFocus
               />
             </div>
@@ -608,61 +628,59 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
 
           {/* Password */}
           <div className="mb-4">
-            <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 block">Password</label>
-            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-4 rounded-xl border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
-              <Lock size={20} className="text-neutral-400" />
+            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-1.5 block">Password</label>
+            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-3.5 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
+              <Lock size={18} className="text-neutral-400 shrink-0" />
               <input
                 type={showPass ? 'text' : 'password'}
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
                 placeholder="Min. 6 characters"
-                className="flex-1 bg-transparent text-neutral-900 text-lg font-semibold outline-none placeholder:text-neutral-300"
+                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-400 placeholder:font-normal"
               />
-              <button onClick={() => setShowPass(!showPass)} className="text-neutral-400 hover:text-neutral-600">
-                {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+              <button onClick={() => setShowPass(!showPass)} className="text-neutral-400 hover:text-neutral-600 transition-colors p-1">
+                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>}
+          {error && <p className="text-rose-500 text-xs font-bold mt-2 p-2.5 bg-rose-50 rounded-xl border border-rose-100 text-center">{error}</p>}
 
-          <div className="flex items-start gap-3 bg-emerald-50 p-4 rounded-xl border border-emerald-100 mt-6">
-            <ShieldCheck size={20} className="text-emerald-600 shrink-0 mt-0.5" />
-            <p className="text-sm text-emerald-800">
-              We&apos;ll send a 6-digit OTP to your email to verify your account.
+          <div className="flex items-start gap-2.5 bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200 mt-4">
+            <ShieldCheck size={18} className="text-emerald-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-emerald-900 font-medium">
+              We&apos;ll send a 6-digit verification code to your email to activate your profile.
             </p>
           </div>
 
-          <p className="text-center text-neutral-400 text-sm mt-6">
-            Already have an account?{' '}
-            <button onClick={() => { setMode('login'); setError(''); }} className="text-emerald-600 font-bold hover:underline">
-              Log in
-            </button>
-          </p>
-        </div>
-
-        <div className="px-8 pb-10 pt-6">
           <button
             onClick={handleSignup}
             disabled={!email || !password || sending}
-            className={`w-full py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+            className={`w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 mt-6 transition-all active:scale-[0.98] ${
               email && password
-                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-700'
-                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-600/30'
+                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200'
             }`}
           >
             {sending ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Creating account...
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Creating Account...</span>
               </>
             ) : (
               <>
-                Sign Up &amp; Send OTP
-                <ArrowRight size={20} />
+                <span>Sign Up &amp; Send Code</span>
+                <ArrowRight size={18} />
               </>
             )}
           </button>
+
+          <p className="text-center text-neutral-500 text-xs font-bold mt-5">
+            Already have an account?{' '}
+            <button onClick={() => { setMode('login'); setError(''); }} className="text-emerald-600 font-black hover:underline">
+              Log in
+            </button>
+          </p>
         </div>
       </div>
     );
@@ -673,31 +691,50 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
   // ═══════════════════════════════════════════
   if (mode === 'login') {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        <div className="px-6 pt-8 pb-4">
-          <button onClick={() => setMode('welcome')} className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition">
-            <ChevronLeft size={22} />
-          </button>
+      <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-green-500 to-teal-700 flex flex-col justify-center items-center relative overflow-hidden text-neutral-900 p-4 md:p-8">
+        {/* Floating Animated Produce Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-20">
+          <div className="absolute -top-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 -left-20 w-80 h-80 bg-white/5 rounded-full blur-2xl" />
+          <div className="absolute top-[15%] left-[12%] text-5xl animate-bounce" style={{ animationDuration: '3.5s' }}>🥬</div>
+          <div className="absolute top-[25%] right-[15%] text-4xl animate-bounce" style={{ animationDelay: '0.7s', animationDuration: '3.8s' }}>🍎</div>
+          <div className="absolute bottom-[20%] left-[15%] text-4xl animate-bounce" style={{ animationDelay: '1.2s', animationDuration: '4s' }}>🥑</div>
         </div>
 
-        <div className="flex-1 px-8 pt-4">
-          <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
-            <Lock size={28} className="text-emerald-600" />
+        {/* Centered Glassmorphic Login Card */}
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-white/40 p-8 relative z-10 animate-slide-up">
+          <div className="flex items-center justify-between mb-6">
+            <button 
+              onClick={() => setMode('welcome')} 
+              className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-700 hover:bg-neutral-200 transition active:scale-95"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <div className="flex items-center gap-1.5 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              <ShieldCheck size={14} className="text-emerald-600" />
+              <span className="text-[11px] font-extrabold text-emerald-800 uppercase tracking-wider">Email Login</span>
+            </div>
           </div>
-          <h2 className="text-3xl font-black text-neutral-900 mb-2">Welcome<br />back</h2>
-          <p className="text-neutral-500 mb-8">Log in with your email &amp; password</p>
+
+          <div className="mb-6 text-center">
+            <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/25">
+              <Lock size={26} />
+            </div>
+            <h2 className="text-2xl font-black text-neutral-900 tracking-tight">Welcome Back</h2>
+            <p className="text-xs text-neutral-500 font-medium mt-1">Sign in with your email &amp; password</p>
+          </div>
 
           {/* Email */}
           <div className="mb-4">
-            <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 block">Email</label>
-            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-4 rounded-xl border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
-              <Mail size={20} className="text-neutral-400" />
+            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-1.5 block">Email Address</label>
+            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-3.5 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
+              <Mail size={18} className="text-neutral-400 shrink-0" />
               <input
                 type="email"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError(''); }}
                 placeholder="you@example.com"
-                className="flex-1 bg-transparent text-neutral-900 text-lg font-semibold outline-none placeholder:text-neutral-300"
+                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-400 placeholder:font-normal"
                 autoFocus
               />
             </div>
@@ -705,59 +742,57 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
 
           {/* Password */}
           <div className="mb-4">
-            <label className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2 block">Password</label>
-            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-4 rounded-xl border-2 border-transparent focus-within:border-emerald-500 focus-within:bg-white transition-all">
-              <Lock size={20} className="text-neutral-400" />
+            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-1.5 block">Password</label>
+            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-3.5 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
+              <Lock size={18} className="text-neutral-400 shrink-0" />
               <input
                 type={showPass ? 'text' : 'password'}
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
                 placeholder="Your password"
-                className="flex-1 bg-transparent text-neutral-900 text-lg font-semibold outline-none placeholder:text-neutral-300"
+                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-400 placeholder:font-normal"
               />
-              <button onClick={() => setShowPass(!showPass)} className="text-neutral-400 hover:text-neutral-600">
-                {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+              <button onClick={() => setShowPass(!showPass)} className="text-neutral-400 hover:text-neutral-600 transition-colors p-1">
+                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             <div className="flex justify-end mt-2">
-              <button onClick={() => { setMode('forgotPassword'); setError(''); setPassword(''); }} className="text-sm font-bold text-emerald-600 hover:underline">
+              <button onClick={() => { setMode('forgotPassword'); setError(''); setPassword(''); }} className="text-xs font-extrabold text-emerald-600 hover:underline">
                 Forgot password?
               </button>
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>}
+          {error && <p className="text-rose-500 text-xs font-bold mt-2 p-2.5 bg-rose-50 rounded-xl border border-rose-100 text-center">{error}</p>}
 
-          <p className="text-center text-neutral-400 text-sm mt-6">
-            Don&apos;t have an account?{' '}
-            <button onClick={() => { setMode('signup'); setError(''); }} className="text-emerald-600 font-bold hover:underline">
-              Sign up
-            </button>
-          </p>
-        </div>
-
-        <div className="px-8 pb-10 pt-6">
           <button
             onClick={handleLogin}
             disabled={!email || !password || sending}
-            className={`w-full py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${
+            className={`w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 mt-6 transition-all active:scale-[0.98] ${
               email && password
-                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-700'
-                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-600/30'
+                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200'
             }`}
           >
             {sending ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Logging in...
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Logging in...</span>
               </>
             ) : (
               <>
-                Log In
-                <ArrowRight size={20} />
+                <span>Log In</span>
+                <ArrowRight size={18} />
               </>
             )}
           </button>
+
+          <p className="text-center text-neutral-500 text-xs font-bold mt-5">
+            Don&apos;t have an account?{' '}
+            <button onClick={() => { setMode('signup'); setError(''); }} className="text-emerald-600 font-black hover:underline">
+              Sign up
+            </button>
+          </p>
         </div>
       </div>
     );

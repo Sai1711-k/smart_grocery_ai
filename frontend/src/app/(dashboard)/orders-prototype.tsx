@@ -488,14 +488,20 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
 
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [driverProgress, setDriverProgress] = useState(35);
+  const [gpsActive, setGpsActive] = useState(false);
 
-  // Get real device location for live Google Map tracking
+  // Continuous real-time GPS tracking for live Google Map updates
   useEffect(() => {
     if (typeof window !== 'undefined' && 'geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => console.log('Geolocation permission pending, using local hub coordinates.')
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          setGpsActive(true);
+        },
+        (err) => console.log('Geolocation watch fallback:', err.message),
+        { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
       );
+      return () => navigator.geolocation.clearWatch(watchId);
     }
   }, []);
 
@@ -637,7 +643,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
             </div>
 
             {/* Interactive Live Google Maps Tracking */}
-            <div className="bg-slate-900 rounded-3xl h-64 relative overflow-hidden shadow-xl border border-slate-800">
+            <div className="bg-slate-900 rounded-3xl h-72 relative overflow-hidden shadow-xl border border-slate-800">
               <iframe
                 title="Real Live Google Map Tracking"
                 width="100%"
@@ -645,9 +651,31 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                 style={{ border: 0 }}
                 loading="lazy"
                 allowFullScreen
-                src={`https://maps.google.com/maps?q=${coords ? `${coords.lat},${coords.lng}` : '12.9716,77.5946'}&z=15&output=embed`}
+                src={`https://maps.google.com/maps?q=${coords ? `${coords.lat},${coords.lng}` : '12.9716,77.5946'}&z=16&output=embed`}
                 className="w-full h-full object-cover"
               />
+
+              {/* Live GPS Active Badge */}
+              <div className="absolute top-3 left-3 z-20 bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-extrabold px-3 py-1.5 rounded-full shadow-lg border border-slate-700 flex items-center gap-1.5">
+                <span className={`w-2 h-2 rounded-full ${gpsActive ? 'bg-emerald-400 animate-ping' : 'bg-amber-400'}`} />
+                <span>{gpsActive ? 'Live GPS Connected' : 'Acquiring GPS...'}</span>
+              </div>
+
+              {/* Recenter Live Location Button */}
+              <button
+                onClick={() => {
+                  if ('geolocation' in navigator) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                      setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+                      setGpsActive(true);
+                    });
+                  }
+                }}
+                className="absolute top-3 right-3 z-20 bg-white/95 backdrop-blur-md text-emerald-700 font-extrabold text-xs px-3.5 py-1.5 rounded-full shadow-lg border border-slate-200 flex items-center gap-1.5 hover:bg-emerald-50 transition active:scale-95"
+              >
+                <MapPin size={14} className="text-emerald-600" />
+                <span>My Live Location</span>
+              </button>
 
               {/* Animated GPS Live Driver Pulse Overlay */}
               <div 
