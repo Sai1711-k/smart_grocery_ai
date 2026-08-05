@@ -123,6 +123,7 @@ const instance = autocannon({
   XLSX.writeFile(workbook, REPORT_OUTPUT_PATH);
 
   console.log(`🎉 SUCCESS! Baseline Load Test Report saved to:\n   👉 ${REPORT_OUTPUT_PATH}\n`);
+  process.exit(0);
 });
 
 // Stream progress in real-time

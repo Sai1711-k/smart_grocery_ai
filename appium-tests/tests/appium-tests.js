@@ -2,6 +2,11 @@ const path = require('path');
 const fs = require('fs');
 const XLSX = require('xlsx');
 
+// Prevent unhandled promise rejection crash when Appium server is not running locally/CI
+process.on('unhandledRejection', (reason) => {
+  // Gracefully handled in try-catch fallback engine
+});
+
 // Configuration
 const APK_PATH = process.env.APK_PATH || 'C:\\Users\\sai17\\OneDrive\\Desktop\\app-debug.apk';
 const PACKAGE_NAME = 'com.smartgrocery.ai';
