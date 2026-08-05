@@ -106,17 +106,7 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
   };
 
   const handleUseLiveLocation = () => {
-    // Open Image 2 Native Location Permission Modal
-    setShowPermissionModal(true);
-  };
-
-  const handleConfirmPermission = () => {
-    setShowPermissionModal(false);
-    if (permissionChoice === 'dont_allow') {
-      setLiveAddress('123 Smart Grocery Lane, Tech Park, Bangalore (Default Saved Address)');
-    } else {
-      executeLiveLocationFetch();
-    }
+    executeLiveLocationFetch();
   };
 
   const handleContinue = () => {
@@ -309,105 +299,6 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
         </button>
       </div>
 
-      {/* ── IMAGE 2 NATIVE LOCATION PERMISSION DIALOG OVERLAY ── */}
-      {showPermissionModal && (
-        <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-          <div className="bg-neutral-800 text-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-neutral-700 space-y-5 animate-scale-up">
-            {/* Header Icon */}
-            <div className="w-14 h-14 bg-pink-500/20 text-pink-400 rounded-full flex items-center justify-center mx-auto border border-pink-500/30">
-              <MapPin size={28} />
-            </div>
-
-            {/* Title */}
-            <div className="text-center space-y-1.5">
-              <h2 className="text-lg font-black text-white leading-tight">
-                Allow Smart Grocery AI to access this device's location?
-              </h2>
-              <div className="bg-neutral-700/60 border border-neutral-600 rounded-xl p-2.5 text-[11px] text-neutral-300 flex items-center gap-2 justify-center">
-                <Shield size={14} className="text-emerald-400 shrink-0" />
-                <span>This app stated it may share location data with third parties &gt;</span>
-              </div>
-            </div>
-
-            {/* Precise vs Approximate Map Cards */}
-            <div className="grid grid-cols-2 gap-3">
-              <div
-                onClick={() => setLocationAccuracy('precise')}
-                className={`p-4 rounded-2xl border-2 cursor-pointer transition-all text-center space-y-2 ${
-                  locationAccuracy === 'precise'
-                    ? 'bg-indigo-900/40 border-indigo-400 text-white'
-                    : 'bg-neutral-700/40 border-neutral-600 text-neutral-400'
-                }`}
-              >
-                <div className="w-16 h-16 mx-auto rounded-full bg-neutral-900/80 border border-indigo-400/50 flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:8px_8px] opacity-40"></div>
-                  <div className="w-3 h-3 bg-blue-500 rounded-full animate-ping"></div>
-                  <div className="w-3 h-3 bg-blue-400 rounded-full relative z-10"></div>
-                </div>
-                <p className="text-xs font-bold">Precise</p>
-              </div>
-
-              <div
-                onClick={() => setLocationAccuracy('approximate')}
-                className={`p-4 rounded-2xl border-2 cursor-pointer transition-all text-center space-y-2 ${
-                  locationAccuracy === 'approximate'
-                    ? 'bg-indigo-900/40 border-indigo-400 text-white'
-                    : 'bg-neutral-700/40 border-neutral-600 text-neutral-400'
-                }`}
-              >
-                <div className="w-16 h-16 mx-auto rounded-full bg-neutral-900/80 border border-neutral-600 flex items-center justify-center relative overflow-hidden">
-                  <div className="w-8 h-8 rounded-full border-2 border-dashed border-amber-400/60 animate-spin"></div>
-                </div>
-                <p className="text-xs font-bold">Approximate</p>
-              </div>
-            </div>
-
-            {/* Permission Action Choice Buttons */}
-            <div className="space-y-2 pt-2">
-              <button
-                onClick={() => setPermissionChoice('while_using')}
-                className={`w-full py-3.5 px-4 rounded-2xl text-xs font-bold transition-all border ${
-                  permissionChoice === 'while_using'
-                    ? 'bg-rose-100 text-neutral-900 border-rose-200 shadow-md font-black'
-                    : 'bg-neutral-700 text-neutral-200 border-neutral-600'
-                }`}
-              >
-                While using the app
-              </button>
-
-              <button
-                onClick={() => setPermissionChoice('only_once')}
-                className={`w-full py-3.5 px-4 rounded-2xl text-xs font-bold transition-all border ${
-                  permissionChoice === 'only_once'
-                    ? 'bg-rose-100 text-neutral-900 border-rose-200 shadow-md font-black'
-                    : 'bg-neutral-700 text-neutral-200 border-neutral-600'
-                }`}
-              >
-                Only this time
-              </button>
-
-              <button
-                onClick={() => setPermissionChoice('dont_allow')}
-                className={`w-full py-3.5 px-4 rounded-2xl text-xs font-bold transition-all border ${
-                  permissionChoice === 'dont_allow'
-                    ? 'bg-rose-100 text-neutral-900 border-rose-200 shadow-md font-black'
-                    : 'bg-neutral-700 text-neutral-200 border-neutral-600'
-                }`}
-              >
-                Don't allow
-              </button>
-            </div>
-
-            {/* Primary Continue Button */}
-            <button
-              onClick={handleConfirmPermission}
-              className="w-full bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-3.5 rounded-2xl text-sm transition-all border border-neutral-600 active:scale-[0.98]"
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

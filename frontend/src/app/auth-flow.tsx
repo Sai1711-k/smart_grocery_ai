@@ -693,85 +693,108 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-green-500 to-teal-700 flex flex-col justify-center items-center relative overflow-hidden text-neutral-900 p-4 md:p-8">
         {/* Floating Animated Produce Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-20">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-25">
           <div className="absolute -top-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute top-1/3 -left-20 w-80 h-80 bg-white/5 rounded-full blur-2xl" />
-          <div className="absolute top-[15%] left-[12%] text-5xl animate-bounce" style={{ animationDuration: '3.5s' }}>🥬</div>
-          <div className="absolute top-[25%] right-[15%] text-4xl animate-bounce" style={{ animationDelay: '0.7s', animationDuration: '3.8s' }}>🍎</div>
-          <div className="absolute bottom-[20%] left-[15%] text-4xl animate-bounce" style={{ animationDelay: '1.2s', animationDuration: '4s' }}>🥑</div>
+          <div className="absolute top-[12%] left-[10%] text-5xl animate-bounce" style={{ animationDuration: '3.5s' }}>🥬</div>
+          <div className="absolute top-[22%] right-[15%] text-4xl animate-bounce" style={{ animationDelay: '0.7s', animationDuration: '3.8s' }}>🍎</div>
+          <div className="absolute bottom-[20%] left-[12%] text-4xl animate-bounce" style={{ animationDelay: '1.2s', animationDuration: '4s' }}>🥑</div>
         </div>
 
-        {/* Centered Glassmorphic Login Card */}
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-white/40 p-8 relative z-10 animate-slide-up">
+        {/* Centered Ultra-Modern Glassmorphic Login Card */}
+        <div className="w-full max-w-[460px] bg-white rounded-[32px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-white/60 p-8 md:p-10 relative z-10 animate-slide-up">
+          {/* Top Controls */}
           <div className="flex items-center justify-between mb-6">
             <button 
               onClick={() => setMode('welcome')} 
-              className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-700 hover:bg-neutral-200 transition active:scale-95"
+              className="w-10 h-10 rounded-full bg-neutral-100/80 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center transition active:scale-95 border border-neutral-200/60"
             >
               <ChevronLeft size={20} />
             </button>
-            <div className="flex items-center gap-1.5 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <div className="flex items-center gap-1.5 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200/80 shadow-sm">
               <ShieldCheck size={14} className="text-emerald-600" />
               <span className="text-[11px] font-extrabold text-emerald-800 uppercase tracking-wider">Email Login</span>
             </div>
           </div>
 
-          <div className="mb-6 text-center">
-            <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/25">
+          {/* Card Header Icon & Titles */}
+          <div className="mb-8">
+            <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 border border-emerald-100 shadow-sm">
               <Lock size={26} />
             </div>
-            <h2 className="text-2xl font-black text-neutral-900 tracking-tight">Welcome Back</h2>
-            <p className="text-xs text-neutral-500 font-medium mt-1">Sign in with your email &amp; password</p>
+            <h2 className="text-3xl font-black text-neutral-900 tracking-tight leading-tight">
+              Welcome<br />back
+            </h2>
+            <p className="text-sm font-medium text-neutral-500 mt-1">
+              Log in with your email &amp; password
+            </p>
           </div>
 
-          {/* Email */}
-          <div className="mb-4">
-            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-1.5 block">Email Address</label>
-            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-3.5 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
-              <Mail size={18} className="text-neutral-400 shrink-0" />
+          {/* Email Address Input */}
+          <div className="mb-5">
+            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-2 block">
+              EMAIL
+            </label>
+            <div className="flex items-center gap-3 bg-neutral-50/80 px-4 py-4 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:bg-white transition-all shadow-sm">
+              <Mail size={20} className="text-neutral-400 shrink-0" />
               <input
                 type="email"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setError(''); }}
                 placeholder="you@example.com"
-                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-300"
                 autoFocus
               />
             </div>
           </div>
 
-          {/* Password */}
-          <div className="mb-4">
-            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-1.5 block">Password</label>
-            <div className="flex items-center gap-3 bg-neutral-50 px-4 py-3.5 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:bg-white transition-all shadow-sm">
-              <Lock size={18} className="text-neutral-400 shrink-0" />
+          {/* Password Input */}
+          <div className="mb-5">
+            <label className="text-[11px] font-extrabold text-neutral-400 uppercase tracking-wider mb-2 block">
+              PASSWORD
+            </label>
+            <div className="flex items-center gap-3 bg-neutral-50/80 px-4 py-4 rounded-2xl border-2 border-neutral-200 focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:bg-white transition-all shadow-sm">
+              <Lock size={20} className="text-neutral-400 shrink-0" />
               <input
                 type={showPass ? 'text' : 'password'}
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
                 placeholder="Your password"
-                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-400 placeholder:font-normal"
+                className="flex-1 bg-transparent text-neutral-900 text-base font-bold outline-none placeholder:text-neutral-300"
               />
-              <button onClick={() => setShowPass(!showPass)} className="text-neutral-400 hover:text-neutral-600 transition-colors p-1">
-                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+              <button 
+                onClick={() => setShowPass(!showPass)} 
+                type="button"
+                className="text-neutral-400 hover:text-neutral-700 transition-colors p-1"
+              >
+                {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            <div className="flex justify-end mt-2">
-              <button onClick={() => { setMode('forgotPassword'); setError(''); setPassword(''); }} className="text-xs font-extrabold text-emerald-600 hover:underline">
+            <div className="flex justify-end mt-2.5">
+              <button 
+                type="button"
+                onClick={() => { setMode('forgotPassword'); setError(''); setPassword(''); }} 
+                className="text-xs font-extrabold text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+              >
                 Forgot password?
               </button>
             </div>
           </div>
 
-          {error && <p className="text-rose-500 text-xs font-bold mt-2 p-2.5 bg-rose-50 rounded-xl border border-rose-100 text-center">{error}</p>}
+          {error && (
+            <p className="text-rose-600 text-xs font-bold mb-4 p-3 bg-rose-50 rounded-xl border border-rose-200 text-center animate-shake">
+              {error}
+            </p>
+          )}
 
+          {/* Submit Action Button */}
           <button
             onClick={handleLogin}
             disabled={!email || !password || sending}
-            className={`w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 mt-6 transition-all active:scale-[0.98] ${
+            className={`w-full py-4.5 rounded-2xl font-black text-base flex items-center justify-center gap-2 mt-4 transition-all active:scale-[0.98] ${
               email && password
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-600/30'
-                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200'
+                ? 'bg-gradient-to-r from-emerald-600 via-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl shadow-emerald-600/30 hover:shadow-emerald-600/40'
+                : 'bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200/80'
             }`}
           >
             {sending ? (
@@ -787,9 +810,14 @@ export function AuthFlow({ onComplete }: { onComplete: () => void }) {
             )}
           </button>
 
-          <p className="text-center text-neutral-500 text-xs font-bold mt-5">
+          {/* Footer Link */}
+          <p className="text-center text-neutral-400 text-xs font-medium mt-6">
             Don&apos;t have an account?{' '}
-            <button onClick={() => { setMode('signup'); setError(''); }} className="text-emerald-600 font-black hover:underline">
+            <button 
+              type="button"
+              onClick={() => { setMode('signup'); setError(''); }} 
+              className="text-emerald-600 font-extrabold hover:underline transition-colors"
+            >
               Sign up
             </button>
           </p>
