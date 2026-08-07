@@ -486,9 +486,25 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
     return () => clearInterval(interval);
   }, [order.created_at, orderStatus]);
 
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('grocery_user_coords');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+    }
+    return { lat: 13.0035, lng: 80.0033 }; // Chennai / Thandalam / Chettipedu coordinates
+  });
+
+  const [activeAddress, setActiveAddress] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('grocery_active_address') || 'Chettipedu, Thandalam, Chennai, PIN: 602105';
+    }
+    return 'Chettipedu, Thandalam, Chennai, PIN: 602105';
+  });
+
   const [driverProgress, setDriverProgress] = useState(35);
-  const [gpsActive, setGpsActive] = useState(false);
+  const [gpsActive, setGpsActive] = useState(true);
 
   // Continuous real-time GPS tracking for live Google Map updates
   useEffect(() => {
@@ -643,6 +659,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
             </div>
 
             {/* Interactive Live Google Maps Tracking */}
+            {/* Interactive Live Google Maps Tracking */}
             <div className="bg-slate-900 rounded-3xl h-72 relative overflow-hidden shadow-xl border border-slate-800">
               <iframe
                 title="Real Live Google Map Tracking"
@@ -651,7 +668,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                 style={{ border: 0 }}
                 loading="lazy"
                 allowFullScreen
-                src={`https://maps.google.com/maps?q=${coords ? `${coords.lat},${coords.lng}` : '12.9716,77.5946'}&z=16&output=embed`}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(coords ? `${coords.lat},${coords.lng}` : activeAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                 className="w-full h-full object-cover"
               />
 
@@ -703,7 +720,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                 <div className="w-8 h-8 rounded-full bg-neutral-100 text-neutral-500 flex items-center justify-center shrink-0"><Box size={14} /></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">From Hub</p>
-                  <p className="text-sm font-bold text-neutral-900 truncate">FreshCart Super Hub #104</p>
+                  <p className="text-sm font-bold text-neutral-900 truncate">FreshCart Super Hub #104 — Chennai</p>
                 </div>
               </div>
               <div className="ml-4 border-l-2 border-dashed border-neutral-200 h-4 my-1"></div>
@@ -711,7 +728,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
                 <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><MapPin size={14} /></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-neutral-400 font-semibold uppercase tracking-wider">Delivery To</p>
-                  <p className="text-sm font-bold text-neutral-900 truncate">{order.delivery_address}</p>
+                  <p className="text-sm font-bold text-neutral-900 truncate">{activeAddress || order.delivery_address}</p>
                 </div>
               </div>
               <div className="pt-3 mt-3 border-t border-neutral-100 flex justify-between items-center">

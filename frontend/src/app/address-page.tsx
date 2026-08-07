@@ -13,25 +13,15 @@ interface Address {
   isDefault?: boolean;
 }
 
-const SAVED_ADDRESSES: Address[] = [
-  {
-    id: '1',
-    label: 'Home',
-    icon: 'home',
-    fullAddress: '123 Smart Grocery Lane, Tech Park, Bangalore',
-    landmark: 'Near Central Mall',
-    pincode: '560001',
-    isDefault: true,
-  },
-  {
-    id: '2',
-    label: 'Office',
-    icon: 'work',
-    fullAddress: 'Building 4, Cyber City, Tech Park, Bangalore',
-    landmark: 'Opposite Metro Station',
-    pincode: '560002',
-  },
-];
+const DEFAULT_HOME_ADDRESS: Address = {
+  id: '1',
+  label: 'Home',
+  icon: 'home',
+  fullAddress: 'Chettipedu, Thandalam, Chennai',
+  landmark: 'Near Rajalakshmi Engineering College',
+  pincode: '602105',
+  isDefault: true,
+};
 
 const ICON_MAP = {
   home: Home,
@@ -40,23 +30,36 @@ const ICON_MAP = {
 };
 
 export function AddressPage({ onBack, onContinue }: { onBack: () => void; onContinue: (address: string) => void }) {
-  const [addresses] = useState<Address[]>(SAVED_ADDRESSES);
-  const [selectedId, setSelectedId] = useState<string>(SAVED_ADDRESSES[0]?.id || '');
+  const [addresses, setAddresses] = useState<Address[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('grocery_saved_addresses');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {}
+      }
+    }
+    return [DEFAULT_HOME_ADDRESS];
+  });
+
+  const [selectedId, setSelectedId] = useState<string>(addresses[0]?.id || '1');
   const [showAddNew, setShowAddNew] = useState(false);
   const [locating, setLocating] = useState(false);
   const [liveAddress, setLiveAddress] = useState('');
   
-  // Image 2 Native Location Permission Dialog State
-  const [showPermissionModal, setShowPermissionModal] = useState(false);
-  const [locationAccuracy, setLocationAccuracy] = useState<'precise' | 'approximate'>('precise');
-  const [permissionChoice, setPermissionChoice] = useState<'while_using' | 'only_once' | 'dont_allow'>('while_using');
-
   // --- New Address Form ---
-  const [newLabel, setNewLabel] = useState('');
+  const [newLabel, setNewLabel] = useState('Home');
   const [newAddress, setNewAddress] = useState('');
   const [newLandmark, setNewLandmark] = useState('');
   const [newPincode, setNewPincode] = useState('');
   const [newIcon, setNewIcon] = useState<'home' | 'work' | 'other'>('home');
+
+  // Sync saved addresses to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('grocery_saved_addresses', JSON.stringify(addresses));
+    }
+  }, [addresses]);
 
   const executeLiveLocationFetch = () => {
     setLocating(true);
@@ -65,42 +68,59 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          
+          // Save real user GPS coordinates for Order Tracking Map
+          localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: latitude, lng: longitude }));
+
+          // Multi-provider Reverse Geocoding (Nominatim OpenStreetMap)
           fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&zoom=18`)
             .then(res => res.json())
             .then(data => {
               if (data && data.address) {
                 const a = data.address;
                 const parts: string[] = [];
-                if (a.house_number) parts.push(a.house_number);
-                if (a.road || a.pedestrian) parts.push(a.road || a.pedestrian);
-                if (a.neighbourhood || a.suburb) parts.push(a.neighbourhood || a.suburb);
-                if (a.city || a.town || a.village || a.county) parts.push(a.city || a.town || a.village || a.county);
+                if (a.suburb || a.village || a.neighbourhood) parts.push(a.suburb || a.village || a.neighbourhood);
+                if (a.road || a.pedestrian || a.locality) parts.push(a.road || a.pedestrian || a.locality);
+                if (a.town || a.city || a.county || a.district) parts.push(a.town || a.city || a.county || a.district);
                 if (a.state) parts.push(a.state);
-                const pincode = a.postcode || '560001';
+                
+                const pincode = a.postcode || '602105';
                 const formattedAddress = parts.filter(Boolean).join(', ');
-                const finalAddr = formattedAddress || data.display_name?.split(', ').slice(0, 5).join(', ') || 'Tech Park, Bangalore';
-                setLiveAddress(`${finalAddr}, PIN: ${pincode}`);
+                const finalAddr = formattedAddress || data.display_name?.split(', ').slice(0, 4).join(', ') || 'Chettipedu, Thandalam, Chennai';
+                const fullLocStr = `${finalAddr}, PIN: ${pincode}`;
+                
+                setLiveAddress(fullLocStr);
+                localStorage.setItem('grocery_active_address', fullLocStr);
                 if (pincode) setNewPincode(pincode);
               } else {
-                setLiveAddress(`Smart Grocery Hub, Tech Park, Bangalore, PIN: 560001 (Live GPS)`);
+                const fallbackStr = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
+                setLiveAddress(fallbackStr);
+                localStorage.setItem('grocery_active_address', fallbackStr);
               }
               setLocating(false);
             })
             .catch(() => {
-              setLiveAddress(`Smart Grocery Hub, Tech Park, Bangalore, PIN: 560001 (Detected)`);
+              const fallbackStr = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
+              setLiveAddress(fallbackStr);
+              localStorage.setItem('grocery_active_address', fallbackStr);
               setLocating(false);
             });
         },
-        () => {
-          // Fallback location on permission prompt refusal
-          setLiveAddress('123 Smart Grocery Lane, Tech Park, Bangalore (Auto-Adapted)');
-          setNewPincode('560001');
+        (err) => {
+          console.log('GPS Geolocation prompt or permission denied:', err.message);
+          const defaultLoc = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
+          setLiveAddress(defaultLoc);
+          localStorage.setItem('grocery_active_address', defaultLoc);
+          localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: 13.0035, lng: 80.0033 }));
           setLocating(false);
         },
-        { enableHighAccuracy: locationAccuracy === 'precise', timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } else {
-      setLiveAddress('123 Smart Grocery Lane, Tech Park, Bangalore (Default)');
+      const defaultLoc = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
+      setLiveAddress(defaultLoc);
+      localStorage.setItem('grocery_active_address', defaultLoc);
+      localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: 13.0035, lng: 80.0033 }));
       setLocating(false);
     }
   };
@@ -109,17 +129,43 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
     executeLiveLocationFetch();
   };
 
+  const handleSaveNewAddress = () => {
+    if (!newAddress.trim()) return;
+    const newAddrObj: Address = {
+      id: Date.now().toString(),
+      label: newLabel || 'Home',
+      icon: newIcon,
+      fullAddress: newAddress,
+      landmark: newLandmark || undefined,
+      pincode: newPincode || '602105',
+      isDefault: addresses.length === 0,
+    };
+    setAddresses(prev => [...prev, newAddrObj]);
+    setSelectedId(newAddrObj.id);
+    setShowAddNew(false);
+    setNewAddress('');
+    setNewLandmark('');
+    setNewPincode('');
+  };
+
   const handleContinue = () => {
+    let chosenAddress = '';
     if (liveAddress) {
-      onContinue(liveAddress);
+      chosenAddress = liveAddress;
     } else if (showAddNew && newAddress) {
-      onContinue(`${newAddress}${newLandmark ? `, ${newLandmark}` : ''}, PIN: ${newPincode || '560001'}`);
+      chosenAddress = `${newAddress}${newLandmark ? `, ${newLandmark}` : ''}, PIN: ${newPincode || '602105'}`;
     } else {
       const selected = addresses.find(a => a.id === selectedId);
       if (selected) {
-        onContinue(`${selected.fullAddress}${selected.landmark ? `, ${selected.landmark}` : ''}, PIN: ${selected.pincode}`);
+        chosenAddress = `${selected.fullAddress}${selected.landmark ? `, ${selected.landmark}` : ''}, PIN: ${selected.pincode}`;
+      } else if (addresses[0]) {
+        chosenAddress = `${addresses[0].fullAddress}, PIN: ${addresses[0].pincode}`;
+      } else {
+        chosenAddress = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
       }
     }
+    localStorage.setItem('grocery_active_address', chosenAddress);
+    onContinue(chosenAddress);
   };
 
   return (
@@ -278,12 +324,25 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
               />
               <input
                 type="text"
-                placeholder="Pincode (e.g. 560001)"
+                placeholder="Pincode (e.g. 602105)"
                 value={newPincode}
                 onChange={e => setNewPincode(e.target.value)}
                 className="w-full p-3.5 rounded-xl border border-neutral-200 text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none"
               />
             </div>
+
+            <button
+              onClick={handleSaveNewAddress}
+              disabled={!newAddress.trim()}
+              className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
+                newAddress.trim()
+                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20'
+                  : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
+              }`}
+            >
+              <Check size={18} />
+              <span>Save &amp; Use Address</span>
+            </button>
           </div>
         )}
       </div>
