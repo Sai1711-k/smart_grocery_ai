@@ -127,4 +127,4 @@ const instance = autocannon({
 });
 
 // Stream progress in real-time
-autocannon.track(instance, { renderProgressBar: false });
+autocannon.track(instance, { renderProgressBar: false, renderResultsTable: false });
