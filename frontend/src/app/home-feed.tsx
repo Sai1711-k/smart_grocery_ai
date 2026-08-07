@@ -230,12 +230,24 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] text-white/60 font-bold uppercase tracking-widest">Delivering to</span>
-                <span className="text-sm font-bold truncate max-w-[200px]">
-                  {preferences?.selectedStore || 'Smart Grocery (Tech Park)'}
+                <span className="text-sm font-bold truncate max-w-[220px]">
+                  {typeof window !== 'undefined' ? (localStorage.getItem('grocery_active_address') || 'Chettipedu, Thandalam, Chennai') : 'Chettipedu, Thandalam, Chennai'}
                 </span>
               </div>
             </div>
-            <StockAlertBell onClick={() => onOpenAlerts?.()} />
+            
+            <div className="flex items-center gap-2">
+              {(user?.email === 'sai17042004@gmail.com' || user?.user_metadata?.role === 'admin') && (
+                <button
+                  onClick={() => window.location.href = '/admin/inventory'}
+                  className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3.5 py-1.5 rounded-full shadow-lg shadow-amber-400/20 flex items-center gap-1.5 transition active:scale-95"
+                >
+                  <span className="text-sm">👑</span>
+                  <span>Admin Live Action</span>
+                </button>
+              )}
+              <StockAlertBell onClick={() => onOpenAlerts?.()} />
+            </div>
           </div>
 
           {/* Search */}

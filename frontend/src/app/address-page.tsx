@@ -44,6 +44,11 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
 
   const [selectedId, setSelectedId] = useState<string>(addresses[0]?.id || '1');
   const [showAddNew, setShowAddNew] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editAddressText, setEditAddressText] = useState('');
+  const [editLandmarkText, setEditLandmarkText] = useState('');
+  const [editPincodeText, setEditPincodeText] = useState('');
+
   const [locating, setLocating] = useState(false);
   const [liveAddress, setLiveAddress] = useState('');
   
@@ -76,7 +81,23 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
           fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&zoom=18`)
             .then(res => res.json())
             .then(data => {
-              if (data && data.address) {
+              const displayName = (data?.display_name || '').toLowerCase();
+              
+              // Exact Locality Override for Chettipedu / Thandalam / NH48 corridor
+              const isThandalamZone = 
+                (latitude >= 12.96 && latitude <= 13.06 && longitude >= 79.95 && longitude <= 80.08) ||
+                displayName.includes('chembarambakkam') ||
+                displayName.includes('thandalam') ||
+                displayName.includes('chettipedu') ||
+                displayName.includes('600124') ||
+                displayName.includes('602105');
+
+              if (isThandalamZone) {
+                const exactAddressStr = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
+                setLiveAddress(exactAddressStr);
+                localStorage.setItem('grocery_active_address', exactAddressStr);
+                setNewPincode('602105');
+              } else if (data && data.address) {
                 const a = data.address;
                 const parts: string[] = [];
                 if (a.suburb || a.village || a.neighbourhood) parts.push(a.suburb || a.village || a.neighbourhood);
@@ -123,6 +144,30 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
       localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: 13.0035, lng: 80.0033 }));
       setLocating(false);
     }
+  };
+
+  const handleStartEdit = (addr: Address, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingId(addr.id);
+    setEditAddressText(addr.fullAddress);
+    setEditLandmarkText(addr.landmark || '');
+    setEditPincodeText(addr.pincode);
+  };
+
+  const handleSaveEdit = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAddresses(prev => prev.map(a => {
+      if (a.id === id) {
+        return {
+          ...a,
+          fullAddress: editAddressText,
+          landmark: editLandmarkText || undefined,
+          pincode: editPincodeText || '602105'
+        };
+      }
+      return a;
+    }));
+    setEditingId(null);
   };
 
   const handleUseLiveLocation = () => {
@@ -231,10 +276,18 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
           {addresses.map(addr => {
             const IconComp = ICON_MAP[addr.icon];
             const isSelected = selectedId === addr.id && !liveAddress && !showAddNew;
+            const isEditingThis = editingId === addr.id;
+
             return (
               <div
                 key={addr.id}
-                onClick={() => { setSelectedId(addr.id); setLiveAddress(''); setShowAddNew(false); }}
+                onClick={() => {
+                  if (!isEditingThis) {
+                    setSelectedId(addr.id);
+                    setLiveAddress('');
+                    setShowAddNew(false);
+                  }
+                }}
                 className={`p-5 rounded-2xl cursor-pointer transition-all border-2 ${
                   isSelected
                     ? 'bg-emerald-50 border-emerald-400 shadow-md shadow-emerald-100'
@@ -247,20 +300,80 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
                   }`}>
                     <IconComp size={22} />
                   </div>
+
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className={`font-bold ${isSelected ? 'text-emerald-800' : 'text-neutral-900'}`}>{addr.label}</h3>
-                      {addr.isDefault && (
-                        <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full uppercase">DEFAULT</span>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className={`font-bold ${isSelected ? 'text-emerald-800' : 'text-neutral-900'}`}>{addr.label}</h3>
+                        {addr.isDefault && (
+                          <span className="text-[9px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full uppercase">DEFAULT</span>
+                        )}
+                      </div>
+
+                      {/* Edit Address Button */}
+                      {!isEditingThis ? (
+                        <button
+                          onClick={(e) => handleStartEdit(addr, e)}
+                          className="text-emerald-600 hover:text-emerald-800 text-xs font-bold flex items-center gap-1 bg-white border border-emerald-200 px-2.5 py-1 rounded-lg hover:bg-emerald-50 transition"
+                        >
+                          <Edit3 size={13} />
+                          <span>Edit</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setEditingId(null); }}
+                          className="text-neutral-400 hover:text-red-500 text-xs font-bold"
+                        >
+                          Cancel
+                        </button>
                       )}
                     </div>
-                    <p className="text-sm text-neutral-600 leading-relaxed">{addr.fullAddress}</p>
-                    {addr.landmark && (
-                      <p className="text-xs text-neutral-400 mt-1">📍 {addr.landmark}</p>
+
+                    {!isEditingThis ? (
+                      <>
+                        <p className="text-sm text-neutral-600 leading-relaxed">{addr.fullAddress}</p>
+                        {addr.landmark && (
+                          <p className="text-xs text-neutral-400 mt-1">📍 {addr.landmark}</p>
+                        )}
+                        <p className="text-xs text-neutral-400 mt-0.5">PIN: {addr.pincode}</p>
+                      </>
+                    ) : (
+                      <div className="space-y-3 pt-2" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="text"
+                          value={editAddressText}
+                          onChange={(e) => setEditAddressText(e.target.value)}
+                          placeholder="Full Street Address"
+                          className="w-full p-2.5 rounded-xl border border-neutral-300 text-xs font-medium focus:ring-2 focus:ring-emerald-500 outline-none"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            type="text"
+                            value={editLandmarkText}
+                            onChange={(e) => setEditLandmarkText(e.target.value)}
+                            placeholder="Landmark"
+                            className="w-full p-2.5 rounded-xl border border-neutral-300 text-xs font-medium focus:ring-2 focus:ring-emerald-500 outline-none"
+                          />
+                          <input
+                            type="text"
+                            value={editPincodeText}
+                            onChange={(e) => setEditPincodeText(e.target.value)}
+                            placeholder="Pincode"
+                            className="w-full p-2.5 rounded-xl border border-neutral-300 text-xs font-medium focus:ring-2 focus:ring-emerald-500 outline-none"
+                          />
+                        </div>
+                        <button
+                          onClick={(e) => handleSaveEdit(addr.id, e)}
+                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition"
+                        >
+                          <Check size={14} />
+                          <span>Save Address Changes</span>
+                        </button>
+                      </div>
                     )}
-                    <p className="text-xs text-neutral-400 mt-0.5">PIN: {addr.pincode}</p>
                   </div>
-                  {isSelected && (
+
+                  {isSelected && !isEditingThis && (
                     <div className="w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center shrink-0">
                       <Check size={16} className="text-white" />
                     </div>
