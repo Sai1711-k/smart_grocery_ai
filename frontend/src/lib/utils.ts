@@ -247,7 +247,15 @@ export function generateFoodSvgDataUri(name: string, category?: string): string 
 export function getValidImageUrl(url: string | null | undefined, fallbackName: string, category?: string): string {
   const cleanName = (fallbackName || '').toLowerCase().trim();
 
-  // 1. Longer multi-word key matching against EXACT_ITEM_IMAGES (Longest keys checked first!)
+  // 1. Direct Local Product Image overrides (e.g. uploaded images in /images/products/)
+  if (cleanName.includes('alphonso mango') || cleanName === 'mango') {
+    return '/images/products/alphonso_mango.png';
+  }
+  if (cleanName.includes('robusta banana') || cleanName.includes('banana')) {
+    return '/images/products/fresh_robusta_banana.png';
+  }
+
+  // 2. Longer multi-word key matching against EXACT_ITEM_IMAGES (Longest keys checked first!)
   const sortedEntries = Object.entries(EXACT_ITEM_IMAGES).sort((a, b) => b[0].length - a[0].length);
   for (const [key, image] of sortedEntries) {
     if (cleanName.includes(key)) {
@@ -255,12 +263,12 @@ export function getValidImageUrl(url: string | null | undefined, fallbackName: s
     }
   }
 
-  // 2. If provided URL is a valid non-placeholder http URL, use it
-  if (url && url.startsWith('http') && !url.includes('loremflickr') && !url.includes('via.placeholder.com') && !url.includes('placehold') && !url.includes('wikimedia.org')) {
+  // 3. If provided URL is a valid non-placeholder http or local URL, use it
+  if (url && (url.startsWith('/') || url.startsWith('http')) && !url.includes('loremflickr') && !url.includes('via.placeholder.com') && !url.includes('placehold') && !url.includes('wikimedia.org')) {
     return url;
   }
 
-  // 3. Fail-safe SVG generator fallback (Emerald Green Card)
+  // 4. Fail-safe SVG generator fallback (Guarantees zero empty/broken images!)
   return generateFoodSvgDataUri(fallbackName, category);
 }
 

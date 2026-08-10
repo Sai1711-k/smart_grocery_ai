@@ -4,8 +4,8 @@ import { supabaseAdmin } from '@/lib/supabase-server';
 const fallbackProducts = [
   // 🍎 Fruits
   { name: 'Red Delicious Apple', category: 'Fruits', price: 150, image_url: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400&q=80' },
-  { name: 'Fresh Robusta Banana', category: 'Fruits', price: 60, image_url: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?w=400&q=80' },
-  { name: 'Alphonso Mango', category: 'Fruits', price: 200, image_url: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&q=80' },
+  { name: 'Fresh Robusta Banana', category: 'Fruits', price: 60, image_url: '/images/products/fresh_robusta_banana.png' },
+  { name: 'Alphonso Mango', category: 'Fruits', price: 200, image_url: '/images/products/alphonso_mango.png' },
   { name: 'Nagpur Oranges', category: 'Fruits', price: 120, image_url: 'https://images.unsplash.com/photo-1582979512210-99b6a53386f9?w=400&q=80' },
   { name: 'Black Seedless Grapes', category: 'Fruits', price: 90, image_url: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=400&q=80' },
   { name: 'Fresh Strawberries', category: 'Fruits', price: 250, image_url: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&q=80' },
