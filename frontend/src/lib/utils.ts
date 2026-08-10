@@ -81,22 +81,22 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   "oreo chocolate cream biscuits": "/images/products/78_Oreo%20Chocolate%20Cream%20Biscuits.png",
   "britannia jimjam biscuits": "/images/products/79_Britannia%20JimJam%20Biscuits.png",
   "parle-g gold biscuits": "/images/products/80_Parle-G%20Gold%20Biscuits.png",
-  "britannia good day butter cookies": "/images/products/81_Britannia%20Good%20Day%20Butter%20Cookies.png",
-  "sunfeast dark fantasy choco fills": "/images/products/82_Sunfeast%20Dark%20Fantasy%20Choco%20Fills.png",
-  "bingo mad angles very peri peri": "/images/products/83_Bingo%20Mad%20Angles%20Very%20Peri%20Peri.png",
-  "doritos nacho cheese tortilla chips": "/images/products/84_Doritos%20Nacho%20Cheese%20Tortilla%20Chips.png",
-  "pringles sour cream _ onion": "/images/products/85_Pringles%20Sour%20Cream%20_%20Onion.png",
-  "cheetos cheese puffs": "/images/products/86_Cheetos%20Cheese%20Puffs.png",
-  "britannia bourbon chocolate biscuits": "/images/products/87_Britannia%20Bourbon%20Chocolate%20Biscuits.png",
-  "parle hide _ seek choco chip": "/images/products/88_Parle%20Hide%20_%20Seek%20Choco%20Chip.png",
-  "haldiram aloo bhujia 200g": "/images/products/89_Haldiram%20Aloo%20Bhujia%20200g.png",
-  "haldiram khatta meetha mixture": "/images/products/90_Haldiram%20Khatta%20Meetha%20Mixture.png",
-  "act ii golden butter popcorn": "/images/products/91_Act%20II%20Golden%20Butter%20Popcorn.png",
-  "snickers peanut chocolate bar": "/images/products/92_Snickers%20Peanut%20Chocolate%20Bar.png",
-  "cadbury dairy milk silk chocolate": "/images/products/93_Cadbury%20Dairy%20Milk%20Silk%20Chocolate.png",
-  "kitkat 4-finger chocolate wafers": "/images/products/94_KitKat%204-Finger%20Chocolate%20Wafers.png",
-  "roasted salted almonds 200g": "/images/products/95_Roasted%20Salted%20Almonds%20200g.png",
-  "premium whole cashews 200g": "/images/products/96_Premium%20Whole%20Cashews%20200g.png",
+  "britannia good day butter cookies": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&q=80",
+  "sunfeast dark fantasy choco fills": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80",
+  "bingo mad angles very peri peri": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=400&q=80",
+  "doritos nacho cheese tortilla chips": "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=400&q=80",
+  "pringles sour cream _ onion": "https://images.unsplash.com/photo-1576643958047-981101789e9b?w=400&q=80",
+  "cheetos cheese puffs": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&q=80",
+  "britannia bourbon chocolate biscuits": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80",
+  "parle hide _ seek choco chip": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&q=80",
+  "haldiram aloo bhujia 200g": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80",
+  "haldiram khatta meetha mixture": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80",
+  "act ii golden butter popcorn": "https://images.unsplash.com/photo-1585647347483-22b66260c69c?w=400&q=80",
+  "snickers peanut chocolate bar": "https://images.unsplash.com/photo-1548741487-18d363dc4469?w=400&q=80",
+  "cadbury dairy milk silk chocolate": "https://images.unsplash.com/photo-1511381939415-e44015466834?w=400&q=80",
+  "kitkat 4-finger chocolate wafers": "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=400&q=80",
+  "roasted salted almonds 200g": "https://images.unsplash.com/photo-1508061942926-6191b5a60af7?w=400&q=80",
+  "premium whole cashews 200g": "https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=400&q=80",
 };
 
 // Fail-safe SVG Food Data URI Generator - Matching Emerald Green Card Design
@@ -191,27 +191,26 @@ export function generateFoodSvgDataUri(name: string, category?: string): string 
 
 export function getValidImageUrl(url: string | null | undefined, fallbackName: string, category?: string): string {
   const cleanName = (fallbackName || '').toLowerCase().trim();
-  const slug = cleanName.replace(/[^a-z0-9]+/g, '_');
 
-  // 1. Direct Local Product Image overrides (e.g. uploaded images in /images/products/ or /images/)
-  if (cleanName.includes('alphonso mango') || cleanName === 'mango') {
-    return '/images/products/alphonso_mango.png';
-  }
-  if (cleanName.includes('robusta banana') || cleanName.includes('banana')) {
-    return '/images/products/fresh_robusta_banana.png';
-  }
-
-  // 2. Dynamic check for custom image URLs passed from API or local folder assets
-  if (url && (url.startsWith('/') || url.startsWith('http')) && !url.includes('loremflickr') && !url.includes('via.placeholder.com') && !url.includes('placehold') && !url.includes('wikimedia.org')) {
-    return url;
-  }
-
-  // 3. Longer multi-word key matching against EXACT_ITEM_IMAGES (Longest keys checked first!)
+  // 1. Check EXACT_ITEM_IMAGES for clean, high-resolution HD product photos without any embedded text or numbers
   const sortedEntries = Object.entries(EXACT_ITEM_IMAGES).sort((a, b) => b[0].length - a[0].length);
   for (const [key, image] of sortedEntries) {
     if (cleanName.includes(key)) {
       return image;
     }
+  }
+
+  // 2. Direct Local Product Image overrides (e.g. uploaded images in /images/products/)
+  if (cleanName.includes('alphonso mango') || cleanName === 'mango') {
+    return '/images/products/03_Alphonso%20Mango.png';
+  }
+  if (cleanName.includes('robusta banana') || cleanName.includes('banana')) {
+    return '/images/products/02_Fresh%20Robusta%20Banana.png';
+  }
+
+  // 3. Dynamic check for valid external image URLs
+  if (url && url.startsWith('http') && !url.includes('loremflickr') && !url.includes('via.placeholder.com') && !url.includes('placehold') && !url.includes('wikimedia.org')) {
+    return url;
   }
 
   // 4. Fail-safe SVG generator fallback (Guarantees zero empty/broken images!)
