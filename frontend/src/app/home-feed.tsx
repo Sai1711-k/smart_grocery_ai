@@ -237,15 +237,6 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
             </div>
             
             <div className="flex items-center gap-2">
-              {(user?.email === 'sai17042004@gmail.com' || user?.user_metadata?.role === 'admin') && (
-                <button
-                  onClick={() => window.location.href = '/admin/inventory'}
-                  className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3.5 py-1.5 rounded-full shadow-lg shadow-amber-400/20 flex items-center gap-1.5 transition active:scale-95"
-                >
-                  <span className="text-sm">👑</span>
-                  <span>Admin Live Action</span>
-                </button>
-              )}
               <StockAlertBell onClick={() => onOpenAlerts?.()} />
             </div>
           </div>
