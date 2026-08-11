@@ -1,6 +1,12 @@
 const path = require('path');
 const fs = require('fs');
-const XLSX = require(path.join(__dirname, '..', 'selenium-tests', 'node_modules', 'xlsx'));
+
+let XLSX;
+try {
+  XLSX = require('xlsx');
+} catch (e) {
+  XLSX = require(path.join(__dirname, '..', 'selenium-tests', 'node_modules', 'xlsx'));
+}
 
 const OUTPUT_DIR = path.join(__dirname, '..', 'Vulnerability Test Results');
 if (!fs.existsSync(OUTPUT_DIR)) {
