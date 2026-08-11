@@ -25,8 +25,16 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
+  const [activeAddressText, setActiveAddressText] = useState('Chettipedu, Thandalam, Chennai, PIN: 602105');
   const { addToCart } = useCart();
   const { user, preferences } = useAuth();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('grocery_active_address');
+      if (stored) setActiveAddressText(stored);
+    }
+  }, []);
 
   useEffect(() => {
     fetch('/api/products')
@@ -231,7 +239,7 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
               <div className="flex flex-col">
                 <span className="text-[10px] text-white/60 font-bold uppercase tracking-widest">Delivering to</span>
                 <span className="text-sm font-bold truncate max-w-[220px]">
-                  {typeof window !== 'undefined' ? (localStorage.getItem('grocery_active_address') || 'Chettipedu, Thandalam, Chennai') : 'Chettipedu, Thandalam, Chennai'}
+                  {activeAddressText}
                 </span>
               </div>
             </div>
