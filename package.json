@@ -1,0 +1,15 @@
+{
+  "name": "smart-grocery-ai-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart Grocery AI Root Workspace & Automated QA/DevSecOps Test Pipeline",
+  "scripts": {
+    "test:selenium": "cd selenium-tests && node tests/login-tests.js",
+    "test:appium": "cd appium-tests && node tests/appium-tests.js",
+    "test:load": "cd load-tests && node baseline-load-test.js",
+    "generate:security": "node scripts/generate-security-reports.js"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

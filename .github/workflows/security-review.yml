@@ -55,7 +55,8 @@ jobs:
           echo "=========================================="
           echo "🚀 Generating Security Reports & Excel Artifacts..."
           echo "=========================================="
-          cd selenium-tests && npm install --legacy-peer-deps && cd ..
+          mkdir -p "Vulnerability Test Results"
+          npm install --legacy-peer-deps
           node scripts/generate-security-reports.js
 
       # --- STEP 4: UPLOAD VULNERABILITY REPORT ARTIFACTS ---
