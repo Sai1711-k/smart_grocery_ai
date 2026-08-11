@@ -81,9 +81,9 @@ jobs:
 
       - name: ⚙️ Run Security Assessment & Discovery (SAST/DAST)
         run: |
-          cd scripts
-          npm install --legacy-peer-deps || npm ci
-          node generate-security-reports.js || true
+          mkdir -p "Vulnerability Test Results"
+          npm install xlsx --legacy-peer-deps
+          node scripts/generate-security-reports.js
 
       - name: 📦 Upload Endpoint Inventory Report
         uses: actions/upload-artifact@v4
@@ -107,9 +107,9 @@ jobs:
 
       - name: ✅ Run Vulnerability & Dependency Assessment
         run: |
-          cd scripts
-          npm install --legacy-peer-deps || npm ci
-          node generate-security-reports.js || true
+          mkdir -p "Vulnerability Test Results"
+          npm install xlsx --legacy-peer-deps
+          node scripts/generate-security-reports.js
 
       - name: 📦 Upload Findings Report
         uses: actions/upload-artifact@v4
