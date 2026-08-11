@@ -382,8 +382,8 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                     </div>
                   )}
 
-                  {/* Image container - High Clarity HD Card */}
-                  <div className={`w-full aspect-square bg-white rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden p-2 border border-neutral-100/80 shadow-2xs ${isOutOfStock ? 'grayscale opacity-60' : ''}`}>
+                  {/* Image container - Full Frame High Clarity Card */}
+                  <div className={`w-full aspect-square bg-white rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden p-0.5 border border-neutral-100/80 shadow-2xs ${isOutOfStock ? 'grayscale opacity-60' : ''}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={getValidImageUrl(product.image_url, product.name, product.category)}
@@ -394,7 +394,7 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                         target.onerror = null;
                         target.src = generateFoodSvgDataUri(product.name, product.category);
                       }}
-                      className="object-contain w-full h-full rounded-xl transition-transform duration-500 group-hover:scale-110 drop-shadow-xs"
+                      className="object-cover w-full h-full rounded-xl transition-transform duration-500 group-hover:scale-105"
                     />
                     {isOutOfStock && (
                       <div className="absolute inset-0 bg-black/30 backdrop-blur-xs rounded-2xl flex items-center justify-center">
