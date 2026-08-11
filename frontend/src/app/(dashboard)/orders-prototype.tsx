@@ -62,9 +62,9 @@ export function CheckoutPrototype({ onBack, onSuccess }: { onBack: () => void, o
     total_price: item.price * item.quantity,
   }));
 
+  const activeAddressStr = (typeof window !== 'undefined' ? localStorage.getItem('grocery_active_address') : null) || 'Chettipedu, Thandalam, Chennai, PIN: 602105';
   const addresses = [
-    { label: 'Home', address: '123 Smart Grocery Lane, Tech Park' },
-    { label: 'Office', address: 'Building 4, Cyber City, Tech Park' },
+    { label: 'Home', address: activeAddressStr },
   ];
   const paymentMethods = ['UPI / QR', 'Credit / Debit Card', 'Cash on Delivery'];
 
@@ -78,13 +78,17 @@ export function CheckoutPrototype({ onBack, onSuccess }: { onBack: () => void, o
           customer_name: user?.email?.split('@')[0] || 'Guest',
           customer_email: user?.email || '',
           user_id: user?.id,
-          delivery_address: addresses[selectedAddress].address,
+          delivery_address: addresses[selectedAddress]?.address || activeAddressStr,
           payment_method: paymentMethods[selectedPayment],
           items: orderItems,
         }),
       });
       const result = await res.json();
       if (result.success) {
+        // Trigger Amazon / Blinkit style Real Device Push Notification
+        import('@/lib/push-notifications').then(mod => {
+          mod.triggerOrderPlacedPush(result.order?.id || 'GRO-4912', activeAddressStr);
+        });
         clearCart();
         onSuccess();
       }

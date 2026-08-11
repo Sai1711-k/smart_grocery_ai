@@ -33,6 +33,11 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('grocery_active_address');
       if (stored) setActiveAddressText(stored);
+
+      // Prompt for Push Notification Permission (Amazon / Blinkit style)
+      import('@/lib/push-notifications').then(mod => {
+        mod.requestPushPermission();
+      });
     }
   }, []);
 
