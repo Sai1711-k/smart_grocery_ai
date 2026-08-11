@@ -33,7 +33,7 @@ export function ChatBot() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  const addBotMessage = (text: string, delay = 900) => {
+  const addBotMessage = (text: string, delay = 120) => {
     setTimeout(() => {
       setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'bot', text }]);
       setIsTyping(false);
@@ -53,13 +53,19 @@ export function ChatBot() {
   const processIntent = async (text: string) => {
     const lower = text.toLowerCase();
 
+    // ── Product Catalog Lookup ──
+    if (lower.includes('apple') || lower.includes('banana') || lower.includes('mango') || lower.includes('milk') || lower.includes('paneer') || lower.includes('bread') || lower.includes('egg') || lower.includes('ghee') || lower.includes('atta') || lower.includes('lays') || lower.includes('oreo') || lower.includes('kurkure')) {
+      addBotMessage(`🛍️ **In Stock & Available for Express 10-Min Delivery:**\n• Fresh Alphonso Mangoes: ₹140/unit\n• Red Delicious Apples: ₹200/unit\n• Full Cream Milk 1L: ₹68/unit\n• Fresh Malai Paneer 200g: ₹110/unit\n• Pure Cow Ghee 500g: ₹350/unit\n• Kurkure & Lays Snacks: ₹20/pack\n\nTap the **Add to Cart** button on the home screen to order now!`);
+      return;
+    }
+
     // ── Greetings ──
     if (/^(hi|hello|hey|hlo|namaste|vanakkam)/.test(lower)) {
-      addBotMessage('Hello! 😊 How can I help you with your FreshCart grocery shopping today?');
+      addBotMessage('Hello! 😊 I am your FreshCart AI Assistant. Ask me about products, 10-min delivery to Chettipedu, personalized diet plans, or order tracking!');
 
     // ── Track / Order Status ──
     } else if (lower.includes('track') || lower.includes('order status') || lower.includes('where is my order')) {
-      addBotMessage('📦 To track your order:\n1. Tap the **Orders** icon in the bottom navigation bar.\n2. Select your active order.\n3. You\'ll see a live map with your driver\'s location and ETA.');
+      addBotMessage('📦 **Live Delivery Tracking:**\nYour order from FreshCart Super Hub #104 is on the way to **Chettipedu, Thandalam, Chennai**.\n\nETA: **10–15 Minutes** (Live Map active under Orders tab).');
 
     // ── Cancel Order ──
     } else if (lower.includes('cancel') && lower.includes('order')) {

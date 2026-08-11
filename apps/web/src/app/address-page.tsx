@@ -128,20 +128,20 @@ export function AddressPage({ onBack, onContinue }: { onBack: () => void; onCont
             });
         },
         (err) => {
-          console.log('GPS Geolocation prompt or permission denied:', err.message);
+          console.log('GPS Geolocation prompt or timeout fallback engaged:', err.message);
           const defaultLoc = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
           setLiveAddress(defaultLoc);
           localStorage.setItem('grocery_active_address', defaultLoc);
-          localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: 13.0035, lng: 80.0033 }));
+          localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: 12.9856, lng: 80.0124 }));
           setLocating(false);
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: false, timeout: 3500, maximumAge: 300000 }
       );
     } else {
       const defaultLoc = 'Chettipedu, Thandalam, Chennai, PIN: 602105';
       setLiveAddress(defaultLoc);
       localStorage.setItem('grocery_active_address', defaultLoc);
-      localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: 13.0035, lng: 80.0033 }));
+      localStorage.setItem('grocery_user_coords', JSON.stringify({ lat: 12.9856, lng: 80.0124 }));
       setLocating(false);
     }
   };
