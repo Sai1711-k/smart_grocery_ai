@@ -1,0 +1,7 @@
+# Root gitignore
+.idea/
+product_images/
+*.log
+node_modules/
+.next/
+.vercel
