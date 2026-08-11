@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Smart Grocery AI",
+    "slug": "smart-grocery-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./public/images/products/03_alphonso_mango.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./public/images/products/03_alphonso_mango.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./public/images/products/03_alphonso_mango.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.smartgrocery.ai"
+    },
+    "web": {
+      "favicon": "./public/images/products/03_alphonso_mango.png"
+    }
+  }
+}
