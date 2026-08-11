@@ -32,14 +32,14 @@ export function CartPage({ onCheckout }: { onCheckout: () => void }) {
       <div className="px-6 py-6 space-y-4">
         {items.map(item => (
           <div key={item.id} className="bg-white p-4 rounded-3xl shadow-sm border border-neutral-100 flex gap-4 relative overflow-hidden">
-            <div className="w-24 h-24 bg-neutral-50 rounded-2xl shrink-0 overflow-hidden relative">
+            <div className="w-24 h-24 bg-white p-1 rounded-2xl shrink-0 overflow-hidden relative border border-neutral-100 shadow-2xs">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={getValidImageUrl(item.image_url, item.name)}
                 alt={item.name}
                 referrerPolicy="no-referrer"
                 onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = getValidImageUrl(null, item.name); }}
-                className="object-cover w-full h-full"
+                className="object-contain w-full h-full rounded-xl"
               />
             </div>
             
