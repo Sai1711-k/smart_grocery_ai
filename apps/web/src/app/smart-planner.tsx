@@ -30,21 +30,40 @@ const GOALS = [
 ];
 
 const INITIAL_CATALOG: DietItem[] = [
+  // 🧀 Dairy & Eggs
   { id: 'ai1', name: 'Fresh Malai Paneer 200g', price: 90, category: 'Dairy', diet: ['veg', 'high-protein', 'keto', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 265, proteinG: 18, carbsG: 3, fatsG: 20, img: '🧀', image_url: '/images/products/22_Fresh%20Malai%20Paneer%20200g.png' },
-  { id: 'ai2', name: 'Brown Eggs (6 Pack)', price: 60, category: 'Dairy', diet: ['high-protein', 'keto', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 70, proteinG: 6, carbsG: 0.5, fatsG: 5, img: '🥚', image_url: '/images/products/27_Brown%20Eggs%20_6%20Pack_.png' },
-  { id: 'ai3', name: 'Fresh Spinach Bunch', price: 20, category: 'Vegetables', diet: ['veg', 'vegan', 'keto', 'high-protein', 'balanced', 'weight-loss'], baseQty: 3, recommendedQty: 3, cals: 23, proteinG: 2.9, carbsG: 3.6, fatsG: 0.4, img: '🥬', image_url: '/images/products/12_Fresh%20Spinach%20Bunch.png' },
-  { id: 'ai4', name: 'Alphonso Mango', price: 200, category: 'Fruits', diet: ['veg', 'vegan', 'balanced'], baseQty: 2, recommendedQty: 2, cals: 135, proteinG: 1.1, carbsG: 35, fatsG: 0.6, img: '🥭', image_url: '/images/products/03_Alphonso%20Mango.png' },
-  { id: 'ai5', name: 'Tata Sampann Toor Dal 1kg', price: 160, category: 'Grains', diet: ['veg', 'vegan', 'high-protein', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 343, proteinG: 22, carbsG: 62, fatsG: 1.7, img: '🥣', image_url: '/images/products/61_Tata%20Sampann%20Toor%20Dal%201kg.png' },
-  { id: 'ai6', name: 'India Gate Basmati Rice 1kg', price: 120, category: 'Grains', diet: ['veg', 'vegan', 'balanced'], baseQty: 2, recommendedQty: 2, cals: 350, proteinG: 7.1, carbsG: 78, fatsG: 0.6, img: '🍚', image_url: '/images/products/57_India%20Gate%20Basmati%20Rice%201kg.png' },
+  { id: 'ai2', name: 'Brown Eggs (6 Pack)', price: 60, category: 'Dairy', diet: ['high-protein', 'keto', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 70, proteinG: 6, carbsG: 0.5, fatsG: 5, img: '🥚', image_url: '/images/products/27_Brown%20Eggs_6%20Pack.png' },
   { id: 'ai7', name: 'Full Cream Milk 1L', price: 66, category: 'Dairy', diet: ['veg', 'high-protein', 'balanced'], baseQty: 3, recommendedQty: 3, cals: 620, proteinG: 32, carbsG: 48, fatsG: 35, img: '🥛', image_url: '/images/products/15_Full%20Cream%20Milk%201L.png' },
-  { id: 'ai8', name: 'Fresh Chicken Breast 500g', price: 280, category: 'Meat', diet: ['high-protein', 'keto', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 165, proteinG: 31, carbsG: 0, fatsG: 3.6, img: '🥩', image_url: '/images/products/43_Fresh%20Chicken%20Breast%20500g.png' },
-  { id: 'ai9', name: 'Classic White Bread', price: 40, category: 'Bakery', diet: ['veg', 'balanced'], baseQty: 2, recommendedQty: 2, cals: 265, proteinG: 9, carbsG: 49, fatsG: 3.2, img: '🍞', image_url: '/images/products/28_Classic%20White%20Bread.png' },
-  { id: 'ai10', name: 'Red Delicious Apple', price: 150, category: 'Fruits', diet: ['veg', 'vegan', 'balanced', 'weight-loss'], baseQty: 1, recommendedQty: 1, cals: 95, proteinG: 0.5, carbsG: 25, fatsG: 0.3, img: '🍎', image_url: '/images/products/01_Red%20Delicious%20Apple.png' },
-  { id: 'ai11', name: 'Fortune Sunflower Oil 1L', price: 140, category: 'Oils', diet: ['veg', 'vegan', 'keto', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 884, proteinG: 0, carbsG: 0, fatsG: 100, img: '🫒', image_url: '/images/products/47_Fortune%20Sunflower%20Oil%201L.png' },
-  { id: 'ai12', name: '100% Multigrain Bread', price: 60, category: 'Bakery', diet: ['veg', 'vegan', 'high-protein', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 250, proteinG: 13, carbsG: 41, fatsG: 4.2, img: '🍞', image_url: '/images/products/32_100_%20Multigrain%20Bread.png' },
-  { id: 'ai13', name: 'Rolled Oats 1kg', price: 180, category: 'Grains', diet: ['veg', 'vegan', 'high-protein', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 389, proteinG: 16.9, carbsG: 66, fatsG: 6.9, img: '🥣', image_url: '/images/products/65_Rolled%20Oats%201kg.png' },
   { id: 'ai14', name: 'Greek Plain Yogurt', price: 80, category: 'Dairy', diet: ['veg', 'high-protein', 'keto', 'weight-loss', 'balanced'], baseQty: 2, recommendedQty: 2, cals: 100, proteinG: 10, carbsG: 4, fatsG: 5, img: '🥣', image_url: '/images/products/25_Greek%20Plain%20Yogurt.png' },
-  { id: 'ai15', name: 'Roasted Salted Almonds 200g', price: 220, category: 'Snacks', diet: ['veg', 'vegan', 'keto', 'high-protein', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 579, proteinG: 21, carbsG: 22, fatsG: 50, img: '🥜', image_url: '/images/products/95_Roasted%20Salted%20Almonds%20200g.png' }
+  { id: 'ai21', name: 'Mozzarella Cheese', price: 200, category: 'Dairy', diet: ['veg', 'keto', 'high-protein', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 300, proteinG: 22, carbsG: 2, fatsG: 22, img: '🧀', image_url: '/images/products/Mozzarella_Cheese.png' },
+  { id: 'ai26', name: 'Toned Milk', price: 54, category: 'Dairy', diet: ['veg', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 470, proteinG: 24, carbsG: 38, fatsG: 24, img: '🥛', image_url: '/images/products/Toned_Milk.png' },
+
+  // 🥬 Vegetables & Fruits
+  { id: 'ai3', name: 'Fresh Spinach Bunch', price: 20, category: 'Vegetables', diet: ['veg', 'vegan', 'keto', 'high-protein', 'balanced', 'weight-loss'], baseQty: 3, recommendedQty: 3, cals: 23, proteinG: 2.9, carbsG: 3.6, fatsG: 0.4, img: '🥬', image_url: '/images/products/12_Fresh%20Spinach%20Bunch.png' },
+  { id: 'ai4', name: 'Alphonso Mango', price: 200, category: 'Fruits', diet: ['veg', 'vegan', 'balanced'], baseQty: 2, recommendedQty: 2, cals: 135, proteinG: 1.1, carbsG: 35, fatsG: 0.6, img: '🥭', image_url: '/images/products/Alphonso_Mango.png' },
+  { id: 'ai10', name: 'Red Delicious Apple', price: 150, category: 'Fruits', diet: ['veg', 'vegan', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 95, proteinG: 0.5, carbsG: 25, fatsG: 0.3, img: '🍎', image_url: '/images/products/Red_Delicious_Apple.png' },
+  { id: 'ai17', name: 'Green Broccoli', price: 150, category: 'Vegetables', diet: ['veg', 'vegan', 'keto', 'high-protein', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 55, proteinG: 3.7, carbsG: 11, fatsG: 0.6, img: '🥦', image_url: '/images/products/Green_Broccoli.png' },
+  { id: 'ai18', name: 'Organic Carrot', price: 50, category: 'Vegetables', diet: ['veg', 'vegan', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 41, proteinG: 0.9, carbsG: 10, fatsG: 0.2, img: '🥕', image_url: '/images/products/Organic_Carrot.png' },
+  { id: 'ai19', name: 'Fresh Robusta Banana', price: 60, category: 'Fruits', diet: ['veg', 'vegan', 'balanced', 'high-protein'], baseQty: 2, recommendedQty: 2, cals: 105, proteinG: 1.3, carbsG: 27, fatsG: 0.3, img: '🍌', image_url: '/images/products/Fresh_Robusta_Banana.png' },
+  { id: 'ai20', name: 'Sweet Watermelon', price: 80, category: 'Fruits', diet: ['veg', 'vegan', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 85, proteinG: 1.7, carbsG: 21, fatsG: 0.4, img: '🍉', image_url: '/images/products/Sweet_Watermelon.png' },
+
+  // 🌾 Grains & Pulses
+  { id: 'ai5', name: 'Tata Sampann Toor Dal 1kg', price: 160, category: 'Grains', diet: ['veg', 'vegan', 'high-protein', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 343, proteinG: 22, carbsG: 62, fatsG: 1.7, img: '🥣', image_url: '/images/products/Tata_Sampann_Toor_Dal_1kg.png' },
+  { id: 'ai6', name: 'India Gate Basmati Rice 1kg', price: 120, category: 'Grains', diet: ['veg', 'vegan', 'balanced'], baseQty: 2, recommendedQty: 2, cals: 350, proteinG: 7.1, carbsG: 78, fatsG: 0.6, img: '🍚', image_url: '/images/products/India_Gate_Basmati_Rice_1kg.png' },
+  { id: 'ai12', name: '100% Multigrain Bread', price: 60, category: 'Bakery', diet: ['veg', 'vegan', 'high-protein', 'balanced', 'weight-loss'], baseQty: 2, recommendedQty: 2, cals: 250, proteinG: 13, carbsG: 41, fatsG: 4.2, img: '🍞', image_url: '/images/products/100_Multigrain_Bread.png' },
+  { id: 'ai13', name: 'Rolled Oats 1kg', price: 180, category: 'Grains', diet: ['veg', 'vegan', 'high-protein', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 389, proteinG: 16.9, carbsG: 66, fatsG: 6.9, img: '🥣', image_url: '/images/products/Rolled_Oats_1kg.png' },
+  { id: 'ai22', name: 'Quinoa 500g', price: 320, category: 'Grains', diet: ['veg', 'vegan', 'high-protein', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 368, proteinG: 14.1, carbsG: 64, fatsG: 6.1, img: '🌾', image_url: '/images/products/Quinoa_500g.png' },
+  { id: 'ai23', name: 'Moong Dal 1kg', price: 130, category: 'Grains', diet: ['veg', 'vegan', 'high-protein', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 347, proteinG: 24, carbsG: 63, fatsG: 1.2, img: '🥣', image_url: '/images/products/Moong_Dal_1kg.png' },
+
+  // 🥩 Meat & Fish
+  { id: 'ai8', name: 'Fresh Chicken Breast 500g', price: 280, category: 'Meat', diet: ['high-protein', 'keto', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 165, proteinG: 31, carbsG: 0, fatsG: 3.6, img: '🥩', image_url: '/images/products/Fresh_Chicken_Breast_500g.png' },
+  { id: 'ai24', name: 'Fresh Mutton Keema 500g', price: 650, category: 'Meat', diet: ['high-protein', 'keto', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 250, proteinG: 26, carbsG: 0, fatsG: 16, img: '🥩', image_url: '/images/products/Fresh_Mutton_Keema_500g.png' },
+  { id: 'ai25', name: 'Fresh Rohu Fish 1kg', price: 300, category: 'Meat', diet: ['high-protein', 'keto', 'weight-loss', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 180, proteinG: 28, carbsG: 0, fatsG: 7, img: '🐟', image_url: '/images/products/Fresh_Rohu_Fish_1kg.png' },
+
+  // 🫒 Oils & Healthy Fats & Beverages
+  { id: 'ai11', name: 'Fortune Sunflower Oil 1L', price: 140, category: 'Oils', diet: ['veg', 'vegan', 'keto', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 884, proteinG: 0, carbsG: 0, fatsG: 100, img: '🫒', image_url: '/images/products/Fortune_Sunflower_Oil_1L.png' },
+  { id: 'ai15', name: 'Roasted Salted Almonds 200g', price: 220, category: 'Snacks', diet: ['veg', 'vegan', 'keto', 'high-protein', 'balanced'], baseQty: 1, recommendedQty: 1, cals: 579, proteinG: 21, carbsG: 22, fatsG: 50, img: '🥜', image_url: '/images/products/Roasted_Salted_Almonds_200g.png' },
+  { id: 'ai27', name: 'Organic Green Tea 25 Bags', price: 180, category: 'Beverages', diet: ['veg', 'vegan', 'weight-loss', 'balanced', 'keto'], baseQty: 1, recommendedQty: 1, cals: 2, proteinG: 0, carbsG: 0.5, fatsG: 0, img: '🍵', image_url: '/images/products/Organic_Green_Tea_25_Bags.png' },
 ];
 
 export function SmartPlanner({ onBack }: { onBack: () => void }) {
@@ -55,7 +74,6 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
   const [selectedItem, setSelectedItem] = useState<DietItem | null>(null);
 
   const familySize = preferences?.familySize || 1;
-  const userDiets = preferences?.dietary || ['balanced'];
   const monthlyBudget = preferences?.monthlyBudget || 15000;
   const weeklyBudget = monthlyBudget / 4;
 
@@ -198,73 +216,72 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
             </div>
             <div className="bg-amber-50/80 rounded-2xl p-3 text-center border border-amber-100/60">
               <span className="block text-xl font-black text-amber-600">{currentGoalMeta.macros.c}%</span>
-              <span className="text-[10px] font-extrabold text-amber-500 uppercase tracking-wider">Carbs</span>
+              <span className="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider">Carbs</span>
             </div>
-            <div className="bg-yellow-50/80 rounded-2xl p-3 text-center border border-yellow-100/60">
-              <span className="block text-xl font-black text-yellow-600">{currentGoalMeta.macros.f}%</span>
-              <span className="text-[10px] font-extrabold text-yellow-600 uppercase tracking-wider">Fats</span>
+            <div className="bg-rose-50/80 rounded-2xl p-3 text-center border border-rose-100/60">
+              <span className="block text-xl font-black text-rose-600">{currentGoalMeta.macros.f}%</span>
+              <span className="text-[10px] font-extrabold text-rose-400 uppercase tracking-wider">Healthy Fats</span>
             </div>
           </div>
         </div>
 
-        {/* Smart Bundle Items List */}
+        {/* AI Recommended Products */}
         <div>
-          <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex justify-between items-center mb-3">
             <h2 className="font-black text-neutral-900 text-base flex items-center gap-2">
-              <Sparkles size={18} className="text-purple-500" />
-              Your Smart Bundle
+              <Sparkles size={18} className="text-indigo-600" />
+              Recommended Grocery Basket ({bundleItems.length})
             </h2>
-            <span className="bg-indigo-50 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full border border-indigo-100">
-              {bundleItems.length} Items Selected
-            </span>
           </div>
 
           <div className="space-y-3">
             {bundleItems.map(item => (
               <div 
                 key={item.id} 
-                className="bg-white p-3.5 rounded-2xl shadow-sm border border-neutral-100 flex items-center gap-3.5 hover:border-indigo-200 transition-all"
+                className="bg-white p-3.5 rounded-2xl shadow-sm border border-neutral-100 flex items-center gap-3.5 transition-all hover:border-indigo-100"
               >
-                <div 
-                  onClick={() => setSelectedItem(item)}
-                  className="w-14 h-14 bg-neutral-50 rounded-xl flex items-center justify-center cursor-pointer overflow-hidden shrink-0 border border-neutral-100"
-                >
+                <div className="w-16 h-16 rounded-xl bg-neutral-50 flex items-center justify-center shrink-0 overflow-hidden border border-neutral-100 relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={getValidImageUrl(item.image_url, item.name, item.category)} 
-                    alt="" 
-                    referrerPolicy="no-referrer"
+                    alt={item.name}
+                    className="w-full h-full object-cover rounded-xl"
                     onError={(e) => {
-                      const t = e.currentTarget;
-                      t.onerror = null;
-                      t.src = generateFoodSvgDataUri(item.name, item.category);
+                      const target = e.currentTarget;
+                      target.onerror = null;
+                      target.src = generateFoodSvgDataUri(item.name, item.category);
                     }}
-                    className="w-full h-full object-contain p-1 rounded-xl" 
                   />
                 </div>
 
-                <div className="flex-1 min-w-0" onClick={() => setSelectedItem(item)}>
-                  <h3 className="font-bold text-neutral-900 truncate text-sm hover:text-indigo-600 transition-colors cursor-pointer">{item.name}</h3>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-neutral-900 text-sm truncate">{item.name}</h4>
+                  <p className="text-[11px] text-neutral-400 font-medium">₹{item.price} • {item.cals} kcal</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[11px] text-neutral-400 font-semibold">{item.category}</span>
-                    <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
-                    <span className="text-[11px] font-bold text-emerald-600">₹{item.price}/ea</span>
+                    <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                      P: {item.proteinG}g
+                    </span>
+                    <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                      C: {item.carbsG}g
+                    </span>
                   </div>
                 </div>
 
-                {/* Instant Quantity Modifier */}
-                <div className="flex items-center gap-2 bg-neutral-50 p-1.5 rounded-xl border border-neutral-100">
+                <div className="flex items-center gap-2 bg-neutral-50 p-1.5 rounded-xl border border-neutral-100 shrink-0">
                   <button 
                     onClick={() => handleQtyChange(item.id, -1)}
-                    className="w-7 h-7 bg-white rounded-lg flex items-center justify-center text-neutral-600 hover:bg-neutral-200 active:scale-95 shadow-2xs transition-all"
+                    className="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-neutral-600 hover:text-neutral-900 border border-neutral-200 active:scale-95 shadow-xs"
                   >
-                    {item.recommendedQty === 1 ? <Trash2 size={13} className="text-red-500" /> : <Minus size={13} />}
+                    <Minus size={14} />
                   </button>
-                  <span className="font-black text-sm text-neutral-900 w-4 text-center">{item.recommendedQty}</span>
+                  <span className="font-black text-sm w-5 text-center text-neutral-800">
+                    {item.recommendedQty}
+                  </span>
                   <button 
                     onClick={() => handleQtyChange(item.id, 1)}
-                    className="w-7 h-7 bg-white rounded-lg flex items-center justify-center text-neutral-600 hover:bg-neutral-200 active:scale-95 shadow-2xs transition-all"
+                    className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white hover:bg-indigo-700 active:scale-95 shadow-xs"
                   >
-                    <Plus size={13} />
+                    <Plus size={14} />
                   </button>
                 </div>
               </div>
@@ -272,95 +289,41 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
           </div>
         </div>
 
-        {/* Floating Add to Cart Button */}
-        <div className="fixed bottom-6 left-0 w-full px-4 z-50">
-          <button 
+      </div>
+
+      {/* Floating Add All to Cart Footer */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-neutral-100 shadow-2xl z-30">
+        <div className="max-w-md mx-auto flex items-center justify-between gap-4">
+          <div>
+            <span className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-wider block">Total AI Basket</span>
+            <span className="text-xl font-black text-neutral-950">₹{totalCost.toLocaleString('en-IN')}</span>
+          </div>
+
+          <button
             onClick={handleAddAllToCart}
-            disabled={added || isAdding || bundleItems.length === 0}
-            className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.99] ${
+            disabled={isAdding || bundleItems.length === 0}
+            className={`flex-1 py-4 px-6 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 ${
               added 
-                ? 'bg-emerald-600 text-white' 
-                : 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white hover:opacity-95'
+                ? 'bg-emerald-600 text-white shadow-emerald-600/30' 
+                : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-600/30 hover:opacity-95'
             }`}
           >
             {isAdding ? (
-              <span className="animate-pulse flex items-center gap-2">
-                <Zap size={18} className="animate-spin" /> Adding Bundle to Cart...
-              </span>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : added ? (
               <>
-                <ShieldCheck size={20} /> Bundle Added to Cart! 🛒
+                <ShieldCheck size={18} />
+                Added Bundle to Cart!
               </>
             ) : (
               <>
-                <ShoppingCart size={20} />
-                Add Smart Bundle to Cart (₹{totalCost.toLocaleString('en-IN')})
+                <Zap size={18} />
+                Add AI Bundle to Cart
               </>
             )}
           </button>
         </div>
-
       </div>
-
-      {/* Item Modal */}
-      {selectedItem && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4">
-          <div 
-            className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm" 
-            onClick={() => setSelectedItem(null)}
-          ></div>
-          
-          <div className="bg-white w-full max-w-sm rounded-[32px] shadow-2xl relative z-10 overflow-hidden animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-300">
-            <div className="bg-[#F8FAFC] p-8 flex items-center justify-center relative border-b border-neutral-100">
-              <button 
-                onClick={() => setSelectedItem(null)}
-                className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center text-neutral-500 shadow-sm hover:scale-105 active:scale-95 transition-all"
-              >
-                <X size={16} strokeWidth={3} />
-              </button>
-              <div className="w-28 h-28 bg-white rounded-2xl p-2 border border-neutral-100 flex items-center justify-center shadow-md">
-                <img 
-                  src={getValidImageUrl(selectedItem.image_url, selectedItem.name, selectedItem.category)} 
-                  alt=""
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-5">
-              <div>
-                <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-2.5 py-1 rounded-md">{selectedItem.category}</span>
-                <h2 className="text-xl font-black text-neutral-900 mt-2 leading-tight">{selectedItem.name}</h2>
-                <p className="text-2xl font-black text-emerald-600 mt-1">₹{selectedItem.price} <span className="text-xs text-neutral-400 font-semibold">/ unit</span></p>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-neutral-50 p-2.5 rounded-2xl border border-neutral-100">
-                  <p className="text-[10px] text-neutral-400 font-bold uppercase">Protein</p>
-                  <p className="text-base font-black text-blue-600">{selectedItem.proteinG}g</p>
-                </div>
-                <div className="bg-neutral-50 p-2.5 rounded-2xl border border-neutral-100">
-                  <p className="text-[10px] text-neutral-400 font-bold uppercase">Carbs</p>
-                  <p className="text-base font-black text-amber-600">{selectedItem.carbsG}g</p>
-                </div>
-                <div className="bg-neutral-50 p-2.5 rounded-2xl border border-neutral-100">
-                  <p className="text-[10px] text-neutral-400 font-bold uppercase">Fats</p>
-                  <p className="text-base font-black text-yellow-600">{selectedItem.fatsG}g</p>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => setSelectedItem(null)}
-                className="w-full bg-neutral-900 text-white font-bold py-3.5 rounded-2xl hover:bg-neutral-800 active:scale-[0.98] transition-all shadow-lg"
-              >
-                Close Details
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }
