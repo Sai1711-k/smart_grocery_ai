@@ -386,8 +386,8 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                     </div>
                   )}
 
-                  {/* Image container - Perfectly Centered 4K HD Card Fit */}
-                  <div className={`w-full aspect-square bg-neutral-50/60 rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden p-2 border border-neutral-100/90 shadow-2xs group-hover:bg-neutral-50 transition-all ${isOutOfStock ? 'grayscale opacity-60' : ''}`}>
+                  {/* Image container - 100% Full Uncropped Centered Card Fit */}
+                  <div className={`w-full aspect-square bg-white rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden p-3 border border-neutral-100/90 shadow-2xs group-hover:border-primary/20 transition-all ${isOutOfStock ? 'grayscale opacity-60' : ''}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={getValidImageUrl(product.image_url, product.name, product.category)}
@@ -398,7 +398,7 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                         target.onerror = null;
                         target.src = generateFoodSvgDataUri(product.name, product.category);
                       }}
-                      className="object-contain w-full h-full rounded-xl transition-transform duration-300 group-hover:scale-105"
+                      className="object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-105"
                     />
                     {isOutOfStock && (
                       <div className="absolute inset-0 bg-black/30 backdrop-blur-xs rounded-2xl flex items-center justify-center">
