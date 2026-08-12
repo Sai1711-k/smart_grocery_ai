@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, MapPin, CreditCard, CheckCircle, Package, Truck, Box, FileText, Download, ArrowRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { useCart, useAuth } from '@/lib/providers';
-import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
+import { getValidImageUrl } from '@/lib/utils';
 
 // ============================================
 // Shared Types

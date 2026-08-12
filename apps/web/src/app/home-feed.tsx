@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, ChevronRight, Tag, Zap, Gift } from 'lucide-react';
 import { useCart, useAuth } from '@/lib/providers';
-import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
+import { getValidImageUrl } from '@/lib/utils';
 import { StockAlertBell } from './stock-alerts';
 
 interface Product {
@@ -386,8 +386,8 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                     </div>
                   )}
 
-                  {/* Image container - 100% Full Uncropped Centered Card Fit */}
-                  <div className={`w-full aspect-square bg-white rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden p-3 border border-neutral-100/90 shadow-2xs group-hover:border-primary/20 transition-all ${isOutOfStock ? 'grayscale opacity-60' : ''}`}>
+                  {/* Image container - Studio E-Commerce Product Card */}
+                  <div className={`w-full aspect-square bg-neutral-50/70 rounded-2xl flex items-center justify-center mb-3 relative overflow-hidden p-3 border border-neutral-100 shadow-2xs group-hover:border-primary/20 transition-all ${isOutOfStock ? 'grayscale opacity-60' : ''}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={getValidImageUrl(product.image_url, product.name, product.category)}
@@ -396,7 +396,7 @@ export function HomeFeedPrototype({ onOpenAlerts, initialCategory = null }: { on
                       onError={(e) => {
                         const target = e.currentTarget;
                         target.onerror = null;
-                        target.src = generateFoodSvgDataUri(product.name, product.category);
+                        target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop';
                       }}
                       className="object-contain max-w-full max-h-full transition-transform duration-300 group-hover:scale-105"
                     />

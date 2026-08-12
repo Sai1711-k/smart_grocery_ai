@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth, useCart } from '@/lib/providers';
 import { ArrowLeft, Sparkles, AlertCircle, ShoppingCart, TrendingDown, Target, X, Plus, Minus, Trash2, ShieldCheck, Zap } from 'lucide-react';
-import { getValidImageUrl, generateFoodSvgDataUri } from '@/lib/utils';
+import { getValidImageUrl } from '@/lib/utils';
 
 interface DietItem {
   id: string;
@@ -249,7 +249,7 @@ export function SmartPlanner({ onBack }: { onBack: () => void }) {
                     onError={(e) => {
                       const target = e.currentTarget;
                       target.onerror = null;
-                      target.src = generateFoodSvgDataUri(item.name, item.category);
+                      target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop';
                     }}
                   />
                 </div>

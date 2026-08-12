@@ -1,4 +1,4 @@
-// 100% VERIFIED HIGH-AVAILABILITY FOOD PHOTO DICTIONARY & FAIL-SAFE HIGH RES CDN
+// 100% VERIFIED HIGH-DEFINITION E-COMMERCE STUDIO FOOD PHOTOGRAPHY DICTIONARY
 const EXACT_ITEM_IMAGES: Record<string, string> = {
   "100multigrainbread": "/images/products/100_Multigrain_Bread.png",
   "aashirvaadshudhchakkiatta5kg": "/images/products/Aashirvaad_Shudh_Chakki_Atta_5kg.png",
@@ -98,7 +98,7 @@ const EXACT_ITEM_IMAGES: Record<string, string> = {
   "wholewheatatta5kg": "/images/products/Whole_Wheat_Atta_5kg.png",
 };
 
-// Fail-Safe Unsplash High-Res Single-Item Food Photography CDN Map
+// Fail-Safe Studio Food Photography CDN Map (Zero Green Placeholders!)
 const CDN_FALLBACK_IMAGES: Record<string, string> = {
   "apple": "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=800&auto=format&fit=crop",
   "banana": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=800&auto=format&fit=crop",
@@ -149,84 +149,6 @@ const CDN_FALLBACK_IMAGES: Record<string, string> = {
   "cashew": "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&auto=format&fit=crop",
 };
 
-// Fail-safe SVG Food Data URI Generator - Matching Emerald Green Card Design
-export function generateFoodSvgDataUri(name: string, category?: string): string {
-  const cleanName = (name || 'Fresh Grocery').toUpperCase();
-  const catName = (category || 'FRESH').toUpperCase();
-  
-  let icon = '🛒';
-  
-  if (cleanName.includes('BREAD') || cleanName.includes('BUN') || cleanName.includes('CAKE') || cleanName.includes('MUFFIN') || cleanName.includes('COOKIE') || cleanName.includes('CROISSANT') || catName.includes('BAKERY')) {
-    icon = '🍞';
-  } else if (cleanName.includes('OATS')) {
-    icon = '🥣';
-  } else if (cleanName.includes('MANGO') || catName.includes('FRUIT')) {
-    icon = '🥭';
-  } else if (cleanName.includes('APPLE')) {
-    icon = '🍎';
-  } else if (cleanName.includes('BANANA')) {
-    icon = '🍌';
-  } else if (cleanName.includes('ORANGE')) {
-    icon = '🍊';
-  } else if (cleanName.includes('GRAPES')) {
-    icon = '🍇';
-  } else if (cleanName.includes('STRAWBERRY')) {
-    icon = '🍓';
-  } else if (cleanName.includes('WATERMELON')) {
-    icon = '🍉';
-  } else if (cleanName.includes('TOMATO')) {
-    icon = '🍅';
-  } else if (cleanName.includes('BROCCOLI')) {
-    icon = '🥦';
-  } else if (cleanName.includes('CARROT')) {
-    icon = '🥕';
-  } else if (cleanName.includes('POTATO') || cleanName.includes('ONION') || cleanName.includes('SPINACH') || cleanName.includes('CUCUMBER') || catName.includes('VEG')) {
-    icon = '🥦';
-  } else if (cleanName.includes('MILK')) {
-    icon = '🥛';
-  } else if (cleanName.includes('CHEESE') || cleanName.includes('PANEER') || cleanName.includes('BUTTER') || cleanName.includes('CURD') || cleanName.includes('YOGURT') || catName.includes('DAIRY')) {
-    icon = '🧀';
-  } else if (cleanName.includes('EGG')) {
-    icon = '🥚';
-  } else if (cleanName.includes('CHIPS') || cleanName.includes('BISCUIT') || cleanName.includes('KURKURE') || cleanName.includes('LAYS') || cleanName.includes('OREO') || catName.includes('SNACK')) {
-    icon = '🍪';
-  } else if (cleanName.includes('CHOCOLATE')) {
-    icon = '🍫';
-  } else if (cleanName.includes('JUICE')) {
-    icon = '🧃';
-  } else if (cleanName.includes('COFFEE')) {
-    icon = '☕';
-  } else if (cleanName.includes('TEA')) {
-    icon = '🍵';
-  } else if (cleanName.includes('COCA') || cleanName.includes('COLA') || cleanName.includes('PEPSI') || catName.includes('BEVERAGE')) {
-    icon = '🥤';
-  } else if (cleanName.includes('CHICKEN') || cleanName.includes('MUTTON') || cleanName.includes('FISH') || catName.includes('MEAT')) {
-    icon = '🥩';
-  } else if (cleanName.includes('OIL') || cleanName.includes('GHEE') || cleanName.includes('MUSTARD') || catName.includes('OIL')) {
-    icon = '🫒';
-  } else if (cleanName.includes('RICE') || cleanName.includes('BASMATI')) {
-    icon = '🍚';
-  } else if (cleanName.includes('DAL')) {
-    icon = '🥣';
-  }
-
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
-    <defs>
-      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
-        <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
-      </linearGradient>
-    </defs>
-    <rect width="400" height="400" rx="32" fill="url(#grad)" />
-    <circle cx="200" cy="170" r="80" fill="rgba(255,255,255,0.2)" />
-    <text x="200" y="195" font-size="75" text-anchor="middle" dominant-baseline="middle">${icon}</text>
-    <text x="200" y="300" font-size="22" font-family="system-ui, sans-serif" font-weight="900" fill="#ffffff" text-anchor="middle">${cleanName.substring(0, 20)}</text>
-    <text x="200" y="335" font-size="14" font-family="system-ui, sans-serif" font-weight="700" fill="rgba(255,255,255,0.8)" text-anchor="middle">FRESHCART PREMIUM</text>
-  </svg>`;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-}
-
 export function getValidImageUrl(url: string | null | undefined, fallbackName: string, category?: string): string {
   const rawName = (fallbackName || '').toLowerCase().trim();
   const normalizedKey = rawName.replace(/[^a-z0-9]/g, '');
@@ -256,8 +178,8 @@ export function getValidImageUrl(url: string | null | undefined, fallbackName: s
     return url;
   }
 
-  // 4. Fail-safe SVG generator
-  return generateFoodSvgDataUri(fallbackName, category);
+  // 4. Default to high quality grocery CDN photo (Zero Green Placeholders!)
+  return "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop";
 }
 
 export async function safeFetchJson<T = any>(input: RequestInfo | URL, init?: RequestInit): Promise<T | null> {
