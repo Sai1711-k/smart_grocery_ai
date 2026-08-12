@@ -473,22 +473,35 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
   const icons = [FileText, CheckCircle, Box, Truck, MapPin];
   
   const [orderStatus, setOrderStatus] = useState(order.status);
-  const [secondsRemaining, setSecondsRemaining] = useState<number>(600); // 10 minutes default
+  const [secondsRemaining, setSecondsRemaining] = useState<number>(1500); // 25 minutes default = 1500 seconds
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
-    if (orderStatus === 'cancelled') return;
+    if (orderStatus === 'cancelled' || orderStatus === 'delivered') return;
     const createdAt = new Date(order.created_at).getTime();
-    const tenMinWindow = createdAt + 10 * 60 * 1000;
+    const twentyFiveMinWindow = createdAt + 25 * 60 * 1000; // 25 minutes
     
     const interval = setInterval(() => {
       const now = Date.now();
-      const diff = Math.max(0, Math.floor((tenMinWindow - now) / 1000));
+      const diff = Math.max(0, Math.floor((twentyFiveMinWindow - now) / 1000));
       setSecondsRemaining(diff);
+
+      // Automatically mark order as delivered after 25 minutes
+      if (diff === 0) {
+        setOrderStatus('delivered');
+        try {
+          const stored = localStorage.getItem('grocery_orders');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            const updated = parsed.map((o: Order) => (o.id === order.id || o.order_number === order.order_number) ? { ...o, status: 'delivered', delivered_at: new Date().toISOString() } : o);
+            localStorage.setItem('grocery_orders', JSON.stringify(updated));
+          }
+        } catch (e) {}
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [order.created_at, orderStatus]);
+  }, [order.created_at, order.id, order.order_number, orderStatus]);
 
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(() => {
     if (typeof window !== 'undefined') {
@@ -579,14 +592,14 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
       </div>
 
       <div className="px-6 py-6 space-y-6 max-w-md mx-auto w-full">
-        {/* ACTIVE 10-MIN WINDOW BANNER */}
+        {/* ACTIVE 25-MIN DELIVERY BANNER */}
         {orderStatus !== 'cancelled' && (
           <div className="p-5 rounded-3xl bg-emerald-50/80 border border-emerald-200 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 <h3 className="font-extrabold text-sm text-emerald-950">
-                  {secondsRemaining > 0 ? '10-Minute Order Window Active' : 'Order Locked & In Transit'}
+                  {secondsRemaining > 0 ? '25-Minute Express Delivery Active' : '🎉 Order Delivered Successfully'}
                 </h3>
               </div>
               {secondsRemaining > 0 && (
@@ -599,7 +612,7 @@ function OrderTrackingView({ order, onBack, onNavigate }: { order: Order, onBack
             {secondsRemaining > 0 ? (
               <div className="space-y-3">
                 <p className="text-xs text-neutral-600 leading-relaxed">
-                  You can modify items or cancel for a 100% instant refund within the next {timerDisplay} minutes.
+                  Your order is being dispatched and will be delivered to your address in <strong>{timerDisplay} minutes</strong>.
                 </p>
                 <div className="flex gap-2">
                   <button 
